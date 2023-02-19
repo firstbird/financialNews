@@ -46,7 +46,7 @@ class MainPageCompaniesState extends State<MainPageCompanies>
           actionIcon3: Icon(Icons.search, color: Colors.white,),
         ),
         _Header('公司快讯', () {}), // 当你不知道吃什么时候
-        SectionNewSongs(),
+        const CompanyNews(),
       ],
     );
   }
@@ -179,11 +179,13 @@ class _PlayListItemView extends ConsumerWidget {
   }
 }
 
-class SectionNewSongs extends ConsumerWidget {
+class CompanyNews extends ConsumerWidget {
+  const CompanyNews({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // final snapshot = ref.watch(personalizedNewSongProvider.logErrorOnDebug());
-    final snapshot = ref.watch(homePlaylistProvider.logErrorOnDebug());
+    final snapshot = ref.watch(newsListProvider(0).logErrorOnDebug());
     return snapshot.when(
       data: (songs) {
         final double width = 500;

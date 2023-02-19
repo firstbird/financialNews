@@ -28,19 +28,18 @@ class SubmitButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return InkWell(
         onTap: () {
-          ref
-              .read(navigatorProvider.notifier)
-              .navigate(NavigationTargetHeadlines());
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context)
-                  {
-                    final navigatorState = ref.watch(navigatorProvider);
-                    NavigationTarget target = navigatorState.current;
-                    return PageHome(selectedTab: target.runtimeType == NavigationTargetWelcome ? NavigationTargetHeadlines() : target);
-                  }
-              ));
+          ref.read(navigatorProvider.notifier).back();
+          ref.read(navigatorProvider.notifier).navigate(NavigationTargetHeadlines());
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context)
+          //         {
+          //           final navigatorState = ref.watch(navigatorProvider);
+          //           NavigationTarget target = navigatorState.current;
+          //           return PageHome(selectedTab: target.runtimeType == NavigationTargetHeadlines ? NavigationTargetHeadlines() : target);
+          //         }
+          //     ));
         },
         child: Container(
           width: MediaQuery.of(context).size.width,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe/navigation/mobile/widgets/movie_app_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../component/global/orientation.dart';
 import '../../../component/route.dart';
@@ -10,48 +11,193 @@ import '../../../providers/personalized_playlist_provider.dart';
 import '../../../repository.dart';
 import '../../common/navigation_target.dart';
 import '../../common/playlist/music_list.dart';
+import 'main_page_companies.dart';
 
-class MainPageHeadlines extends StatefulWidget {
+typedef DebugPrinter = void Function(String message);
+
+typedef setEndIdCallback = void Function(int endId);
+
+DebugPrinter debugPrint = (msg) {
+  print(msg);
+};
+
+class MainPageHeadlines extends ConsumerStatefulWidget  {
   const MainPageHeadlines({super.key});
 
   @override
-  State<StatefulWidget> createState() => CloudPageState();
+  CloudPageState  createState() => CloudPageState();
 }
 
-class CloudPageState extends State<MainPageHeadlines>
+class CloudPageState extends ConsumerState<MainPageHeadlines>
     with AutomaticKeepAliveClientMixin {
+
   @override
   bool get wantKeepAlive => true;
 
+  double currentScrollOffset = 0;
+
+  List<RecommendedPlaylist> _itemList = [];
+
+  String _loadMoreText = "网络加载中";
+
+  TextStyle _loadMoreTextStyle = new TextStyle(color: const Color(0xFF4483f6), fontSize: 14.0);
+
+  var _hasData = true;
+
+  ScrollController _scrollController = new ScrollController();
+  var _page = 0;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadMore();
+    debugPrint('init state: add scroll listener =============');
+    _scrollController.addListener(() {
+      debugPrint('in listener: scroll pixels: ${_scrollController.position.pixels}, max: ${_scrollController.position.maxScrollExtent}' );
+      currentScrollOffset = _scrollController.position.pixels;
+      if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+        debugPrint('load more: =============');
+        _loadMore();
+
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadMore() async {
+
+    var itemIndex = _itemList.isEmpty ? 0 : _itemList.last.id + 1;
+    final list = (await ref.read(newsListProvider(itemIndex).future) ) as List<RecommendedPlaylist>;
+    setState(() {
+      if (list.length < 8) {
+        _hasData = false;
+      } else {
+        _hasData = true;
+      }
+      _itemList.addAll(list);
+
+      // setState 相当于 runOnUiThread
+      if (_hasData) {
+        // setState(() {
+          _loadMoreText = "网络加载中";
+          _loadMoreTextStyle = new TextStyle(color: const Color(0xFF4483f6), fontSize: 14.0);
+        // });
+        _page++;
+        debugPrint('page = ${_page.toString()}');
+      } else {
+        // setState(() {
+          _loadMoreText = "没有更多数据";
+          _loadMoreTextStyle = new TextStyle(color: const Color(0xFF999999), fontSize: 14.0);
+        // });
+      }
+      debugPrint('list length: ${list.length.toString()}');
+    });
+    // List<dynamic> snapshot = newsListProvider(this._fromId);
+    // if (snapshot)
+    // setState(() {
+    //
+    // });
+  }
+
+  Future<Null> _onRefresh() async {
+    await Future.delayed(Duration(seconds: 1), () {
+      print('refresh');
+      setState(() {
+        _page = 0;
+        _itemList.clear();
+        _loadMore();
+      });
+    });
+  }
+
+  Widget _buildProgressMoreIndicator() {
+    return new Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: new Center(
+        child: new Text(_loadMoreText, style: _loadMoreTextStyle),
+      ),
+    );
+  }
+
+  Widget getRow(int i) {
+    var p = _itemList[i];
+    return _PlayListItemView(playlist: p, width: 150, type: 0);
+  }
+  Widget _contentList() {
+    debugPrint('news length: ${_itemList.length.toString()}');
+    return RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: ListView.builder(
+          itemCount: _itemList.length + 1,
+          itemBuilder: (BuildContext context, int index) {
+            if (index == _itemList.length) {
+              return _buildProgressMoreIndicator();
+            } else {
+              return getRow(index);
+            }
+          },
+          controller: _scrollController,
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
+    var content;
     super.build(context);
-    return ListView(
-      children: <Widget>[
-        CustomAppBar(
-          title: context.strings.headlines,
-          isShowLeftIcon: true,
-          leftIcon: Icon(
-            Icons.chevron_left_outlined,
-            color: Colors.white,
-          ),
-          isShowActionIcon1: true,
-          actionIcon1: Icon(
-            Icons.category,
-            color: Colors.white,
-          ),
-          isShowActionIcon2: true,
-          actionIcon2: Icon(Icons.air_rounded, color: Colors.white,),
-          isShowActionIcon3: true,
-          actionIcon3: Icon(Icons.search, color: Colors.white,),
-        ),
-        _NavigationLine(),
-        // _Header('菜谱类型', () {}), // 当你知道想吃什么的时候
-        // _SectionPlaylist(),
-        _Header('推荐菜品', () {}), // 当你不知道吃什么时候
-        _SectionNewSongs(),
-      ],
+    if (_itemList.length == 0) {
+       content = new Center(
+         child: new CircularProgressIndicator(),
+       );
+    } else {
+      content = _contentList();
+    }
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF117215),
+      appBar: AppBar(
+        title: Text('AndBlog'),
+      ),
+      body: content,
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Increment',
+        child: Icon(Icons.account_box),
+        onPressed: () {
+          print("FloatingActionButton");
+        },
+        elevation: 30,
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
+      // SingleChildScrollView(
+      //     controller: _scrollController,
+      //     child: Column(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: <Widget>[
+      //         CustomAppBar(
+      //           title: context.strings.headlines,
+      //           isShowLeftIcon: true,
+      //           leftIcon: Icon(
+      //             Icons.chevron_left_outlined,
+      //             color: Colors.white,
+      //           ),
+      //           isShowActionIcon1: true,
+      //           actionIcon1: Icon(
+      //             Icons.category,
+      //             color: Colors.white,
+      //           ),
+      //           isShowActionIcon2: true,
+      //           actionIcon2: Icon(Icons.air_rounded, color: Colors.white,),
+      //           isShowActionIcon3: true,
+      //           actionIcon3: Icon(Icons.search, color: Colors.white,),
+      //         ),
+      //         _Header('推荐菜品', () {}), // 当你不知道吃什么时候
+      //       ]),
+      //   );
   }
 }
 
@@ -152,56 +298,75 @@ class _ItemNavigator extends StatelessWidget {
   }
 }
 
-class _SectionPlaylist extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final snapshot = ref.watch(homePlaylistProvider.logErrorOnDebug());
-    return snapshot.when(
-      data: (list) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            assert(
-              constraints.maxWidth.isFinite,
-              'can not layout playlist item in infinite width container.',
-            );
-            final parentWidth = constraints.maxWidth - 8;
-            const count = /* false ? 6 : */ 3;
-            final width = (parentWidth / count).clamp(80.0, 200.0);
-            final spacing = (parentWidth - width * count) / (count + 1);
-            return Padding(
-              padding:
-                  EdgeInsets.symmetric(horizontal: 4 + spacing.roundToDouble()),
-              child: Wrap(
-                spacing: spacing,
-                children: list.map<Widget>((p) {
-                  return _PlayListItemView(playlist: p, width: width, type: 0);
-                }).toList(),
-              ),
-            );
-          },
-        );
-      },
-      error: (error, stacktrace) {
-        return SizedBox(
-          height: 200,
-          child: Center(
-            child: Text(context.formattedError(error)),
-          ),
-        );
-      },
-      // loading 的时候显示的图标
-      loading: () => const SizedBox(
-        height: 200,
-        child: Center(
-          child: SizedBox.square(
-            dimension: 24,
-            child: CircularProgressIndicator(),
-          ),
-        ),
-      ),
-    );
-  }
-}
+// class _HeadLineNews extends ConsumerWidget {
+//   _HeadLineNews(this._fromId, this._callback);
+//
+//   int _fromId = 0;
+//   final setEndIdCallback _callback;
+//   List<RecommendedPlaylist> widgets = [];
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+
+    // final snapshot = ref.watch(newsListProvider(this._fromId).logErrorOnDebug());
+    // return snapshot.when(
+    //   data: (list) {
+    //     RecommendedPlaylist last = list.last as RecommendedPlaylist;
+    //     _callback(last.id);
+    //     widgets.addAll(list as List<RecommendedPlaylist>);
+    //
+    //     return LayoutBuilder(
+    //       builder: (context, constraints) {
+    //         assert(
+    //         constraints.maxWidth.isFinite,
+    //         'can not layout playlist item in infinite width container.',
+    //         );
+    //         final parentWidth = constraints.maxWidth - 8;
+    //         const count = /* false ? 6 : */ 3;
+    //         final width = (parentWidth / count).clamp(80.0, 200.0);
+    //         final spacing = (parentWidth - width * count) / (count + 1);
+    //         return Padding(
+    //           padding:
+    //           EdgeInsets.symmetric(horizontal: 4 + spacing.roundToDouble()),
+    //           child: ListView.builder(
+    //             itemCount: widgets.length,
+    //             physics: const NeverScrollableScrollPhysics(),
+    //             itemBuilder: (BuildContext context, int position) {
+    //               return getRow(position);
+    //             },
+    //             scrollDirection: Axis.vertical,
+    //             shrinkWrap: true,
+    //           ),
+    //         );
+    //       },
+    //     );
+    //   },
+    //   error: (error, stacktrace) {
+    //     return SizedBox(
+    //       height: 200,
+    //       child: Center(
+    //         child: Text(context.formattedError(error)),
+    //       ),
+    //     );
+    //   },
+    //   // loading 的时候显示的图标
+    //   loading: () => const SizedBox(
+    //     height: 200,
+    //     child: Center(
+    //       child: SizedBox.square(
+    //         dimension: 24,
+    //         child: CircularProgressIndicator(),
+    //       ),
+    //     ),
+    //   ),
+    // );
+  // }
+
+//   Widget getRow(int i) {
+//     var p = widgets[i];
+//     return _PlayListItemView(playlist: p, width: 150, type: 0);
+//   }
+// }
 
 class _PlayListItemView extends ConsumerWidget {
   const _PlayListItemView({
@@ -265,7 +430,7 @@ class _PlayListItemView extends ConsumerWidget {
             ),
             const Padding(padding: EdgeInsets.only(top: 4)),
             Text(
-              playlist.name,
+              "${playlist.id} - ${playlist.name}",
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -304,19 +469,26 @@ class _PlayListItemView extends ConsumerWidget {
 class _SectionNewSongs extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final snapshot = ref.watch(personalizedNewSongProvider.logErrorOnDebug());
-    final snapshot = ref.watch(homePlaylistProvider.logErrorOnDebug());
+    final snapshot = ref.watch(personalizedNewSongProvider.logErrorOnDebug());
+    // final snapshot = ref.watch(homePlaylistProvider.logErrorOnDebug());
     return snapshot.when(
       data: (songs) {
         final double width = 500;
-        return Flexible(
-            child: Column(
-            // children: songs.map(MusicTile.new).toList(),
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: songs.map<Widget>((p) {
-                return _PlayListItemView(playlist: p, width: 100, type: 1);
-              }).toList()
-        ));
+        // return Flexible(
+        //     child: Column(
+        //       // children: songs.map(MusicTile.new).toList(),
+        //       crossAxisAlignment: CrossAxisAlignment.start,
+        //       children: songs.map<Widget>((p) {
+        //         return _PlayListItemView(playlist: p, width: 100, type: 1);
+        //       }).toList()
+        // ));
+        return MusicTileConfiguration(
+          musics: songs,
+          token: 'playlist_main_newsong',
+          child: Column(
+            children: songs.map(MusicTile.new).toList(),
+          ),
+        );
       },
       error: (error, stacktrace) {
         return SizedBox(

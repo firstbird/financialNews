@@ -4,24 +4,24 @@ class PlayListDetail {
   PlayListDetail({
     this.code = 0,
     required this.playlist,
-    required this.privileges,
+    // required this.privileges,
   });
 
   factory PlayListDetail.fromJson(Map<String, dynamic>? json) => PlayListDetail(
         code: asInt(json, 'code'),
-        playlist: Playlist.fromJson(asMap(json, 'playlist')),
-        privileges: asList(json, 'privileges')
-            .map((e) => PrivilegesItem.fromJson(e))
-            .toList(),
+        playlist: Playlist.fromJson(asMap(json, 'result')),
+        // privileges: asList(json, 'privileges')
+        //     .map((e) => PrivilegesItem.fromJson(e))
+        //     .toList(),
       );
   final int code;
   final Playlist playlist;
-  final List<PrivilegesItem> privileges;
+  // final List<PrivilegesItem> privileges;
 
   Map<String, dynamic> toJson() => {
         'code': code,
         'playlist': playlist.toJson(),
-        'privileges': privileges.map((e) => e.toJson()),
+        // 'privileges': privileges.map((e) => e.toJson()),
       };
 }
 
@@ -57,8 +57,8 @@ class Playlist {
     required this.subscribers,
     this.subscribed = false,
     required this.creator,
-    required this.tracks,
-    required this.trackIds,
+    // required this.tracks,
+    // required this.trackIds,
     this.shareCount = 0,
     this.commentCount = 0,
   });
@@ -67,7 +67,7 @@ class Playlist {
         id: asInt(json, 'id'),
         name: asString(json, 'name'),
         coverImgId: asInt(json, 'coverImgId'),
-        coverImgUrl: asString(json, 'coverImgUrl'),
+        coverImgUrl: asString(json, 'picUrl'),// coverImgUrl
         coverImgIdStr: asString(json, 'coverImgId_str'),
         adType: asInt(json, 'adType'),
         userId: asInt(json, 'userId'),
@@ -96,11 +96,11 @@ class Playlist {
             .toList(),
         subscribed: asBool(json, 'subscribed'),
         creator: Creator.fromJson(asMap(json, 'creator')),
-        tracks:
-            asList(json, 'tracks').map((e) => TracksItem.fromJson(e)).toList(),
-        trackIds: asList(json, 'trackIds')
-            .map((e) => TrackIdsItem.fromJson(e))
-            .toList(),
+        // tracks:
+        //     asList(json, 'tracks').map((e) => TracksItem.fromJson(e)).toList(),
+        // trackIds: asList(json, 'trackIds')
+        //     .map((e) => TrackIdsItem.fromJson(e))
+        //     .toList(),
         shareCount: asInt(json, 'shareCount'),
         commentCount: asInt(json, 'commentCount'),
       );
@@ -134,8 +134,8 @@ class Playlist {
   final List<SubscribersItem> subscribers;
   final bool subscribed;
   final Creator creator;
-  final List<TracksItem> tracks;
-  final List<TrackIdsItem> trackIds;
+  // final List<TracksItem> tracks;
+  // final List<TrackIdsItem> trackIds;
   final int shareCount;
   final int commentCount;
 
@@ -170,8 +170,8 @@ class Playlist {
         'subscribers': subscribers.map((e) => e.toJson()),
         'subscribed': subscribed,
         'creator': creator.toJson(),
-        'tracks': tracks.map((e) => e.toJson()),
-        'trackIds': trackIds.map((e) => e.toJson()),
+        // 'tracks': tracks.map((e) => e.toJson()),
+        // 'trackIds': trackIds.map((e) => e.toJson()),
         'shareCount': shareCount,
         'commentCount': commentCount,
       };

@@ -168,7 +168,7 @@ class NetworkRepository {
     }
     final userPlayList = ret.asValue!.value;
     return Result.value(
-      userPlayList.playlist.map((e) => e.toPlaylistDetail(const [])).toList(),
+      userPlayList.playlist.map((e) => e.toPlaylistDetail()).toList(),
     );
   }
 
@@ -176,12 +176,13 @@ class NetworkRepository {
     int id, {
     int s = 5,
   }) async {
-    final ret = await _repository.playlistDetail(id, s: s);
+    final ret = await _repository.playlistDetail(id);
     if (ret.isError) {
       return ret.asError!;
     }
     final value = ret.asValue!.value;
-    return Result.value(value.playlist.toPlaylistDetail(value.privileges));
+    debugPrint('playlistDetail result : ${value.playlist}');
+    return Result.value(value.playlist.toPlaylistDetail());
   }
 
   Future<Result<AlbumDetail>> albumDetail(int id) async {
@@ -345,6 +346,9 @@ class NetworkRepository {
   Future<Result<Map>> login(String? phone, String password) =>
       _repository.login(phone, password);
 
+  Future<bool> register(String userId, String account, String password) =>
+      _repository.register(userId, account,  password);
+
   Future<Result<User>> getUserDetail(int uid) async {
     final ret = await _repository.getUserDetail(uid);
     if (ret.isError) {
@@ -496,11 +500,11 @@ extension _FmAlbumMapper on api.FmAlbum {
 }
 
 extension _PlayListMapper on api.Playlist {
-  PlaylistDetail toPlaylistDetail(List<api.PrivilegesItem> privileges) {
-    assert(coverImgUrl.isNotEmpty, 'coverImgUrl is empty');
-    final privilegesMap = Map<int, api.PrivilegesItem>.fromEntries(
-      privileges.map((e) => MapEntry(e.id, e)),
-    );
+  PlaylistDetail toPlaylistDetail() {
+    // assert(coverImgUrl.isNotEmpty, 'coverImgUrl is empty');
+    // final privilegesMap = Map<int, api.PrivilegesItem>.fromEntries(
+    //   privileges.map((e) => MapEntry(e.id, e)),
+    // );
     return PlaylistDetail(
       id: id,
       name: name,
@@ -511,11 +515,13 @@ extension _PlayListMapper on api.Playlist {
       creator: creator.toUser(),
       description: description,
       subscribed: subscribed,
-      tracks: tracks.map((e) => e.toTrack(privilegesMap[e.id])).toList(),
+      // tracks: tracks.map((e) => e.toTrack(privilegesMap[e.id])).toList(),
+      tracks: [],
       commentCount: commentCount,
       shareCount: shareCount,
       trackUpdateTime: trackUpdateTime,
-      trackIds: trackIds.map((e) => e.id).toList(),
+      // trackIds: trackIds.map((e) => e.id).toList(),
+      trackIds: [],
       createTime: DateTime.fromMillisecondsSinceEpoch(createTime),
     );
   }

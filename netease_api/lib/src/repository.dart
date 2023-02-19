@@ -6,8 +6,18 @@ import 'package:async/async.dart' show Result, ErrorResult;
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:netease_music_api/netease_cloud_music.dart' as api;
+import 'package:http/http.dart';
 
 import '../netease_api.dart';
+import 'dart:convert';
+
+import 'http/http_adapter.dart';
+
+typedef DebugPrinter = void Function(String message);
+
+DebugPrinter debugPrint = (msg) {
+  print(msg);
+};
 
 ///enum for NeteaseRepository.search param type
 class SearchType {
@@ -72,7 +82,7 @@ typedef OnRequestError = void Function(ErrorResult error);
 
 class Repository {
   Repository(String cookiePath, {this.onError}) {
-    api.debugPrint = debugPrint;
+    // api.debugPrint = debugPrint;
     scheduleMicrotask(() async {
       PersistCookieJar? cookieJar;
       try {
@@ -107,6 +117,42 @@ class Repository {
     );
   }
 
+  ///调用此接口, 注册用户
+  Future<bool> register(String userId, String account, String password) async {
+    // final result =
+    // await doRequest('/user/register', {'id': userId, 'account': account, 'password': password});
+    // var data = { 'title' : 'My first post' };
+    makePostRequest({'mobile': account, 'password': password});
+    return true;
+
+    // return result.isValue;
+  }
+
+  static const urlPrefix = 'http://10.0.2.2:8080';
+  Future<void> makePostRequest(Map<String, dynamic> body) async {
+    final url = Uri.parse('$urlPrefix/api/users');
+    // final headers = {"Content-type": "application/json"};
+    final headers = {
+      "Accept": "application/json",
+      "Content-type": "application/json"
+    };
+    // final json = '{"title": "Hello", "body": "body text", "userId": 1}';
+    // final response = await post(url, headers: headers, body: body);
+    final response = await post(
+      url,
+      body: jsonEncode(body),
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+    );
+    stdout.writeln('Status code: ${response.statusCode}');
+    stdout.writeln('Body: ${response.body}');
+    // print('Status code: ${response.statusCode}');
+    // print('Body: ${response.body}');
+  }
+
+
+
   Future<Result<Map>> loginQrKey() {
     return doRequest('/login/qr/key');
   }
@@ -122,7 +168,7 @@ class Repository {
       debugPrint('login qr check: $ret');
     } on RequestError catch (error) {
       if (error.code == 803) {
-        await _saveCookies(error.answer.cookie);
+        // await _saveCookies(error.answer.cookie);
       }
       return error.code;
     }
@@ -179,8 +225,10 @@ class Repository {
   ///根据歌单id获取歌单详情，包括歌曲
   ///
   /// [s] 歌单最近的 s 个收藏者
-  Future<Result<PlayListDetail>> playlistDetail(int id, {int s = 5}) async {
-    final response = await doRequest('/playlist/detail', {'id': '$id', 's': s});
+  Future<Result<PlayListDetail>> playlistDetail(int id) async {
+    // final response = await doRequest('/playlist/detail', {'id': '$id', 's': s});
+    final response = await doRequest('/news/detail', {'id': id});
+    debugPrint('playlistDetail response : $response');
     return _map(response, (t) => PlayListDetail.fromJson(t));
   }
 
@@ -207,7 +255,9 @@ class Repository {
   }) async {
     final response = await doRequest(
       '/personalized',
-      {'limit': limit, 'offset': offset, 'total': true, 'n': 1000},
+      // {'limit': limit, 'offset': offset, 'total': true, 'n': 1000},
+      {'limit': limit, 'type': 0, 'offset': offset},
+      // {'type': 0},
     );
     return _map(response, (t) => Personalized.fromJson(t));
   }
@@ -519,16 +569,24 @@ class Repository {
     String path, [
     Map param = const {},
   ]) async {
-    api.Answer result;
+    // network mock
+    // api.Answer result;
+    Answer result;
     try {
       // convert all params to string
       final convertedParams =
           param.map((k, v) => MapEntry(k.toString(), v.toString()));
-      result = await api.cloudMusicApi(
+      // result = await api.cloudMusicApi(
+      //   path,
+      //   parameter: convertedParams,
+      //   cookie: await _loadCookies(),
+      // );
+      result = await httpServerApi(
         path,
         parameter: convertedParams,
         cookie: await _loadCookies(),
       );
+
     } catch (e, stacktrace) {
       debugPrint('request error : $e \n $stacktrace');
       final result = ErrorResult(e, stacktrace);
@@ -552,7 +610,7 @@ class Repository {
         RequestError(
           code: kCodeNeedLogin,
           message: '需要登录才能访问哦~',
-          answer: result,
+          // answer: result,
         ),
       );
       onError?.call(error);
@@ -562,12 +620,13 @@ class Repository {
         RequestError(
           code: map['code'],
           message: map['msg'] ?? map['message'] ?? '请求失败了~',
-          answer: result,
+          // answer: result,
         ),
       );
       onError?.call(error);
       return error;
     }
+    // return Result.value(Map<String, dynamic>());
     return Result.value(map as Map<String, dynamic>);
   }
 }

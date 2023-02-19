@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../providers/navigator_provider.dart';
+import '../navigation_target.dart';
 import 'loginPage.dart';
 import 'signup.dart';
 
-class WelcomePage extends StatefulWidget {
+class WelcomePage extends ConsumerStatefulWidget {
   WelcomePage({Key? key, this.title}) : super(key: key);
 
   final String? title;
@@ -13,12 +16,15 @@ class WelcomePage extends StatefulWidget {
   _WelcomePageState createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> {
+class _WelcomePageState extends ConsumerState<WelcomePage> {
   Widget _submitButton() {
     return InkWell(
       onTap: () {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+        // Navigator.push(
+        //     context, MaterialPageRoute(builder: (context) => LoginPage()));
+        ref
+            .read(navigatorProvider.notifier)
+            .navigate(NavigationTargetLogin());
       },
       child: Container(
         width: MediaQuery.of(context).size.width,
@@ -35,7 +41,7 @@ class _WelcomePageState extends State<WelcomePage> {
             ],
             color: Colors.white),
         child: Text(
-          'Login',
+          'WelCome Login',
           style: TextStyle(fontSize: 20, color: Color(0xfff7892b)),
         ),
       ),

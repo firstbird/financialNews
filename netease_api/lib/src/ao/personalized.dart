@@ -9,9 +9,9 @@ class Personalized {
   });
 
   factory Personalized.fromJson(Map<String, dynamic>? json) => Personalized(
-        hasTaste: asBool(json, 'hasTaste'),
+        // hasTaste: asBool(json, 'hasTaste'),
         code: asInt(json, 'code'),
-        category: asInt(json, 'category'),
+        // category: asInt(json, 'category'),
         result: asList(json, 'result')
             .map((e) => PersonalizedItem.fromJson(e))
             .toList(),

@@ -21,18 +21,18 @@ final userIdProvider = Provider<int?>((ref) {
 
 class UserAccount extends StateNotifier<User?> {
   UserAccount(this.ref) : super(null) {
-    // _subscription =
-    //     ref.read(neteaseRepositoryProvider).onApiUnAuthorized.listen(
-    //   (event) {
-    //     debugPrint('onApiUnAuthorized');
-    //     logout();
-    //   },
-    // );
+    _subscription =
+        ref.read(neteaseRepositoryProvider).onApiUnAuthorized.listen(
+      (event) {
+        debugPrint('onApiUnAuthorized');
+        logout();
+      },
+    );
   }
 
   final Ref ref;
 
-  // StreamSubscription? _subscription;
+  StreamSubscription? _subscription;
 
   Future<Result<Map>> login(String? phone, String password) async {
     final result = await neteaseRepository!.login(phone, password);
@@ -45,6 +45,11 @@ class UserAccount extends StateNotifier<User?> {
         return Result.error(error, stacktrace);
       }
     }
+    return result;
+  }
+
+  Future<bool> register(String userId, String account, String password) async {
+    final result = await neteaseRepository!.register(userId, account, password);
     return result;
   }
 
@@ -66,16 +71,16 @@ class UserAccount extends StateNotifier<User?> {
   }
 
   Future<void> loginWithQrKey() async {
-    // final result = await ref.read(neteaseRepositoryProvider).getLoginStatus();
-    // final userId = result['account']['id'] as int;
-    final userId = 1000;
+    final result = await ref.read(neteaseRepositoryProvider).getLoginStatus();
+    final userId = result['account']['id'] as int;
+    // final userId = 1000;
     await _updateLoginStatus(userId, loginByQrKey: true);
   }
 
   void logout() {
     state = null;
-    // ref.read(sharedPreferenceProvider).setLoginUser(null);
-    // ref.read(neteaseRepositoryProvider).logout();
+    ref.read(sharedPreferenceProvider).setLoginUser(null);
+    ref.read(neteaseRepositoryProvider).logout();
   }
 
   Future<void> initialize() async {
@@ -124,6 +129,6 @@ class UserAccount extends StateNotifier<User?> {
   @override
   void dispose() {
     super.dispose();
-    // _subscription?.cancel();
+    _subscription?.cancel();
   }
 }

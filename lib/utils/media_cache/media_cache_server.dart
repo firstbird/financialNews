@@ -53,7 +53,8 @@ class MediaCacheServer {
       await request.response.close();
       return;
     }
-    final contentLength = await cacheFile.contentLength;
+    // final contentLength = await cacheFile.contentLength;
+    const contentLength = 100;
     request.response.headers.contentLength = contentLength;
     request.response.headers.add(HttpHeaders.acceptRangesHeader, 'bytes');
 
@@ -73,8 +74,9 @@ class MediaCacheServer {
         HttpHeaders.contentRangeHeader,
         'bytes $start-${end ?? contentLength - 1}/$contentLength',
       );
-      request.response.headers.contentLength =
-          (end ?? contentLength - 1) - start + 1;
+      // request.response.headers.contentLength =
+      //     (end ?? contentLength - 1) - start + 1;
+      request.response.headers.contentLength = contentLength;
     }
     await request.response
         .addStream(cacheFile.stream(start, end ?? contentLength));

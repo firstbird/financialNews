@@ -4,6 +4,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:recipe/providers/repository_provider.dart';
+import 'package:recipe/repository/data/user.dart';
+import 'package:recipe/repository/netease.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
@@ -13,6 +16,7 @@ import 'package:overlay_support/overlay_support.dart';
 
 import 'providers/preference_provider.dart';
 
+import 'repository/data/playlist_detail.dart';
 import 'repository/network_repository.dart';
 import 'utils/callback_window_listener.dart';
 import 'utils/platform_configuration.dart';
@@ -35,7 +39,7 @@ Future<void> main() async {
       ProviderScope(
         overrides: [
           sharedPreferenceProvider.overrideWithValue(preferences),
-          // neteaseRepositoryProvider.overrideWithValue(neteaseRepository!),
+          neteaseRepositoryProvider.overrideWithValue(neteaseRepository!),
         ],
         child: PageSplash(
           futures: const [],
@@ -52,13 +56,13 @@ Future<void> main() async {
 
 Future<void> _initHive() async {
   await Hive.initFlutter(p.join(appDir.path, 'hive'));
-  // Hive.registerAdapter(PlaylistDetailAdapter());
+  Hive.registerAdapter(PlaylistDetailAdapter());
   // Hive.registerAdapter(TrackTypeAdapter());
   // Hive.registerAdapter(TrackAdapter());
   // Hive.registerAdapter(ArtistMiniAdapter());
   // Hive.registerAdapter(AlbumMiniAdapter());
   // Hive.registerAdapter(DurationAdapter());
-  // Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(UserAdapter());
 }
 
 Future<void> _initialDesktop(SharedPreferences preferences) async {

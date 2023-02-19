@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../providers/navigator_provider.dart';
+import '../common/login/loginPage.dart';
 import '../common/login/login_sub_navigation.dart';
 import '../common/login/welcomePage.dart';
 import '../common/navigation_target.dart';
@@ -89,6 +90,9 @@ class MobileNavigatorController extends NavigatorController {
     final Widget page;
     var pageType = _PageType.normal;
     switch (target.runtimeType) {
+      case NavigationTargetLogin:
+        page = LoginPage();
+        break;
       case NavigationTargetWelcome:
         page = WelcomePage();
         break;
