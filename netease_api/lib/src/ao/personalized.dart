@@ -33,55 +33,43 @@ class PersonalizedItem {
   PersonalizedItem({
     this.id = 0,
     this.type = 0,
-    this.name = '',
-    this.copywriter = '',
-    this.picUrl = '',
-    this.canDislike = false,
-    this.trackNumberUpdateTime = 0,
-    this.playCount = 0,
-    this.trackCount = 0,
-    this.highQuality = false,
-    this.alg = '',
+    this.title = '',
+    this.source = '',
+    this.headPicUrl = '',
+    this.updateTime = 0,
+    this.starCount = 0,
+    this.commentCount = 0,
   });
 
   factory PersonalizedItem.fromJson(Map<String, dynamic>? json) =>
       PersonalizedItem(
         id: asInt(json, 'id'),
         type: asInt(json, 'type'),
-        name: asString(json, 'name'),
-        copywriter: asString(json, 'copywriter'),
-        picUrl: asString(json, 'picUrl'),
-        canDislike: asBool(json, 'canDislike'),
-        trackNumberUpdateTime: asInt(json, 'trackNumberUpdateTime'),
-        playCount: asInt(json, 'playCount'),
-        trackCount: asInt(json, 'trackCount'),
-        highQuality: asBool(json, 'highQuality'),
-        alg: asString(json, 'alg'),
+        title: asString(json, 'title'),
+        source: asString(json, 'source'),
+        headPicUrl: asString(json, 'headPicUrl'),
+        updateTime: asInt(json, 'updateTime'),
+        starCount: asInt(json, 'starCount'),
+        commentCount: asInt(json, 'commentCount'),
       );
 
   final int id;
   final int type;
-  final String name;
-  final String copywriter;
-  final String picUrl;
-  final bool canDislike;
-  final int trackNumberUpdateTime;
-  final int playCount;
-  final int trackCount;
-  final bool highQuality;
-  final String alg;
+  final String title;
+  final String source;
+  final String headPicUrl;
+  final int updateTime;
+  final int starCount;
+  final int commentCount;
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'type': type,
-        'name': name,
-        'copywriter': copywriter,
-        'picUrl': picUrl,
-        'canDislike': canDislike,
-        'trackNumberUpdateTime': trackNumberUpdateTime,
-        'playCount': playCount,
-        'trackCount': trackCount,
-        'highQuality': highQuality,
-        'alg': alg,
+        'name': title,
+        'source': source,
+        'headPicUrl': headPicUrl,
+        'created_at': updateTime,
+        'starCount': starCount,
+        'commentCount': commentCount,
       };
 }

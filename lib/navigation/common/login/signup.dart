@@ -6,6 +6,7 @@ import 'package:recipe/navigation/mobile/home/page_home.dart';
 import 'package:recipe/providers/navigator_provider.dart';
 
 import '../../../providers/account_provider.dart';
+import '../../mobile/playlists/page_playlist_detail.dart';
 import 'bezierContainer.dart';
 import 'loginPage.dart';
 
@@ -78,7 +79,6 @@ class _SignUpPageState extends State<SignUpPage> {
       ),
     );
   }
-
 
 
   @override
@@ -163,19 +163,7 @@ class SignUpForm extends ConsumerWidget {
           InkWell(
               onTap: () {
                 _doRegister(context, ref);
-                ref
-                    .read(navigatorProvider.notifier)
-                    .navigate(NavigationTargetHeadlines());
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context)
-                        {
-                          final navigatorState = ref.watch(navigatorProvider);
-                          NavigationTarget target = navigatorState.current;
-                          return PageHome(selectedTab: target.runtimeType == NavigationTargetWelcome ? NavigationTargetHeadlines() : target);
-                        }
-                    ));
+
               },
               child: Container(
                 width: MediaQuery.of(context).size.width,
@@ -272,9 +260,35 @@ class SignUpForm extends ConsumerWidget {
     }
     final String account = accountTextController.text;
     final accountProvider = ref.read(userProvider.notifier);
-    // final result =
-    // await showLoaderOverlay(context, accountProvider.register("123456", account, password));
-    final result = accountProvider.register("123456", account, password);
-    toast('登录成功');
+    final result =
+    await showLoaderOverlay(context, accountProvider.register("default", account, password));
+    // final result = accountProvider.register("123456", account, password);
+    if (result) {
+      ref
+          .read(navigatorProvider.notifier)
+          .navigate(NavigationTargetHeadlines());
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context)
+              {
+                final navigatorState = ref.watch(navigatorProvider);
+                NavigationTarget target = navigatorState.current;
+                if (target.runtimeType == NavigationTargetWelcome) {
+                  return PageHome(selectedTab: NavigationTargetHeadlines());
+                }
+                if (target.runtimeType == NavigationTargetPlaylist) {
+                  return PlaylistDetailPage(
+                    (target as NavigationTargetPlaylist).playlistId,
+                  );
+                }
+                return PageHome(selectedTab: NavigationTargetHeadlines());
+                // return PageHome(selectedTab: target.runtimeType == NavigationTargetWelcome ? NavigationTargetHeadlines() : target);
+              }
+          ));
+      toast("注册成功");
+    } else {
+      toast("注册失败, todo: 失败原因?");
+    }
   }
 }

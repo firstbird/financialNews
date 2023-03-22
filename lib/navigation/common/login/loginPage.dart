@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:recipe/navigation/mobile/playlists/page_playlist_detail.dart';
+import 'package:recipe/providers/account_provider.dart';
 import 'package:recipe/providers/navigator_provider.dart';
 
 import '../../mobile/home/page_home.dart';
@@ -8,7 +11,7 @@ import 'bezierContainer.dart';
 import 'signup.dart';
 
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   LoginPage({Key? key, this.title}) : super(key: key);
 
   final String? title;
@@ -67,7 +70,10 @@ class SubmitButton extends ConsumerWidget {
   }
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
+  final accountTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+
   Widget _backButton() {
     return InkWell(
       onTap: () {
@@ -105,6 +111,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           TextField(
               obscureText: isPassword,
+              controller: isPassword ? passwordTextController : accountTextController,
               decoration: InputDecoration(
                   border: InputBorder.none,
                   fillColor: Color(0xfff3f3f4),
@@ -114,9 +121,9 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _submitButton() {
-    return SubmitButton();
-  }
+  // Widget _submitButton() {
+  //   return SubmitButton();
+  // }
 
   Widget _divider() {
     return Container(
@@ -264,6 +271,46 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  void _doLogin(BuildContext context) async {
+    final String password = passwordTextController.text;
+    if (password.isEmpty) {
+      // toast(context.strings.pleaseInputPassword);
+      return;
+    }
+    final String account = accountTextController.text;
+    final accountProvider = ref.read(userProvider.notifier);
+    final result =
+    await showLoaderOverlay(context, accountProvider.login(account, password));
+    // final result = accountProvider.register("123456", account, password);
+    if (result.isValue) {
+      ref
+          .read(navigatorProvider.notifier)
+          .navigate(NavigationTargetHeadlines());
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context)
+              {
+                final navigatorState = ref.watch(navigatorProvider);
+                NavigationTarget target = navigatorState.current;
+                if (target.runtimeType == NavigationTargetWelcome) {
+                  return PageHome(selectedTab: NavigationTargetHeadlines());
+                }
+                if (target.runtimeType == NavigationTargetPlaylist) {
+                  return PlaylistDetailPage(
+                    (target as NavigationTargetPlaylist).playlistId,
+                  );
+                }
+                return PageHome(selectedTab: NavigationTargetHeadlines());
+                // return PageHome(selectedTab: target.runtimeType == NavigationTargetWelcome ? NavigationTargetHeadlines() : target);
+              }
+          ));
+      toast("登录成功");
+    } else {
+      toast("登录失败, todo: 失败原因?");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final height = MediaQuery.of(context).size.height;
@@ -288,7 +335,34 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: 50),
                   _emailPasswordWidget(),
                   SizedBox(height: 20),
-                  _submitButton(),
+                  // _submitButton(),
+                  InkWell(
+                    onTap: () {
+                      _doLogin(context);
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      padding: EdgeInsets.symmetric(vertical: 15),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                offset: Offset(2, 4),
+                                blurRadius: 5,
+                                spreadRadius: 2)
+                          ],
+                          gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [Color(0xfffbb448), Color(0xfff7892b)])),
+                      child: Text(
+                        'Login',
+                        style: TextStyle(fontSize: 20, color: Colors.white),
+                      ),
+                    )
+                  ),
                   Container(
                     padding: EdgeInsets.symmetric(vertical: 10),
                     alignment: Alignment.centerRight,

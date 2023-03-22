@@ -34,11 +34,12 @@ class UserAccount extends StateNotifier<User?> {
 
   StreamSubscription? _subscription;
 
-  Future<Result<Map>> login(String? phone, String password) async {
-    final result = await neteaseRepository!.login(phone, password);
+  Future<Result<Map>> login(String? account, String password) async {
+    // to do mzl check account is phone or username or email
+    final result = await neteaseRepository!.login(account, password);
     if (result.isValue) {
       final json = result.asValue!.value;
-      final userId = json['account']['id'] as int;
+      final userId = json["result"]['accountId'] as int;
       try {
         await _updateLoginStatus(userId);
       } catch (error, stacktrace) {
@@ -48,8 +49,8 @@ class UserAccount extends StateNotifier<User?> {
     return result;
   }
 
-  Future<bool> register(String userId, String account, String password) async {
-    final result = await neteaseRepository!.register(userId, account, password);
+  Future<bool> register(String username, String account, String password) async {
+    final result = await neteaseRepository!.register(username, account, password);
     return result;
   }
 

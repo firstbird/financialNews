@@ -25,10 +25,10 @@ class MainPageHeadlines extends ConsumerStatefulWidget  {
   const MainPageHeadlines({super.key});
 
   @override
-  CloudPageState  createState() => CloudPageState();
+  PageHeadlinesState  createState() => PageHeadlinesState();
 }
 
-class CloudPageState extends ConsumerState<MainPageHeadlines>
+class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
     with AutomaticKeepAliveClientMixin {
 
   @override
@@ -36,7 +36,7 @@ class CloudPageState extends ConsumerState<MainPageHeadlines>
 
   double currentScrollOffset = 0;
 
-  List<RecommendedPlaylist> _itemList = [];
+  List<HeadLinesItem> _itemList = [];
 
   String _loadMoreText = "网络加载中";
 
@@ -73,7 +73,7 @@ class CloudPageState extends ConsumerState<MainPageHeadlines>
   Future<void> _loadMore() async {
 
     var itemIndex = _itemList.isEmpty ? 0 : _itemList.last.id + 1;
-    final list = (await ref.read(newsListProvider(itemIndex).future) ) as List<RecommendedPlaylist>;
+    final list = (await ref.read(newsListProvider(itemIndex).future) ) as List<HeadLinesItem>;
     setState(() {
       if (list.length < 8) {
         _hasData = false;
@@ -127,7 +127,7 @@ class CloudPageState extends ConsumerState<MainPageHeadlines>
 
   Widget getRow(int i) {
     var p = _itemList[i];
-    return _PlayListItemView(playlist: p, width: 150, type: 0);
+    return _PlayListItemView(playlist: p, width: 60, type: 0);
   }
   Widget _contentList() {
     debugPrint('news length: ${_itemList.length.toString()}');
@@ -376,7 +376,7 @@ class _PlayListItemView extends ConsumerWidget {
     required this.type,
   });
 
-  final RecommendedPlaylist playlist;
+  final HeadLinesItem playlist;
 
   final double width;
 
@@ -386,14 +386,14 @@ class _PlayListItemView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     GestureLongPressCallback? onLongPress;
 
-    if (playlist.copywriter.isNotEmpty) {
+    if (playlist.source.isNotEmpty) {
       onLongPress = () {
         showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
               content: Text(
-                playlist.copywriter,
+                playlist.source,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             );
@@ -410,8 +410,37 @@ class _PlayListItemView extends ConsumerWidget {
       child: Container(
         width: this.type == 0 ? width : 800,
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        child: this.type == 0 ? Column(
+        child: this.type == 0 ? Row(
           children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  "${playlist.title}",
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const Padding(padding: EdgeInsets.only(top: 20)),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      "${playlist.source}",
+                      style: TextStyle(fontSize: 10),
+                      maxLines: 1,
+                    ),
+                    const Padding(padding: EdgeInsets.only(left: 10)),
+                    Text(
+                      "${DateTime.fromMillisecondsSinceEpoch(int.parse(playlist.updateTime.toString()))}",
+                      style: TextStyle(fontSize: 10),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    ]
+                )
+              ]
+            ),
+            // const Padding(padding: EdgeInsets.only(right: 8)),
+            const Spacer(),
             SizedBox(
               height: width,
               width: width,
@@ -421,19 +450,14 @@ class _PlayListItemView extends ConsumerWidget {
                   aspectRatio: 1,
                   child: FadeInImage(
                     placeholder:
-                        const AssetImage('assets/playlist_playlist.9.png'),
-                    image: CachedImage(playlist.picUrl),
+                    const AssetImage('assets/playlist_playlist.9.png'),
+                    image: CachedImage(playlist.headPicUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
-            const Padding(padding: EdgeInsets.only(top: 4)),
-            Text(
-              "${playlist.id} - ${playlist.name}",
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
+            const Padding(padding: EdgeInsets.only(right: 8))
           ],
         ) :
         Row(
@@ -448,14 +472,14 @@ class _PlayListItemView extends ConsumerWidget {
                   child: FadeInImage(
                     placeholder:
                     const AssetImage('assets/playlist_playlist.9.png'),
-                    image: CachedImage(playlist.picUrl),
+                    image: CachedImage(playlist.headPicUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
             Text(
-              playlist.name,
+              playlist.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

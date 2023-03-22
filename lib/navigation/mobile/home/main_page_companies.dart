@@ -15,10 +15,10 @@ class MainPageCompanies extends StatefulWidget {
   const MainPageCompanies({super.key});
 
   @override
-  State<StatefulWidget> createState() => MainPageCompaniesState();
+  State<StatefulWidget> createState() => PageCompaniesState();
 }
 
-class MainPageCompaniesState extends State<MainPageCompanies>
+class PageCompaniesState extends State<MainPageCompanies>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -89,7 +89,7 @@ class _PlayListItemView extends ConsumerWidget {
     required this.type,
   });
 
-  final RecommendedPlaylist playlist;
+  final HeadLinesItem playlist;
 
   final double width;
 
@@ -99,14 +99,14 @@ class _PlayListItemView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     GestureLongPressCallback? onLongPress;
 
-    if (playlist.copywriter.isNotEmpty) {
+    if (playlist.source.isNotEmpty) {
       onLongPress = () {
         showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
               content: Text(
-                playlist.copywriter,
+                playlist.source,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
             );
@@ -135,7 +135,7 @@ class _PlayListItemView extends ConsumerWidget {
                   child: FadeInImage(
                     placeholder:
                         const AssetImage('assets/playlist_playlist.9.png'),
-                    image: CachedImage(playlist.picUrl),
+                    image: CachedImage(playlist.headPicUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -143,7 +143,7 @@ class _PlayListItemView extends ConsumerWidget {
             ),
             const Padding(padding: EdgeInsets.only(top: 4)),
             Text(
-              playlist.name,
+              playlist.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -161,14 +161,14 @@ class _PlayListItemView extends ConsumerWidget {
                   child: FadeInImage(
                     placeholder:
                     const AssetImage('assets/playlist_playlist.9.png'),
-                    image: CachedImage(playlist.picUrl),
+                    image: CachedImage(playlist.headPicUrl),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
             ),
             Text(
-              playlist.name,
+              playlist.title,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

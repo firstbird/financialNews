@@ -5,14 +5,14 @@ import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mixin_logger/mixin_logger.dart';
 
-import '../repository/data/playlist_detail.dart';
+import '../repository/data/news_detail.dart';
 import '../repository/data/track.dart';
 import '../repository/netease.dart';
 import '../repository/network_repository.dart';
 import 'account_provider.dart';
 
 final playlistDetailProvider = StateNotifierProvider.family<
-    PlaylistDetailStateNotifier, AsyncValue<PlaylistDetail>, int>(
+    PlaylistDetailStateNotifier, AsyncValue<NewsDetail>, int>(
   (ref, playlistId) => PlaylistDetailStateNotifier(
     playlistId: playlistId,
     ref: ref,
@@ -20,7 +20,7 @@ final playlistDetailProvider = StateNotifierProvider.family<
 );
 
 class PlaylistDetailStateNotifier
-    extends StateNotifier<AsyncValue<PlaylistDetail>> {
+    extends StateNotifier<AsyncValue<NewsDetail>> {
   PlaylistDetailStateNotifier({
     required this.playlistId,
     required this.ref,
@@ -30,15 +30,15 @@ class PlaylistDetailStateNotifier
 
   final int playlistId;
   final Ref ref;
-  late Box<PlaylistDetail> _playlistDetailBox;
+  late Box<NewsDetail> _playlistDetailBox;
 
-  PlaylistDetail? _playlistDetail;
+  NewsDetail? _playlistDetail;
 
   final _initializeCompleter = Completer();
 
   Future<void> _initializeLoad() async {
     assert(state is AsyncLoading, 'state is not AsyncLoading');
-    _playlistDetailBox = await Hive.openBox<PlaylistDetail>('playlistDetail');
+    _playlistDetailBox = await Hive.openBox<NewsDetail>('playlistDetail');
     final local = _playlistDetailBox.get(playlistId.toString());
     if (local != null) {
       _playlistDetail = local;
@@ -58,20 +58,20 @@ class PlaylistDetailStateNotifier
     try {
       final result = await neteaseRepository!.playlistDetail(playlistId);
       var data = await result.asFuture;
-      if (data.tracks.length != data.trackCount) {
-        final trackIds = data.trackIds.toSet();
-
-        for (final track in data.tracks) {
-          trackIds.remove(track.id);
-        }
-        if (trackIds.isEmpty) {
-          e('trackIds is empty. but trackCount is not. ${data.trackCount} ${data.tracks.length}');
-        }
-        final musics = await neteaseRepository!.songDetails(data.trackIds);
-        if (musics.isValue) {
-          data = data.copyWith(tracks: musics.asValue!.value);
-        }
-      }
+    //   if (data.tracks.length != data.trackCount) {
+    //     final trackIds = data.trackIds.toSet();
+    //
+    //     for (final track in data.tracks) {
+    //       trackIds.remove(track.id);
+    //     }
+    //     if (trackIds.isEmpty) {
+    //       e('trackIds is empty. but trackCount is not. ${data.trackCount} ${data.tracks.length}');
+    //     }
+    //     final musics = await neteaseRepository!.songDetails(data.trackIds);
+    //     if (musics.isValue) {
+    //       data = data.copyWith(tracks: musics.asValue!.value);
+    //     }
+    //   }
       _playlistDetail = data;
       state = AsyncValue.data(data);
       await _playlistDetailBox.put(playlistId.toString(), data);
@@ -102,8 +102,8 @@ class PlaylistDetailStateNotifier
       throw Exception('add track failed');
     }
     final detail = _playlistDetail!.copyWith(
-      tracks: [track, ..._playlistDetail!.tracks],
-      trackIds: [track.id, ..._playlistDetail!.trackIds],
+      // tracks: [track, ..._playlistDetail!.tracks],
+      // trackIds: [track.id, ..._playlistDetail!.trackIds],
     );
     _playlistDetail = detail;
     await _playlistDetailBox.put(playlistId.toString(), detail);
@@ -126,8 +126,8 @@ class PlaylistDetailStateNotifier
       throw Exception('add track failed');
     }
     final detail = _playlistDetail!.copyWith(
-      tracks: _playlistDetail!.tracks.where((t) => t.id != track.id).toList(),
-      trackIds: _playlistDetail!.trackIds.where((t) => t != track.id).toList(),
+      // tracks: _playlistDetail!.tracks.where((t) => t.id != track.id).toList(),
+      // trackIds: _playlistDetail!.trackIds.where((t) => t != track.id).toList(),
     );
     _playlistDetail = detail;
     await _playlistDetailBox.put(playlistId.toString(), detail);

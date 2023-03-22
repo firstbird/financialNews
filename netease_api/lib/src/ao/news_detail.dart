@@ -1,60 +1,45 @@
 import 'safe_convert.dart';
 
-class PlayListDetail {
-  PlayListDetail({
+class NewsDetail {
+  NewsDetail({
     this.code = 0,
-    required this.playlist,
+    required this.newsDetailItem,
     // required this.privileges,
   });
 
-  factory PlayListDetail.fromJson(Map<String, dynamic>? json) => PlayListDetail(
+  factory NewsDetail.fromJson(Map<String, dynamic>? json) => NewsDetail(
         code: asInt(json, 'code'),
-        playlist: Playlist.fromJson(asMap(json, 'result')),
+        newsDetailItem: NewsDetailItem.fromJson(asMap(json, 'result')),
         // privileges: asList(json, 'privileges')
         //     .map((e) => PrivilegesItem.fromJson(e))
         //     .toList(),
       );
   final int code;
-  final Playlist playlist;
+  final NewsDetailItem newsDetailItem;
   // final List<PrivilegesItem> privileges;
 
   Map<String, dynamic> toJson() => {
         'code': code,
-        'playlist': playlist.toJson(),
+        'playlist': newsDetailItem.toJson(),
         // 'privileges': privileges.map((e) => e.toJson()),
       };
 }
 
-class Playlist {
-  Playlist({
+class NewsDetailItem {
+  NewsDetailItem({
     this.id = 0,
-    this.name = '',
     this.coverImgId = 0,
     this.coverImgUrl = '',
     this.coverImgIdStr = '',
     this.adType = 0,
     this.userId = 0,
     this.createTime = 0,
-    this.status = 0,
-    this.opRecommend = false,
-    this.highQuality = false,
-    this.newImported = false,
     this.updateTime = 0,
-    this.trackCount = 0,
-    this.specialType = 0,
-    this.privacy = 0,
-    this.trackUpdateTime = 0,
-    this.commentThreadId = '',
-    this.playCount = 0,
-    this.trackNumberUpdateTime = 0,
+    this.readCount = 0,
     this.subscribedCount = 0,
-    this.cloudTrackCount = 0,
     this.ordered = false,
-    this.description = '',
-    required this.tags,
-    this.backgroundCoverId = 0,
-    this.titleImage = 0,
-    required this.subscribers,
+    this.title = '',
+    this.text = '',
     this.subscribed = false,
     required this.creator,
     // required this.tracks,
@@ -63,37 +48,23 @@ class Playlist {
     this.commentCount = 0,
   });
 
-  factory Playlist.fromJson(Map<String, dynamic>? json) => Playlist(
+  factory NewsDetailItem.fromJson(Map<String, dynamic>? json) => NewsDetailItem(
         id: asInt(json, 'id'),
-        name: asString(json, 'name'),
         coverImgId: asInt(json, 'coverImgId'),
-        coverImgUrl: asString(json, 'picUrl'),// coverImgUrl
+        coverImgUrl: asString(json, 'headPicUrl'),// coverImgUrl
         coverImgIdStr: asString(json, 'coverImgId_str'),
         adType: asInt(json, 'adType'),
         userId: asInt(json, 'userId'),
         createTime: asInt(json, 'createTime'),
-        status: asInt(json, 'status'),
-        opRecommend: asBool(json, 'opRecommend'),
-        highQuality: asBool(json, 'highQuality'),
-        newImported: asBool(json, 'newImported'),
         updateTime: asInt(json, 'updateTime'),
-        trackCount: asInt(json, 'trackCount'),
-        specialType: asInt(json, 'specialType'),
-        privacy: asInt(json, 'privacy'),
-        trackUpdateTime: asInt(json, 'trackUpdateTime'),
-        commentThreadId: asString(json, 'commentThreadId'),
-        playCount: asInt(json, 'playCount'),
-        trackNumberUpdateTime: asInt(json, 'trackNumberUpdateTime'),
+        readCount: asInt(json, 'playCount'),
         subscribedCount: asInt(json, 'subscribedCount'),
-        cloudTrackCount: asInt(json, 'cloudTrackCount'),
         ordered: asBool(json, 'ordered'),
-        description: asString(json, 'description'),
-        tags: asList(json, 'tags').map((e) => e.toString()).toList(),
-        backgroundCoverId: asInt(json, 'backgroundCoverId'),
-        titleImage: asInt(json, 'titleImage'),
-        subscribers: asList(json, 'subscribers')
-            .map((e) => SubscribersItem.fromJson(e))
-            .toList(),
+        title: asString(json, 'title'),
+        text: asString(json, 'text'),
+    // subscribers: asList(json, 'subscribers')
+        //     .map((e) => SubscribersItem.fromJson(e))
+        //     .toList(),
         subscribed: asBool(json, 'subscribed'),
         creator: Creator.fromJson(asMap(json, 'creator')),
         // tracks:
@@ -105,69 +76,38 @@ class Playlist {
         commentCount: asInt(json, 'commentCount'),
       );
   final int id;
-  final String name;
   final int coverImgId;
   final String coverImgUrl;
   final String coverImgIdStr;
   final int adType;
   final int userId;
   final int createTime;
-  final int status;
-  final bool opRecommend;
-  final bool highQuality;
-  final bool newImported;
   final int updateTime;
-  final int trackCount;
-  final int specialType;
-  final int privacy;
-  final int trackUpdateTime;
-  final String commentThreadId;
-  final int playCount;
-  final int trackNumberUpdateTime;
+  final int readCount;
   final int subscribedCount;
-  final int cloudTrackCount;
   final bool ordered;
-  final String description;
-  final List<String> tags;
-  final int backgroundCoverId;
-  final int titleImage;
-  final List<SubscribersItem> subscribers;
+  final String title;
+  final String text;
   final bool subscribed;
   final Creator creator;
-  // final List<TracksItem> tracks;
-  // final List<TrackIdsItem> trackIds;
   final int shareCount;
   final int commentCount;
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'name': name,
         'coverImgId': coverImgId,
         'coverImgUrl': coverImgUrl,
         'coverImgId_str': coverImgIdStr,
         'adType': adType,
         'userId': userId,
         'createTime': createTime,
-        'status': status,
-        'opRecommend': opRecommend,
-        'highQuality': highQuality,
-        'newImported': newImported,
         'updateTime': updateTime,
-        'trackCount': trackCount,
-        'specialType': specialType,
-        'privacy': privacy,
-        'trackUpdateTime': trackUpdateTime,
-        'commentThreadId': commentThreadId,
-        'playCount': playCount,
-        'trackNumberUpdateTime': trackNumberUpdateTime,
+        'playCount': readCount,
         'subscribedCount': subscribedCount,
-        'cloudTrackCount': cloudTrackCount,
         'ordered': ordered,
-        'description': description,
-        'tags': tags.map((e) => e),
-        'backgroundCoverId': backgroundCoverId,
-        'titleImage': titleImage,
-        'subscribers': subscribers.map((e) => e.toJson()),
+        'title': title,
+        'text': text,
+    // 'subscribers': subscribers.map((e) => e.toJson()),
         'subscribed': subscribed,
         'creator': creator.toJson(),
         // 'tracks': tracks.map((e) => e.toJson()),

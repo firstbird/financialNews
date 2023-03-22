@@ -155,7 +155,7 @@ class PlaylistSelectorDialog extends ConsumerWidget {
       );
     }
     final userId = ref.watch(userProvider)!.userId;
-    return Loader<List<PlaylistDetail?>>(
+    return Loader<List<NewsDetail?>>(
       loadTask: () =>
           neteaseRepository!.userPlaylist(userId).then((value) => value),
       errorBuilder: (context, result) {
@@ -194,13 +194,13 @@ class PlaylistSelectorDialog extends ConsumerWidget {
                 return _buildTile(
                     context,
                     FadeInImage(
-                      image: CachedImage(p!.coverUrl),
+                      image: CachedImage(p!.coverImageUrl),
                       placeholder:
                           const AssetImage('assets/playlist_playlist.9.png'),
                       fit: BoxFit.cover,
                     ),
-                    Text(p.name),
-                    Text('共${p.trackCount}首'), () {
+                    Text(p.text),
+                    Text('共--首'), () {
                   Navigator.of(context).pop(p.id);
                 });
               }),

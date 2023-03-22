@@ -14,13 +14,13 @@ class UserPlayList {
         version: asString(json, 'version'),
         more: asBool(json, 'more'),
         playlist:
-            asList(json, 'playlist').map((e) => Playlist.fromJson(e)).toList(),
+            asList(json, 'playlist').map((e) => NewsDetailItem.fromJson(e)).toList(),
         code: asInt(json, 'code'),
       );
 
   final String version;
   final bool more;
-  final List<Playlist> playlist;
+  final List<NewsDetailItem> playlist;
   final int code;
 
   Map<String, dynamic> toJson() => {

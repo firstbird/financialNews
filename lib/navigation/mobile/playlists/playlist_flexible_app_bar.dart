@@ -158,10 +158,10 @@ class AlbumFlexibleAppBar extends StatelessWidget {
 class PlaylistFlexibleAppBar extends StatelessWidget {
   const PlaylistFlexibleAppBar({
     super.key,
-    required this.playlist,
+    required this.newsList,
   });
 
-  final PlaylistDetail playlist;
+  final NewsDetail newsList;
 
   @override
   Widget build(BuildContext context) {
@@ -193,7 +193,7 @@ class PlaylistFlexibleAppBar extends StatelessWidget {
         right: 0,
         bottom: 0,
         child: _Background(
-          image: CachedImage(playlist.coverUrl),
+          image: CachedImage(newsList.coverImageUrl),
           current: settings.currentExtent - settings.minExtent,
         ),
       ),
@@ -210,7 +210,7 @@ class PlaylistFlexibleAppBar extends StatelessWidget {
           opacity: 1 - t,
           child: Padding(
             padding: const EdgeInsets.only(top: kToolbarHeight),
-            child: SafeArea(child: _PlayListHeaderContent(playlist: playlist)),
+            child: SafeArea(child: _PlayListHeaderContent(playlist: newsList)),
           ),
         ),
       ),
@@ -219,7 +219,7 @@ class PlaylistFlexibleAppBar extends StatelessWidget {
     // add appbar.
     children.add(
       Column(
-        children: [_AppBar(t: t, playlist: playlist)],
+        children: [_AppBar(t: t, playlist: newsList)],
       ),
     );
 
@@ -381,7 +381,7 @@ class _AppBar extends StatelessWidget {
   });
 
   final double t;
-  final PlaylistDetail playlist;
+  final NewsDetail playlist;
 
   @override
   Widget build(BuildContext context) {
@@ -441,7 +441,7 @@ class _PlayListHeaderContent extends ConsumerWidget {
     required this.playlist,
   });
 
-  final PlaylistDetail playlist;
+  final NewsDetail playlist;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Column(
@@ -456,7 +456,7 @@ class _PlayListHeaderContent extends ConsumerWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image(
-                    image: CachedImage(playlist.coverUrl),
+                    image: CachedImage(playlist.coverImageUrl),
                     width: 120,
                     height: 120,
                     fit: BoxFit.cover,
@@ -468,7 +468,7 @@ class _PlayListHeaderContent extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        playlist.name,
+                        playlist.text,
                         style: context.primaryTextTheme.titleMedium,
                         maxLines: 2,
                       ),
@@ -479,7 +479,7 @@ class _PlayListHeaderContent extends ConsumerWidget {
                       ),
                       const Spacer(),
                       Text(
-                        playlist.description,
+                        playlist.title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: context.primaryTextTheme.bodySmall,

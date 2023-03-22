@@ -9,7 +9,9 @@ import 'package:path_provider/path_provider.dart';
 
 import '../repository.dart';
 import '../utils/cache/key_value_cache.dart';
+import 'data/headlines_item.dart';
 import 'data/login_qr_key_status.dart';
+import 'data/news_detail.dart';
 import 'data/search_result.dart';
 
 export 'package:netease_api/netease_api.dart'
@@ -153,7 +155,7 @@ class NetworkRepository {
         countryCode,
       );
 
-  Future<Result<List<PlaylistDetail>>> userPlaylist(
+  Future<Result<List<NewsDetail>>> userPlaylist(
     int? userId, {
     int offset = 0,
     int limit = 1000,
@@ -172,7 +174,7 @@ class NetworkRepository {
     );
   }
 
-  Future<Result<PlaylistDetail>> playlistDetail(
+  Future<Result<NewsDetail>> playlistDetail(
     int id, {
     int s = 5,
   }) async {
@@ -181,8 +183,8 @@ class NetworkRepository {
       return ret.asError!;
     }
     final value = ret.asValue!.value;
-    debugPrint('playlistDetail result : ${value.playlist}');
-    return Result.value(value.playlist.toPlaylistDetail());
+    debugPrint('playlistDetail result : ${value.newsDetailItem}');
+    return Result.value(value.newsDetailItem.toPlaylistDetail());
   }
 
   Future<Result<AlbumDetail>> albumDetail(int id) async {
@@ -292,7 +294,7 @@ class NetworkRepository {
     );
   }
 
-  Future<Result<List<RecommendedPlaylist>>> personalizedPlaylist({
+  Future<Result<List<HeadLinesItem>>> personalizedPlaylist({
     int limit = 30,
     int offset = 0,
   }) async {
@@ -307,14 +309,14 @@ class NetworkRepository {
     return Result.value(
       personalizedPlaylist
           .map(
-            (e) => RecommendedPlaylist(
+            (e) => HeadLinesItem(
               id: e.id,
-              name: e.name,
-              copywriter: e.copywriter,
-              picUrl: e.picUrl,
-              playCount: e.playCount,
-              trackCount: e.trackCount,
-              alg: e.alg,
+              title: e.title,
+              source: e.source,
+              headPicUrl: e.headPicUrl,
+              starCount: e.starCount,
+              commentCount: e.commentCount,
+              updateTime: e.updateTime,
             ),
           )
           .toList(),
@@ -342,12 +344,12 @@ class NetworkRepository {
 
   Future<void> logout() => _repository.logout();
 
-  // FIXME
+  // FIXME to do mzl login with phone? username? email?
   Future<Result<Map>> login(String? phone, String password) =>
       _repository.login(phone, password);
 
-  Future<bool> register(String userId, String account, String password) =>
-      _repository.register(userId, account,  password);
+  Future<bool> register(String username, String account, String password) =>
+      _repository.register(username, account,  password);
 
   Future<Result<User>> getUserDetail(int uid) async {
     final ret = await _repository.getUserDetail(uid);
@@ -499,30 +501,30 @@ extension _FmAlbumMapper on api.FmAlbum {
       );
 }
 
-extension _PlayListMapper on api.Playlist {
-  PlaylistDetail toPlaylistDetail() {
+extension _PlayListMapper on api.NewsDetailItem {
+  NewsDetail toPlaylistDetail() {
     // assert(coverImgUrl.isNotEmpty, 'coverImgUrl is empty');
     // final privilegesMap = Map<int, api.PrivilegesItem>.fromEntries(
     //   privileges.map((e) => MapEntry(e.id, e)),
     // );
-    return PlaylistDetail(
+    return NewsDetail(
       id: id,
-      name: name,
-      coverUrl: coverImgUrl,
-      trackCount: trackCount,
-      playCount: playCount,
+      text: text,
+      coverImageUrl: coverImgUrl,
+      // trackCount: trackCount,
+      readCount: readCount,
       subscribedCount: subscribedCount,
       creator: creator.toUser(),
-      description: description,
+      title: title,
       subscribed: subscribed,
       // tracks: tracks.map((e) => e.toTrack(privilegesMap[e.id])).toList(),
-      tracks: [],
+      // tracks: [],
       commentCount: commentCount,
       shareCount: shareCount,
-      trackUpdateTime: trackUpdateTime,
-      // trackIds: trackIds.map((e) => e.id).toList(),
-      trackIds: [],
       createTime: DateTime.fromMillisecondsSinceEpoch(createTime),
+      // trackIds: trackIds.map((e) => e.id).toList(),
+      // trackIds: [],
+      // createTime: DateTime.fromMillisecondsSinceEpoch(createTime),
     );
   }
 }

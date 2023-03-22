@@ -5,99 +5,79 @@ import 'track.dart';
 
 import 'user.dart';
 
-part 'playlist_detail.g.dart';
+part 'news_detail.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 1)
-class PlaylistDetail with EquatableMixin {
-  PlaylistDetail({
+class NewsDetail with EquatableMixin {
+  NewsDetail({
     required this.id,
-    required this.tracks,
     required this.creator,
-    required this.coverUrl,
-    required this.trackCount,
+    required this.coverImageUrl,
     required this.subscribed,
     required this.subscribedCount,
     required this.shareCount,
-    required this.playCount,
-    required this.trackUpdateTime,
-    required this.name,
-    required this.description,
+    required this.readCount,
+    required this.text,
+    required this.title,
     required this.commentCount,
-    required this.trackIds,
     required this.createTime,
   });
 
-  factory PlaylistDetail.fromJson(Map<String, dynamic> json) =>
+  factory NewsDetail.fromJson(Map<String, dynamic> json) =>
       _$PlaylistDetailFromJson(json);
 
   @HiveField(0)
   final int id;
 
   @HiveField(1)
-  final List<Track> tracks;
-
-  @HiveField(2)
   final User creator;
 
+  @HiveField(2)
+  final String coverImageUrl;
+
   @HiveField(3)
-  final String coverUrl;
-
-  @HiveField(4)
-  final int trackCount;
-
-  @HiveField(5)
   final bool subscribed;
 
-  @HiveField(6)
+  @HiveField(4)
   final int subscribedCount;
 
-  @HiveField(7)
+  @HiveField(5)
   final int shareCount;
 
+  @HiveField(6)
+  final int readCount;
+
+  @HiveField(7)
+  final String text;
+
   @HiveField(8)
-  final int playCount;
+  final String title;
 
   @HiveField(9)
-  final int trackUpdateTime;
-
-  @HiveField(10)
-  final String name;
-
-  @HiveField(11)
-  final String description;
-
-  @HiveField(12)
   final int commentCount;
 
-  @HiveField(13)
-  final List<int> trackIds;
-
-  @HiveField(14)
+  @HiveField(10)
   final DateTime createTime;
 
   @override
   List<Object?> get props => [
         id,
-        tracks,
         creator,
-        coverUrl,
-        trackCount,
+        coverImageUrl,
         subscribed,
         subscribedCount,
         shareCount,
-        playCount,
-        trackUpdateTime,
-        name,
-        description,
+        readCount,
+        text,
+        title,
         commentCount,
-        trackIds,
         createTime,
       ];
 
   Map<String, dynamic> toJson() => _$PlaylistDetailToJson(this);
 
-  PlaylistDetail copyWith({
+  NewsDetail copyWith({
     List<Track>? tracks,
     User? creator,
     String? coverUrl,
@@ -113,21 +93,17 @@ class PlaylistDetail with EquatableMixin {
     List<int>? trackIds,
     DateTime? createTime,
   }) {
-    return PlaylistDetail(
+    return NewsDetail(
       id: id,
-      tracks: tracks ?? this.tracks,
       creator: creator ?? this.creator,
-      coverUrl: coverUrl ?? this.coverUrl,
-      trackCount: trackCount ?? this.trackCount,
+      coverImageUrl: coverUrl ?? this.coverImageUrl,
       subscribed: subscribed ?? this.subscribed,
       subscribedCount: subscribedCount ?? this.subscribedCount,
       shareCount: shareCount ?? this.shareCount,
-      playCount: playCount ?? this.playCount,
-      trackUpdateTime: trackUpdateTime ?? this.trackUpdateTime,
-      name: name ?? this.name,
-      description: description ?? this.description,
+      readCount: playCount ?? this.readCount,
+      text: name ?? this.text,
+      title: description ?? this.title,
       commentCount: commentCount ?? this.commentCount,
-      trackIds: trackIds ?? this.trackIds,
       createTime: createTime ?? this.createTime,
     );
   }

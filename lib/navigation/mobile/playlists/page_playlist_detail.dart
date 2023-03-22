@@ -42,7 +42,7 @@ class PlaylistDetailPage extends HookConsumerWidget {
               CustomScrollView(
                   slivers: <Widget>[
                     SliverOverlapAbsorber(handle: absorberHandle),
-                    _Appbar(playlist: detail),
+                    _Appbar(newsDetail: detail),
                     _MusicList(detail),
                   ],
               ),
@@ -228,9 +228,9 @@ class OverlappedButtonState extends State<_OverlappedButton> {
 }
 
 class _Appbar extends StatelessWidget {
-  const _Appbar({super.key, required this.playlist});
+  const _Appbar({super.key, required this.newsDetail});
 
-  final PlaylistDetail playlist;
+  final NewsDetail newsDetail;
 
   @override
   Widget build(BuildContext context) => SliverAppBar(
@@ -240,7 +240,7 @@ class _Appbar extends StatelessWidget {
         backgroundColor: Colors.transparent,
         expandedHeight: kHeaderHeight,
         // bottom: MusicListHeader(playlist.tracks.length),
-        flexibleSpace: PlaylistFlexibleAppBar(playlist: playlist),
+        flexibleSpace: PlaylistFlexibleAppBar(newsList: newsDetail),
       );
 }
 
@@ -248,7 +248,7 @@ class _Appbar extends StatelessWidget {
 class _MusicList extends ConsumerWidget {
   const _MusicList(this.playlist);
 
-  final PlaylistDetail playlist;
+  final NewsDetail playlist;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -265,7 +265,7 @@ class _MusicList extends ConsumerWidget {
           child: Scrollbar( // 显示进度条
           child: SingleChildScrollView(
             padding: EdgeInsets.all(16.0),
-            child: Text(text, textScaleFactor: 1.2)
+            child: Text(playlist.text, textScaleFactor: 1.2)
           ),
           ),
         ),
@@ -274,63 +274,63 @@ class _MusicList extends ConsumerWidget {
   }
 }
 
-class _NewsDetail extends ConsumerWidget {
-  const _NewsDetail(this.playlist);
-
-  final PlaylistDetail playlist;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return SliverToBoxAdapter(
-        child: Container(
-          height: 200.0,
-          child: specialCharsPanel(context),
-        )
-    );
-  }
-
-  Widget specialCharsPanel(BuildContext context) {
-    return SizedBox(
-      height: 100,
-      child: Material(
-        elevation: 4.0,
-        borderRadius: BorderRadius.all(Radius.circular(6.0)),
-        child: Row(
-          children: <Widget>[
-            _OverlappedButton(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(24),
-                bottomLeft: Radius.circular(24),
-              ),
-              // icon: const Icon(Icons.library_add),
-              label: Text(
-                  playlist.subscribedCount.toString(),
-                  style: context.primaryTextTheme.titleMedium,
-              ),
-              onPressed: () {
-                // toast(context.strings.todo + " play list store");
-                // 1. store subscribed count on item's record
-                // 2. change icon
-                toast(context.strings.todo + " play list part implemented");
-              },
-            ),
-            _OverlappedButton(
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(24),
-                bottomLeft: Radius.circular(24),
-              ),
-              // icon: const Icon(Icons.library_add),
-              label: Text(playlist.subscribedCount.toString()),
-              onPressed: () {
-                // toast(context.strings.todo + " play list store");
-                // 1. store subscribed count on item's record
-                // 2. change icon
-                toast(context.strings.todo + " play list part implemented");
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// class _NewsDetail extends ConsumerWidget {
+//   const _NewsDetail(this.playlist);
+//
+//   final NewsDetail playlist;
+//
+//   @override
+//   Widget build(BuildContext context, WidgetRef ref) {
+//     return SliverToBoxAdapter(
+//         child: Container(
+//           height: 200.0,
+//           child: specialCharsPanel(context),
+//         )
+//     );
+//   }
+//
+//   Widget specialCharsPanel(BuildContext context) {
+//     return SizedBox(
+//       height: 100,
+//       child: Material(
+//         elevation: 4.0,
+//         borderRadius: BorderRadius.all(Radius.circular(6.0)),
+//         child: Row(
+//           children: <Widget>[
+//             _OverlappedButton(
+//               borderRadius: const BorderRadius.only(
+//                 topLeft: Radius.circular(24),
+//                 bottomLeft: Radius.circular(24),
+//               ),
+//               // icon: const Icon(Icons.library_add),
+//               label: Text(
+//                   playlist.subscribedCount.toString(),
+//                   style: context.primaryTextTheme.titleMedium,
+//               ),
+//               onPressed: () {
+//                 // toast(context.strings.todo + " play list store");
+//                 // 1. store subscribed count on item's record
+//                 // 2. change icon
+//                 toast(context.strings.todo + " play list part implemented");
+//               },
+//             ),
+//             _OverlappedButton(
+//               borderRadius: const BorderRadius.only(
+//                 topLeft: Radius.circular(24),
+//                 bottomLeft: Radius.circular(24),
+//               ),
+//               // icon: const Icon(Icons.library_add),
+//               label: Text(playlist.subscribedCount.toString()),
+//               onPressed: () {
+//                 // toast(context.strings.todo + " play list store");
+//                 // 1. store subscribed count on item's record
+//                 // 2. change icon
+//                 toast(context.strings.todo + " play list part implemented");
+//               },
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

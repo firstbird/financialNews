@@ -110,26 +110,28 @@ class Repository {
   }
 
   ///使用手机号码登录
+  // FIXME to do mzl login with phone? username? email?
   Future<Result<Map>> login(String? phone, String password) async {
     return doRequest(
-      '/login/cellphone',
-      {'phone': phone, 'password': password},
+      '/users/login_with_phone',
+      {'account': phone, 'passwd': password},
     );
   }
 
   ///调用此接口, 注册用户
-  Future<bool> register(String userId, String account, String password) async {
+  Future<bool> register(String username, String account, String password) async {
     // final result =
     // await doRequest('/user/register', {'id': userId, 'account': account, 'password': password});
     // var data = { 'title' : 'My first post' };
-    makePostRequest({'mobile': account, 'password': password});
-    return true;
+    // to do, check account is email or phone format
+    final result = await makePostRequest({'username': username, 'email': account, 'mobile': account, 'passwd': password, 'gender': 0});
+    return result;
 
     // return result.isValue;
   }
 
   static const urlPrefix = 'http://10.0.2.2:8080';
-  Future<void> makePostRequest(Map<String, dynamic> body) async {
+  Future<bool> makePostRequest(Map<String, dynamic> body) async {
     final url = Uri.parse('$urlPrefix/api/users');
     // final headers = {"Content-type": "application/json"};
     final headers = {
@@ -145,8 +147,9 @@ class Repository {
         HttpHeaders.contentTypeHeader: 'application/json',
       },
     );
-    stdout.writeln('Status code: ${response.statusCode}');
-    stdout.writeln('Body: ${response.body}');
+    debugPrint('Status code: ${response.statusCode}');
+    debugPrint('Body: ${response.body}');
+    return response.statusCode == HttpStatus.created;
     // print('Status code: ${response.statusCode}');
     // print('Body: ${response.body}');
   }
@@ -208,7 +211,7 @@ class Repository {
   }
 
   ///create new playlist by [name]
-  Future<Result<PlayListDetail>?> createPlaylist(
+  Future<Result<NewsDetail>?> createPlaylist(
     String? name, {
     bool privacy = false,
   }) async {
@@ -218,18 +221,18 @@ class Repository {
     );
     return _map(
       response,
-      (result) => PlayListDetail.fromJson(result['playlist']),
+      (result) => NewsDetail.fromJson(result['playlist']),
     );
   }
 
   ///根据歌单id获取歌单详情，包括歌曲
   ///
   /// [s] 歌单最近的 s 个收藏者
-  Future<Result<PlayListDetail>> playlistDetail(int id) async {
+  Future<Result<NewsDetail>> playlistDetail(int id) async {
     // final response = await doRequest('/playlist/detail', {'id': '$id', 's': s});
     final response = await doRequest('/news/detail', {'id': id});
     debugPrint('playlistDetail response : $response');
-    return _map(response, (t) => PlayListDetail.fromJson(t));
+    return _map(response, (t) => NewsDetail.fromJson(t));
   }
 
   ///id 歌单id
@@ -530,7 +533,7 @@ class Repository {
 
   ///获取用户详情
   Future<Result<UserDetail>> getUserDetail(int uid) async {
-    final result = await doRequest('/user/detail', {'uid': uid});
+    final result = await doRequest('/users/detail', {'uid': uid});
     return _map(result, (t) => UserDetail.fromJson(t));
   }
 

@@ -1,4 +1,4 @@
-import 'playlist_detail.dart';
+import 'news_detail.dart';
 import 'safe_convert.dart';
 
 class PlayRecord {

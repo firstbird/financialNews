@@ -6,7 +6,7 @@ import '../../../repository.dart';
 class PlaylistEditPage extends StatefulWidget {
   const PlaylistEditPage(this.playlist, {super.key});
 
-  final PlaylistDetail playlist;
+  final NewsDetail playlist;
 
   @override
   State<PlaylistEditPage> createState() => _PlaylistEditPageState();
@@ -44,7 +44,7 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
                     children: <Widget>[
                       Expanded(child: Text('更换封面', style: style)),
                       Image(
-                        image: CachedImage(widget.playlist.coverUrl),
+                        image: CachedImage(widget.playlist.coverImageUrl),
                         height: 56,
                         width: 56,
                       )
@@ -69,7 +69,7 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
                   child: Row(
                     children: <Widget>[
                       Expanded(child: Text('名称', style: style)),
-                      Text(widget.playlist.name)
+                      Text(widget.playlist.text)
                     ],
                   ),
                 ),
@@ -110,7 +110,7 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
                   child: Row(
                     children: <Widget>[
                       Expanded(child: Text('描述', style: style)),
-                      Text(widget.playlist.name)
+                      Text(widget.playlist.text)
                     ],
                   ),
                 ),
@@ -127,7 +127,7 @@ class _PlaylistEditPageState extends State<PlaylistEditPage> {
 class _PlaylistNameEditPage extends StatefulWidget {
   const _PlaylistNameEditPage(this.playlist, {super.key});
 
-  final PlaylistDetail? playlist;
+  final NewsDetail? playlist;
 
   @override
   _PlaylistNameEditPageState createState() {
@@ -145,7 +145,7 @@ class _PlaylistNameEditPageState extends State<_PlaylistNameEditPage> {
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.playlist!.name);
+    _controller = TextEditingController(text: widget.playlist!.text);
   }
 
   @override

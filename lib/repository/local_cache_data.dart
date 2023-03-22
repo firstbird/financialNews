@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:hive/hive.dart';
 import 'package:mixin_logger/mixin_logger.dart';
 
-import 'data/playlist_detail.dart';
+import 'data/news_detail.dart';
 import 'data/track.dart';
 
 LocalData neteaseLocalData = LocalData._();
@@ -41,20 +41,20 @@ class LocalData {
     }
   }
 
-  Future<PlaylistDetail?> getPlaylistDetail(int playlistId) async {
+  Future<NewsDetail?> getPlaylistDetail(int playlistId) async {
     final data = await get<Map<String, dynamic>>('playlist_detail_$playlistId');
     if (data == null) {
       return null;
     }
     try {
-      return PlaylistDetail.fromJson(data);
+      return NewsDetail.fromJson(data);
     } catch (e) {
       return null;
     }
   }
 
   //TODO 添加分页加载逻辑
-  Future<void> updatePlaylistDetail(PlaylistDetail playlistDetail) {
+  Future<void> updatePlaylistDetail(NewsDetail playlistDetail) {
     return _put(
       playlistDetail.toJson(),
       'playlist_detail_${playlistDetail.id}',

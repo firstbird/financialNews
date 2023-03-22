@@ -19,4 +19,6 @@ typedef Handler = Future<Answer> Function(Map? query, List<Cookie> cookie);
 final handles = <String, Handler>{
   "/personalized": news_get,
   "/news/detail": news_detail,
+  "/users/login_with_phone": login_with_phone,
+  "/users/detail": users_detail,
 };

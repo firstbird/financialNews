@@ -16,7 +16,7 @@ import 'package:overlay_support/overlay_support.dart';
 
 import 'providers/preference_provider.dart';
 
-import 'repository/data/playlist_detail.dart';
+import 'repository/data/news_detail.dart';
 import 'repository/network_repository.dart';
 import 'utils/callback_window_listener.dart';
 import 'utils/platform_configuration.dart';
@@ -56,7 +56,7 @@ Future<void> main() async {
 
 Future<void> _initHive() async {
   await Hive.initFlutter(p.join(appDir.path, 'hive'));
-  Hive.registerAdapter(PlaylistDetailAdapter());
+  Hive.registerAdapter(NewsDetailAdapter());
   // Hive.registerAdapter(TrackTypeAdapter());
   // Hive.registerAdapter(TrackAdapter());
   // Hive.registerAdapter(ArtistMiniAdapter());

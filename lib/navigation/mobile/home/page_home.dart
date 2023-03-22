@@ -4,8 +4,7 @@ import 'package:recipe/navigation/mobile/home/main_page_companies.dart';
 
 import '../../common/navigation_target.dart';
 import '../widgets/bottom_bar.dart';
-import 'main_page_discover.dart';
-import 'main_page_my.dart';
+import 'main_page_headlines.dart';
 import 'person_center_page.dart';
 // import 'tab_search.dart';
 

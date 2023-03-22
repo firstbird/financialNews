@@ -47,7 +47,7 @@ class MainPlayListTile extends StatelessWidget {
     this.enableBottomRadius = false,
   });
 
-  final PlaylistDetail data;
+  final NewsDetail data;
   final bool enableBottomRadius;
 
   @override
@@ -168,8 +168,8 @@ class _UserPlaylists extends HookConsumerWidget {
     required this.firstItemOffset,
   });
 
-  final List<PlaylistDetail> created;
-  final List<PlaylistDetail> subscribed;
+  final List<NewsDetail> created;
+  final List<NewsDetail> subscribed;
   final ScrollController scrollController;
 
   final double firstItemOffset;
@@ -260,7 +260,7 @@ class _UserPlaylists extends HookConsumerWidget {
     );
   }
 
-  static Iterable<Widget> _playlistWidget(List<PlaylistDetail> details) {
+  static Iterable<Widget> _playlistWidget(List<NewsDetail> details) {
     return [
       for (var i = 0; i < details.length; i++)
         MainPlayListTile(

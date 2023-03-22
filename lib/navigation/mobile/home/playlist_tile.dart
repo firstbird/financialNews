@@ -17,7 +17,7 @@ class PlaylistTile extends ConsumerWidget {
     this.enableHero = true,
   });
 
-  final PlaylistDetail playlist;
+  final NewsDetail playlist;
 
   final bool enableMore;
 
@@ -29,7 +29,7 @@ class PlaylistTile extends ConsumerWidget {
       borderRadius: const BorderRadius.all(Radius.circular(4)),
       child: FadeInImage(
         placeholder: const AssetImage('assets/playlist_playlist.9.png'),
-        image: CachedImage(playlist.coverUrl),
+        image: CachedImage(playlist.coverImageUrl),
         fit: BoxFit.cover,
         height: 50,
         width: 50,
@@ -53,14 +53,14 @@ class PlaylistTile extends ConsumerWidget {
                 children: <Widget>[
                   const Spacer(),
                   Text(
-                    playlist.name,
+                    playlist.text,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 15),
                   ),
                   const Padding(padding: EdgeInsets.only(top: 4)),
                   Text(
-                    '${playlist.trackCount}首',
+                    '-首',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                   const Spacer(),

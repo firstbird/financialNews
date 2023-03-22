@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../repository.dart';
 
-final userPlaylistsProvider = FutureProvider.family<List<PlaylistDetail>, int>(
+final userPlaylistsProvider = FutureProvider.family<List<NewsDetail>, int>(
   (ref, userId) async {
     final result = await neteaseRepository!.userPlaylist(userId);
     return result.asFuture;
@@ -10,14 +10,14 @@ final userPlaylistsProvider = FutureProvider.family<List<PlaylistDetail>, int>(
 );
 
 class _UserPlaylistStateNotifier
-    extends StateNotifier<AsyncValue<List<PlaylistDetail>>> {
+    extends StateNotifier<AsyncValue<List<NewsDetail>>> {
   _UserPlaylistStateNotifier(this.userId) : super(const AsyncValue.loading()) {
     _load();
   }
 
   final int userId;
 
-  final List<PlaylistDetail> _data = [];
+  final List<NewsDetail> _data = [];
 
   var _isLoading = false;
 
@@ -42,22 +42,22 @@ class _UserPlaylistStateNotifier
 
   Future<void> refresh() => _load();
 
-  Future<void> add(PlaylistDetail playlist) async {
+  Future<void> add(NewsDetail playlist) async {
     _data.add(playlist);
     state = AsyncValue.data(_data.toList());
   }
 
-  Future<void> remove(PlaylistDetail playlist) async {
+  Future<void> remove(NewsDetail playlist) async {
     _data.remove(playlist);
     state = AsyncValue.data(_data.toList());
   }
 
-  Future<void> subscribe(PlaylistDetail playlist) async {
+  Future<void> subscribe(NewsDetail playlist) async {
     _data.add(playlist);
     state = AsyncValue.data(_data.toList());
   }
 
-  Future<void> unsubscribe(PlaylistDetail playlist) async {
+  Future<void> unsubscribe(NewsDetail playlist) async {
     _data.remove(playlist);
     state = AsyncValue.data(_data.toList());
   }

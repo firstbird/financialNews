@@ -34,7 +34,7 @@ extension _TracksPlayer on TracksPlayer {
       final list = TrackList.playlist(
         id: listId,
         tracks:
-            tracks.whereNot((e) => e.type == TrackType.noCopyright).toList(),
+            tracks!.whereNot((e) => e.type == TrackType.noCopyright).toList(),
       );
       if (list.tracks.isEmpty) {
         return PlayResult.fail;
@@ -108,40 +108,6 @@ class TrackTileContainer extends StatelessWidget {
       tracks: tracks,
       player: player,
       id: 'user_cloud_tracks',
-      child: child,
-    );
-  }
-
-  factory TrackTileContainer.playlist({
-    required PlaylistDetail playlist,
-    required Widget child,
-    required TracksPlayer player,
-    required bool skipAccompaniment,
-    int? userId,
-  }) {
-    final id = 'playlist_${playlist.id}';
-    final isUserPlaylist = userId != null && playlist.creator.userId == userId;
-    return TrackTileContainer._private(
-      (track) {
-        final List<Track> tracks;
-        if (skipAccompaniment) {
-          tracks = playlist.tracks
-              .whereNot((value) => value.name.contains('伴奏'))
-              .toList();
-        } else {
-          tracks = playlist.tracks;
-        }
-        return player.playWithList(id, tracks, track: track);
-      },
-      isUserPlaylist
-          ? (ref, track) async {
-              await ref
-                  .read(playlistDetailProvider(playlist.id).notifier)
-                  .removeTrack(track);
-            }
-          : null,
-      tracks: playlist.tracks,
-      id: id,
       child: child,
     );
   }

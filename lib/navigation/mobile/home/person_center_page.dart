@@ -65,7 +65,7 @@ class PersonCenterPage extends StatelessWidget {
                   ),
                 ),
                 SliverToBoxAdapter(
-                  child: CompanyNews(),
+                  child: CompanyNews(), // to do
                 )
                 // SliverToBoxAdapter(
                 //   child: Container(

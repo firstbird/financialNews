@@ -192,7 +192,7 @@ class _MobileBottomPlayerBar extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        music.name,
+                        music.title,
                         style: context.textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 2),
