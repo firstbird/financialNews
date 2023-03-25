@@ -19,76 +19,229 @@ class PersonCenterPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('build PersonCenterPage');
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
-              shrinkWrap: false,
-              slivers: <Widget>[
-                // SliverAppBar(
-                //   backgroundColor: Colors.transparent,
-                //   flexibleSpace: HeartImgWidget(Image.asset(
-                //       Constant.ASSETS_IMG + 'bg_person_center_default.webp')),
-                //   expandedHeight: 200.0,
-                // ),
-                _personItem(Icon(
-                  Icons.account_circle,
-                ), '18817845273', false),
-                // _divider(),
-                // _personItem(Image.asset(
-                //   Constant.ASSETS_IMG + 'ic_me_wallet.png',
-                //   width: 25.0,
-                //   height: 25.0,
-                // ), '会员', true),
-                _divider(),
-                // _personItem(Icon(
-                //   Icons.history,
-                // ), '浏览历史', true),
-                // _divider(),
-                // _personItem(Image.asset(
-                //   Constant.ASSETS_IMG + 'ic_me_follows.png',
-                //   width: 25.0,
-                //   height: 25.0,
-                // ), '关注题材', true),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 10.0, top: 10.0, bottom: 20.0),
-                    child: Text(
-                      '我的收藏',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 18.0),
+    return
+    //   Scaffold(
+    //   backgroundColor: Colors.white,
+    //   body: SafeArea(
+    //       child: Padding(
+    //         padding: EdgeInsets.only(top: 10.0),
+    //         child: CustomScrollView(
+    //           physics: const BouncingScrollPhysics(),
+    //           shrinkWrap: false,
+    //           slivers: <Widget>[
+    //             SliverAppBar(
+    //               //backgroundColor: Colors.transparent,
+    //               stretch: true,
+    //               onStretchTrigger: () {
+    //                 // Function callback for stretch
+    //                 return Future<void>.value();
+    //               },
+    //               leading: Icon(Icons.account_circle_rounded),
+    //               leadingWidth: 100, // default is 56
+    //               flexibleSpace: FlexibleSpaceBar(
+    //                 stretchModes: const <StretchMode>[
+    //                   StretchMode.zoomBackground,
+    //                   StretchMode.blurBackground,
+    //                   StretchMode.fadeTitle,
+    //                 ],
+    //                 centerTitle: true,
+    //                 title: const Text('Flight Report'),
+    //                 background: Stack(
+    //                   fit: StackFit.expand,
+    //                   children: <Widget>[
+    //                     Image.network(
+    //                       'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg',
+    //                       fit: BoxFit.cover,
+    //                     ),
+    //                     const DecoratedBox(
+    //                       decoration: BoxDecoration(
+    //                         gradient: LinearGradient(
+    //                           begin: Alignment(0.0, 0.5),
+    //                           end: Alignment.center,
+    //                           colors: <Color>[
+    //                             Color(0x60000000),
+    //                             Color(0x00000000),
+    //                           ],
+    //                         ),
+    //                       ),
+    //                     ),
+    //                   ],
+    //                 ),
+    //               ),
+    //               //HeartImgWidget(Image.asset(
+    //               //   Constant.ASSETS_IMG + 'bg_person_center_default.webp')),
+    //               expandedHeight: 200.0,
+    //             ),
+    //             _personItem(Icon(
+    //               Icons.account_circle,
+    //             ), '18817845273', false),
+    //             _divider(),
+    //             _personItem(Image.asset(
+    //               Constant.ASSETS_IMG + 'ic_me_wallet.png',
+    //               width: 25.0,
+    //               height: 25.0,
+    //             ), '会员', true),
+    //             _divider(),
+    //             // _personItem(Icon(
+    //             //   Icons.history,
+    //             // ), '浏览历史', true),
+    //             // _divider(),
+    //             // _personItem(Image.asset(
+    //             //   Constant.ASSETS_IMG + 'ic_me_follows.png',
+    //             //   width: 25.0,
+    //             //   height: 25.0,
+    //             // ), '关注题材', true),
+    //             SliverToBoxAdapter(
+    //               child: Padding(
+    //                 padding: EdgeInsets.only(
+    //                     left: 10.0, top: 10.0, bottom: 20.0),
+    //                 child: Text(
+    //                   '我的收藏',
+    //                   style: TextStyle(
+    //                       fontWeight: FontWeight.bold, fontSize: 18.0),
+    //                 ),
+    //               ),
+    //             ),
+    //             SliverToBoxAdapter(
+    //               child: CompanyNews(), // to do
+    //             )
+    //             // SliverToBoxAdapter(
+    //             //   child: Container(
+    //             //     child: _VideoBookMusicBookWidget(),
+    //             //   ),
+    //             // ),
+    //             // _personItem('ic_me_journal.png', '我的发布'),
+    //             // _personItem(Image.asset(
+    //             //   Constant.ASSETS_IMG + 'ic_me_follows.png',
+    //             //   width: 25.0,
+    //             //   height: 25.0,
+    //             // ), '关注题材', true),
+    //             // _personItem('ic_me_photo_album.png', '相册'),
+    //             // _personItem(Image.asset(
+    //             //   Constant.ASSETS_IMG + 'ic_me_doulist.png',
+    //             //   width: 25.0,
+    //             //   height: 25.0,
+    //             // ), '收藏', true),
+    //             // _divider(),
+    //           ],
+    //         ),
+    //       )),
+    // );
+      Scaffold(
+        body: CustomScrollView(
+          shrinkWrap: true,
+          physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics()),
+          slivers: <Widget>[
+            SliverAppBar(
+              stretch: true,
+              pinned: true,
+              onStretchTrigger: () {
+                // Function callback for stretch
+                return Future<void>.value();
+              },
+              // leading: Icon(Icons.account_circle_rounded),
+              leadingWidth: 100,
+              title: Row(
+                children: [
+                  Icon(Icons.account_circle_rounded),
+                  SizedBox(width: 10),
+                  Text('Profile Page'),
+                ],
+              ),
+              expandedHeight: 200.0,
+              flexibleSpace: FlexibleSpaceBar(
+                stretchModes: const <StretchMode>[
+                  StretchMode.zoomBackground,
+                  StretchMode.blurBackground,
+                  StretchMode.fadeTitle,
+                ],
+                centerTitle: true,
+                titlePadding: EdgeInsetsDirectional.only(start: 0, bottom: 200),
+                background: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    Image.network(
+                      'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg',
+                      fit: BoxFit.cover,
                     ),
-                  ),
+                    const DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment(0.0, 0.5),
+                          end: Alignment.center,
+                          colors: <Color>[
+                            Color(0x60000000),
+                            Color(0x00000000),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                SliverToBoxAdapter(
-                  child: CompanyNews(), // to do
-                )
-                // SliverToBoxAdapter(
-                //   child: Container(
-                //     child: _VideoBookMusicBookWidget(),
-                //   ),
-                // ),
-                // _personItem('ic_me_journal.png', '我的发布'),
-                // _personItem(Image.asset(
-                //   Constant.ASSETS_IMG + 'ic_me_follows.png',
-                //   width: 25.0,
-                //   height: 25.0,
-                // ), '关注题材', true),
-                // _personItem('ic_me_photo_album.png', '相册'),
-                // _personItem(Image.asset(
-                //   Constant.ASSETS_IMG + 'ic_me_doulist.png',
-                //   width: 25.0,
-                //   height: 25.0,
-                // ), '收藏', true),
-                // _divider(),
-              ],
+              ),
             ),
-          )),
-    );
+            _personItem(Icon(Icons.history), '浏览历史', true),
+            _personItem(Image.asset(
+              Constant.ASSETS_IMG + 'ic_me_doulist.png',
+              width: 25.0,
+              height: 25.0,
+            ), '收藏', true),
+            // todo mzl pic
+            _personItem(Image.asset(
+              Constant.ASSETS_IMG + 'ic_me_doulist.png',
+              width: 25.0,
+              height: 25.0,
+            ), '点赞', true),
+            _divider(),
+            _personItem(Image.asset(
+              Constant.ASSETS_IMG + 'ic_me_follows.png',
+              width: 25.0,
+              height: 25.0,
+            ), '关注公司', true),
+            _personItem(Image.asset(
+              Constant.ASSETS_IMG + 'ic_me_follows.png',
+              width: 25.0,
+              height: 25.0,
+            ), '关注领域', true),
+            _personItem(Image.asset(
+              Constant.ASSETS_IMG + 'ic_me_wallet.png',
+              width: 25.0,
+              height: 25.0,
+            ), '会员', true),
+            _divider(),
+            _personItem(Image.asset(
+              Constant.ASSETS_IMG + 'ic_me_wallet.png',
+              width: 25.0,
+              height: 25.0,
+            ), '主题切换', true),
+            _divider(),
+            _personItem(Image.asset(
+              Constant.ASSETS_IMG + 'ic_me_wallet.png',
+              width: 25.0,
+              height: 25.0,
+            ), '意见反馈', true),
+            SliverList(
+              delegate: SliverChildListDelegate(
+                const <Widget>[
+                  // const CompanyNews(),
+                  // ListTile(
+                  //   leading: Icon(Icons.wb_sunny),
+                  //   title: Text('Sunday'),
+                  //   subtitle: Text('sunny, h: 80, l: 65'),
+                  // ),
+                  // ListTile(
+                  //   leading: Icon(Icons.wb_sunny),
+                  //   title: Text('Monday'),
+                  //   subtitle: Text('sunny, h: 80, l: 65'),
+                  // ),
+                  // ListTiles++
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
   }
 
   _rightArrow() {
