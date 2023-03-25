@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:recipe/constant/constant.dart';
 import 'package:recipe/navigation/mobile/widgets/movie_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -159,9 +160,22 @@ class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF117215),
-      appBar: AppBar(
-        title: Text('AndBlog'),
+      backgroundColor: const Color(Constant.APPBAR_COLOR),
+      appBar: CustomAppBar(
+        backgroundColor: Colors.blue,
+        title: Text(
+          context.strings.headlines,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        isShowLeftIcon: true,
+        leftIcon: Icon(
+          Icons.chevron_left_outlined,
+          color: Colors.white,
+        ),
+        isShowActionIcon3: true,
+        actionIcon3: Icon(Icons.search, color: Colors.white,),
       ),
       body: content,
       floatingActionButton: FloatingActionButton(

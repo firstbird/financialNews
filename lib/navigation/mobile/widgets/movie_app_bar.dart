@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String? title;
+  final Widget? title;
   final Color? titleColor;
   final Color? backgroundColor;
   final Icon? leftIcon;
@@ -13,9 +13,9 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool? isShowActionIcon1;
   final bool? isShowActionIcon2;
   final bool? isShowActionIcon3;
-  final Icon? actionIcon1;
-  final Icon? actionIcon2;
-  final Icon? actionIcon3;
+  final Widget? actionIcon1;
+  final Widget? actionIcon2;
+  final Widget? actionIcon3;
   final VoidCallback? pressedLeftIcon;
   final VoidCallback? pressedActionIcon1;
   final VoidCallback? pressedActionIcon2;
@@ -47,12 +47,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       // centerTitle: true,
-      title: Text(
-        title!,
-        style: TextStyle(
-          color: titleColor,
-        ),
-      ),
+      title: title,
       backgroundColor: backgroundColor,
       elevation: 0,
       leading: isShowLeftIcon!

@@ -134,6 +134,7 @@ class PersonCenterPage extends StatelessWidget {
               parent: AlwaysScrollableScrollPhysics()),
           slivers: <Widget>[
             SliverAppBar(
+              backgroundColor: Colors.blue,
               stretch: true,
               pinned: true,
               onStretchTrigger: () {

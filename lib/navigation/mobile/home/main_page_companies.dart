@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:recipe/navigation/mobile/widgets/movie_app_bar.dart';
 
 import '../../../component/global/orientation.dart';
@@ -20,31 +21,104 @@ class MainPageCompanies extends StatefulWidget {
 
 class PageCompaniesState extends State<MainPageCompanies>
     with AutomaticKeepAliveClientMixin {
+  bool isInSearch = false;
+  final searchController = TextEditingController();
+  String searchWord = "";
+
   @override
   bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
+    // companyTitle = context.strings.companies;
     super.build(context);
     return ListView(
       children: <Widget>[
         CustomAppBar(
-          title: context.strings.headlines,
-          isShowLeftIcon: true,
-          leftIcon: Icon(
-            Icons.chevron_left_outlined,
-            color: Colors.white,
-          ),
-          isShowActionIcon1: true,
-          actionIcon1: Icon(
-            Icons.category,
-            color: Colors.white,
-          ),
-          isShowActionIcon2: true,
-          actionIcon2: Icon(Icons.air_rounded, color: Colors.white,),
-          isShowActionIcon3: true,
-          actionIcon3: Icon(Icons.search, color: Colors.white,),
-        ),
+            title: !isInSearch
+                ? Text(
+              // todo mzl search area style
+                    searchWord == "" ? context.strings.companies : searchWord,
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TextField(
+                      controller: searchController,
+                      decoration: InputDecoration(
+                        hintText: 'search company name',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        border: InputBorder.none,
+                      ),
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                      onEditingComplete: () {
+                        setState(() {
+                          // toast(searchController.text);
+                          searchWord = searchController.text;
+                          isInSearch = false;
+                        });
+                      },
+                    )),
+            isShowLeftIcon: true,
+            backgroundColor: Colors.blue,
+            leftIcon: Icon(
+              Icons.chevron_left_outlined,
+              color: Colors.white,
+            ),
+            isShowActionIcon1: false,
+            // actionIcon1: isInSearch ?  : const Icon(Icons.search),
+            // isShowActionIcon2: true,
+            // actionIcon2: Icon(Icons.air_rounded, color: Colors.white,),
+            isShowActionIcon3: true,
+            actionIcon3: Icon(Icons.search),
+            pressedActionIcon3: () {
+              toast("搜索公司");
+              setState(() {
+                isInSearch = !isInSearch;
+                // if (customIcon.icon == Icons.search) {
+                //   customIcon = const Icon(Icons.cancel);
+                //   companyTitle = "";
+                //   customSearchBar = const ListTile(
+                //     leading: Icon(
+                //       Icons.search,
+                //       color: Colors.white,
+                //       size: 28,
+                //     ),
+                //     title: TextField(
+                //       decoration: InputDecoration(
+                //         hintText: 'type in journal name...',
+                //         hintStyle: TextStyle(
+                //           color: Colors.white,
+                //           fontSize: 18,
+                //           fontStyle: FontStyle.italic,
+                //         ),
+                //         border: InputBorder.none,
+                //       ),
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //       ),
+                //     ),
+                //   );
+                // } else {
+                //   // customIcon = const Icon(Icons.search);
+                //   // customSearchBar = const Text('My Personal Journal');
+                //   customIcon = Icon(Icons.search);
+                //   customSearchBar = Icon(
+                //     Icons.category,
+                //     color: Colors.white,
+                //   );
+                //   companyTitle = context.strings.companies;
+                // }
+              });
+            }),
         _Header('公司快讯', () {}), // 当你不知道吃什么时候
         const CompanyNews(),
       ],
@@ -121,60 +195,62 @@ class _PlayListItemView extends ConsumerWidget {
           .navigate(NavigationTargetPlaylist(playlist.id)),
       onLongPress: onLongPress,
       child: Container(
-        width: this.type == 0 ? width : 800,
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-        child: this.type == 0 ? Column(
-          children: <Widget>[
-            SizedBox(
-              height: width,
-              width: width,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: FadeInImage(
-                    placeholder:
-                        const AssetImage('assets/playlist_playlist.9.png'),
-                    image: CachedImage(playlist.headPicUrl),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            const Padding(padding: EdgeInsets.only(top: 4)),
-            Text(
-              playlist.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ) :
-        Row(
-          children: <Widget>[
-            SizedBox(
-              height: width,
-              width: width,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.all(Radius.circular(6)),
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: FadeInImage(
-                    placeholder:
-                    const AssetImage('assets/playlist_playlist.9.png'),
-                    image: CachedImage(playlist.headPicUrl),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            Text(
-              playlist.title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        )
-      ),
+          width: this.type == 0 ? width : 800,
+          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+          child: this.type == 0
+              ? Column(
+                  children: <Widget>[
+                    SizedBox(
+                      height: width,
+                      width: width,
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: FadeInImage(
+                            placeholder: const AssetImage(
+                                'assets/playlist_playlist.9.png'),
+                            image: CachedImage(playlist.headPicUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(top: 4)),
+                    Text(
+                      playlist.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                )
+              : Row(
+                  children: <Widget>[
+                    SizedBox(
+                      height: width,
+                      width: width,
+                      child: ClipRRect(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(6)),
+                        child: AspectRatio(
+                          aspectRatio: 1,
+                          child: FadeInImage(
+                            placeholder: const AssetImage(
+                                'assets/playlist_playlist.9.png'),
+                            image: CachedImage(playlist.headPicUrl),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      playlist.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                )),
     );
   }
 }
@@ -191,17 +267,16 @@ class CompanyNews extends ConsumerWidget {
         final double width = 500;
         return Flexible(
             child: Column(
-            // children: songs.map(MusicTile.new).toList(),
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: songs.map<Widget>((p) {
-                return _PlayListItemView(playlist: p, width: 100, type: 1);
-              }).toList()
-        ));
+                // children: songs.map(MusicTile.new).toList(),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: songs.map<Widget>((p) {
+                  return _PlayListItemView(playlist: p, width: 100, type: 1);
+                }).toList()));
       },
       error: (error, stacktrace) {
         return SizedBox(
           height: 200,
-            child: Text(context.formattedError(error)),
+          child: Text(context.formattedError(error)),
         );
       },
       loading: () => const SizedBox(
