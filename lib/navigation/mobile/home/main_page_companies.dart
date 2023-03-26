@@ -37,36 +37,42 @@ class PageCompaniesState extends State<MainPageCompanies>
         CustomAppBar(
             title: !isInSearch
                 ? Text(
-              // todo mzl search area style
+                    // todo mzl search area style
                     searchWord == "" ? context.strings.companies : searchWord,
                     style: TextStyle(
                       color: Colors.white,
                     ),
                   )
-                : Padding(
-                    padding: const EdgeInsets.all(16.0),
+                : SizedBox(
+                    // padding: const EdgeInsets.all(16.0),
+                    height: 28.0,
+                    width: 270.0,
                     child: TextField(
-                      controller: searchController,
-                      decoration: InputDecoration(
-                        hintText: 'search company name',
-                        hintStyle: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        border: InputBorder.none,
-                      ),
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                      onEditingComplete: () {
-                        setState(() {
-                          // toast(searchController.text);
-                          searchWord = searchController.text;
-                          isInSearch = false;
-                        });
-                      },
-                    )),
+                          controller: searchController,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            hintText: 'search company name',
+                            filled: true,
+                            fillColor: Colors.white,
+                            hintStyle: TextStyle(
+                              color: Colors.black54,
+                              fontSize: 18,
+                              fontStyle: FontStyle.italic,
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            ),
+                            style: TextStyle(
+                                color: Colors.black54,
+                            ),
+                            onEditingComplete: () {
+                              setState(() {
+                                // toast(searchController.text);
+                                searchWord = searchController.text;
+                                isInSearch = false;
+                              });
+                            },
+                )),
             isShowLeftIcon: true,
             backgroundColor: Colors.blue,
             leftIcon: Icon(
@@ -83,40 +89,6 @@ class PageCompaniesState extends State<MainPageCompanies>
               toast("搜索公司");
               setState(() {
                 isInSearch = !isInSearch;
-                // if (customIcon.icon == Icons.search) {
-                //   customIcon = const Icon(Icons.cancel);
-                //   companyTitle = "";
-                //   customSearchBar = const ListTile(
-                //     leading: Icon(
-                //       Icons.search,
-                //       color: Colors.white,
-                //       size: 28,
-                //     ),
-                //     title: TextField(
-                //       decoration: InputDecoration(
-                //         hintText: 'type in journal name...',
-                //         hintStyle: TextStyle(
-                //           color: Colors.white,
-                //           fontSize: 18,
-                //           fontStyle: FontStyle.italic,
-                //         ),
-                //         border: InputBorder.none,
-                //       ),
-                //       style: TextStyle(
-                //         color: Colors.white,
-                //       ),
-                //     ),
-                //   );
-                // } else {
-                //   // customIcon = const Icon(Icons.search);
-                //   // customSearchBar = const Text('My Personal Journal');
-                //   customIcon = Icon(Icons.search);
-                //   customSearchBar = Icon(
-                //     Icons.category,
-                //     color: Colors.white,
-                //   );
-                //   companyTitle = context.strings.companies;
-                // }
               });
             }),
         _Header('公司快讯', () {}), // 当你不知道吃什么时候

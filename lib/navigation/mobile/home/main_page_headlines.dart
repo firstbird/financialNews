@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:recipe/constant/constant.dart';
 import 'package:recipe/navigation/mobile/widgets/movie_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +32,10 @@ class MainPageHeadlines extends ConsumerStatefulWidget  {
 
 class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
     with AutomaticKeepAliveClientMixin {
+
+  bool isInSearch = false;
+  final searchController = TextEditingController();
+  String searchWord = "";
 
   @override
   bool get wantKeepAlive => true;
@@ -162,21 +167,62 @@ class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
     return Scaffold(
       backgroundColor: const Color(Constant.APPBAR_COLOR),
       appBar: CustomAppBar(
-        backgroundColor: Colors.blue,
-        title: Text(
-          context.strings.headlines,
-          style: TextStyle(
+          title: !isInSearch
+              ? Text(
+            // todo mzl search area style
+            searchWord == "" ? context.strings.headlines : searchWord,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          )
+              : SizedBox(
+            // padding: const EdgeInsets.all(16.0),
+              height: 28.0,
+              width: 270.0,
+              child: TextField(
+                controller: searchController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'search news',
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintStyle: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 18,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 5, horizontal: 10),
+                ),
+                style: TextStyle(
+                  color: Colors.black54,
+                ),
+                onEditingComplete: () {
+                  setState(() {
+                    // toast(searchController.text);
+                    searchWord = searchController.text;
+                    isInSearch = false;
+                  });
+                },
+              )),
+          isShowLeftIcon: true,
+          backgroundColor: Colors.blue,
+          leftIcon: Icon(
+            Icons.chevron_left_outlined,
             color: Colors.white,
           ),
-        ),
-        isShowLeftIcon: true,
-        leftIcon: Icon(
-          Icons.chevron_left_outlined,
-          color: Colors.white,
-        ),
-        isShowActionIcon3: true,
-        actionIcon3: Icon(Icons.search, color: Colors.white,),
-      ),
+          isShowActionIcon1: false,
+          // actionIcon1: isInSearch ?  : const Icon(Icons.search),
+          // isShowActionIcon2: true,
+          // actionIcon2: Icon(Icons.air_rounded, color: Colors.white,),
+          isShowActionIcon3: true,
+          actionIcon3: Icon(Icons.search),
+          pressedActionIcon3: () {
+            toast("搜索新闻");
+            setState(() {
+              isInSearch = !isInSearch;
+            });
+          }),
       body: content,
       floatingActionButton: FloatingActionButton(
         tooltip: 'Increment',

@@ -31,6 +31,19 @@ class QuietApp extends ConsumerWidget {
     return GlobalHotkeys(
       child: MaterialApp(
         title: 'Quiet',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+          inputDecorationTheme: const InputDecorationTheme(
+            enabledBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+              borderSide: BorderSide(width: 2, color: Colors.amberAccent),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+              borderSide: BorderSide(width: 2, color: Colors.amberAccent),
+            ),
+          ),
+        ),
         supportedLocales: const [Locale('en'), Locale('zh')],
         localizationsDelegates: const [
           S.delegate,
@@ -38,7 +51,7 @@ class QuietApp extends ConsumerWidget {
           GlobalMaterialLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        theme: lightTheme,
+        // theme: lightTheme,
         darkTheme: quietDarkTheme,
         // themeMode: ref.watch(
           // settingStateProvider.select((value) => value.themeMode),
