@@ -8,7 +8,7 @@ import '../../../extension.dart';
 import '../../../providers/account_provider.dart';
 import '../../../providers/user_playlists_provider.dart';
 import '../../../repository.dart';
-import 'playlist_tile.dart';
+import 'newslist_tile.dart';
 
 class PlayListsGroupHeader extends StatelessWidget {
   const PlayListsGroupHeader({super.key, required this.name, this.count});
@@ -59,7 +59,7 @@ class MainPlayListTile extends StatelessWidget {
             ? const BorderRadius.vertical(bottom: Radius.circular(4))
             : null,
         color: context.colorScheme.background,
-        child: PlaylistTile(playlist: data),
+        child: NewsListTile(playlist: data),
       ),
     );
   }

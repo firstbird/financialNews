@@ -8,6 +8,7 @@ import 'main_page_headlines.dart';
 import 'person_center_page.dart';
 // import 'tab_search.dart';
 
+// only includes page on bottom tabs, also the sub pages of sub tabs
 class PageHome extends StatelessWidget {
   PageHome({super.key, required this.selectedTab})
       : assert(selectedTab.isMobileHomeTab());

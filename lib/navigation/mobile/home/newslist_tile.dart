@@ -6,11 +6,12 @@ import '../../../component/global/orientation.dart';
 import '../../../providers/navigator_provider.dart';
 import '../../../repository.dart';
 import '../../common/navigation_target.dart';
-import '../playlists/page_playlist_edit.dart';
+import '../pages/page_playlist_edit.dart';
+// import '../playlists/page_playlist_edit.dart';
 
-///歌单列表元素
-class PlaylistTile extends ConsumerWidget {
-  const PlaylistTile({
+///新闻列表元素
+class NewsListTile extends ConsumerWidget {
+  const NewsListTile({
     super.key,
     required this.playlist,
     this.enableMore = true,
@@ -39,7 +40,7 @@ class PlaylistTile extends ConsumerWidget {
     return InkWell(
       onTap: () => ref
           .read(navigatorProvider.notifier)
-          .navigate(NavigationTargetPlaylist(playlist.id)),
+          .navigate(NavigationTargetNewsDetail(playlist.id)),
       child: SizedBox(
         height: 60,
         child: Row(

@@ -164,7 +164,7 @@ class _PlayListItemView extends ConsumerWidget {
     return InkWell(
       onTap: () => ref
           .read(navigatorProvider.notifier)
-          .navigate(NavigationTargetPlaylist(playlist.id)),
+          .navigate(NavigationTargetNewsDetail(playlist.id)),
       onLongPress: onLongPress,
       child: Container(
           width: this.type == 0 ? width : 800,

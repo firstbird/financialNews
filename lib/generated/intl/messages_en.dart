@@ -135,7 +135,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "playingList": MessageLookupByLibrary.simpleMessage("Playing List"),
         "playlist": MessageLookupByLibrary.simpleMessage("PlayList"),
         "playlistLoginDescription": MessageLookupByLibrary.simpleMessage(
-            "Login to discover your playlists."),
+            "Login to discover your pages."),
         "playlistPlayCount": m4,
         "playlistShareContent": m5,
         "playlistTrackCount": m6,

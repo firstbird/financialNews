@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:recipe/constant/constant.dart';
+import 'package:recipe/navigation/common/navigation_target.dart';
+import 'package:recipe/providers/navigator_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:doubanapp/constant/cache_key.dart';
 // import 'package:doubanapp/main.dart';
@@ -13,11 +15,11 @@ import 'main_page_companies.dart';
 typedef VoidCallback = void Function();
 
 ///个人中心
-class PersonCenterPage extends StatelessWidget {
+class PersonCenterPage extends ConsumerWidget {
   const PersonCenterPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     print('build PersonCenterPage');
     return
     //   Scaffold(
@@ -182,29 +184,49 @@ class PersonCenterPage extends StatelessWidget {
                 ),
               ),
             ),
-            _personItem(Icon(Icons.history), '浏览历史', true),
+            _personItem(Icon(Icons.history), '浏览历史', true, onTab: () {
+              ref
+                  .read(navigatorProvider.notifier)
+                  .navigate(NavigationTargetHistory());
+            }),
             _personItem(Image.asset(
               Constant.ASSETS_IMG + 'ic_me_doulist.png',
               width: 25.0,
               height: 25.0,
-            ), '收藏', true),
+            ), '收藏', true, onTab: () {
+              ref
+                  .read(navigatorProvider.notifier)
+                  .navigate(NavigationTargetCollection());
+            }),
             // todo mzl pic
             _personItem(Image.asset(
               Constant.ASSETS_IMG + 'ic_me_doulist.png',
               width: 25.0,
               height: 25.0,
-            ), '点赞', true),
+            ), '点赞', true, onTab: () {
+              ref
+                  .read(navigatorProvider.notifier)
+                  .navigate(NavigationTargetLike());
+            }),
             _divider(),
             _personItem(Image.asset(
               Constant.ASSETS_IMG + 'ic_me_follows.png',
               width: 25.0,
               height: 25.0,
-            ), '关注公司', true),
+            ), '关注公司', true, onTab: () {
+              ref
+                  .read(navigatorProvider.notifier)
+                  .navigate(NavigationTargetFollow());
+            }),
             _personItem(Image.asset(
               Constant.ASSETS_IMG + 'ic_me_follows.png',
               width: 25.0,
               height: 25.0,
-            ), '关注领域', true),
+            ), '关注领域', true, onTab: () {
+              ref
+                  .read(navigatorProvider.notifier)
+                  .navigate(NavigationTargetFollow());
+            }),
             _personItem(Image.asset(
               Constant.ASSETS_IMG + 'ic_me_wallet.png',
               width: 25.0,

@@ -18,8 +18,8 @@ const double kHeaderHeight = 180 + kToolbarHeight;
 /// page display a Playlist
 ///
 /// Playlist : a list of musics by user collected
-class PlaylistDetailPage extends HookConsumerWidget {
-  const PlaylistDetailPage(
+class NewsDetailPage extends HookConsumerWidget {
+  const NewsDetailPage(
     this.playlistId, {
     super.key,
   });

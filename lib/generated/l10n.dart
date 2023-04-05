@@ -91,7 +91,7 @@ class S {
   }
 
   /// `Play History`
-  String get latestPlayHistory {
+  String get newsBrowseHistory {
     return Intl.message(
       'Play History',
       name: 'latestPlayHistory',
@@ -160,10 +160,10 @@ class S {
     );
   }
 
-  /// `Login to discover your playlists.`
+  /// `Login to discover your pages.`
   String get playlistLoginDescription {
     return Intl.message(
-      'Login to discover your playlists.',
+      'Login to discover your pages.',
       name: 'playlistLoginDescription',
       desc: '',
       args: [],
@@ -683,7 +683,7 @@ class S {
   }
 
   /// `Like Music`
-  String get likeMusic {
+  String get likeNews {
     return Intl.message(
       'Like Music',
       name: 'likeMusic',

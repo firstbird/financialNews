@@ -22,7 +22,7 @@ abstract class NavigationTarget {
   factory NavigationTarget.settings() => NavigationTargetSettings();
 
   factory NavigationTarget.playlist({required int playlistId}) =>
-      NavigationTargetPlaylist(playlistId);
+      NavigationTargetNewsDetail(playlistId);
 
   bool isTheSameTarget(NavigationTarget other) {
     return other.runtimeType == runtimeType;
@@ -47,17 +47,33 @@ class NavigationTargetSettings extends NavigationTarget {
   NavigationTargetSettings();
 }
 
-class NavigationTargetPlaylist extends NavigationTarget {
-  NavigationTargetPlaylist(this.playlistId);
+class NavigationTargetNewsDetail extends NavigationTarget {
+  NavigationTargetNewsDetail(this.playlistId);
 
   final int playlistId;
 
   @override
   bool isTheSameTarget(NavigationTarget other) {
     return super.isTheSameTarget(other) &&
-        other is NavigationTargetPlaylist &&
+        other is NavigationTargetNewsDetail &&
         other.playlistId == playlistId;
   }
+}
+
+class NavigationTargetCollection extends NavigationTarget {
+  NavigationTargetCollection();
+}
+
+class NavigationTargetFollow extends NavigationTarget {
+  NavigationTargetFollow();
+}
+
+class NavigationTargetHistory extends NavigationTarget {
+  NavigationTargetHistory();
+}
+
+class NavigationTargetLike extends NavigationTarget {
+  NavigationTargetLike();
 }
 
 class NavigationTargetPlaying extends NavigationTarget {

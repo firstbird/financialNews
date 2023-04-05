@@ -1,9 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:recipe/constant/constant.dart';
+import 'package:recipe/navigation/common/buttons.dart';
 import 'package:recipe/navigation/mobile/widgets/movie_app_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,25 +13,17 @@ import '../../../providers/navigator_provider.dart';
 import '../../../providers/personalized_playlist_provider.dart';
 import '../../../repository.dart';
 import '../../common/navigation_target.dart';
-import '../../common/playlist/music_list.dart';
-import 'main_page_companies.dart';
-
-typedef DebugPrinter = void Function(String message);
 
 typedef setEndIdCallback = void Function(int endId);
 
-DebugPrinter debugPrint = (msg) {
-  print(msg);
-};
-
-class MainPageHeadlines extends ConsumerStatefulWidget  {
-  const MainPageHeadlines({super.key});
+class PageCollection extends ConsumerStatefulWidget  {
+  const PageCollection({super.key});
 
   @override
-  PageHeadlinesState  createState() => PageHeadlinesState();
+  PageCollectionState  createState() => PageCollectionState();
 }
 
-class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
+class PageCollectionState extends ConsumerState<PageCollection>
     with AutomaticKeepAliveClientMixin {
 
   bool isInSearch = false;
@@ -50,35 +41,9 @@ class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
 
   TextStyle _loadMoreTextStyle = new TextStyle(color: const Color(0xFF4483f6), fontSize: 14.0);
 
-  //定时器自动轮播
-  Timer? _timer = null;
-
   var _hasData = true;
 
   ScrollController _scrollController = new ScrollController();
-  PageController _pageController=PageController();
-  List<Widget> _viewPageList =<Widget>[
-    // new Center(child:new Pages(text: "Page 1",)),
-    // new Center(child:new Pages(text: "Page 2",)),
-    // new Center(child:new Pages(text: "Page 3",)),
-    // new Center(child:new Pages(text: "Page 4",))
-    Container(
-      color: Colors.green,
-      width: double.infinity,
-      height: 110,
-    ),
-    Container(
-      color: Colors.red,
-      width: double.infinity,
-      height: 130,
-    ),
-    Container(
-      color: Colors.blue,
-      width: double.infinity,
-      height: 110,
-    )
-  ];
-  int _curr=0;
   var _page = 0;
 
 
@@ -95,10 +60,6 @@ class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
         _loadMore();
 
       }
-    });
-    ///当前页面绘制完第一帧后回调
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-      startTimer();
     });
   }
 
@@ -160,7 +121,7 @@ class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
 
   Widget getRow(int i) {
     var p = _itemList[i];
-    return _NewsListItemView(playlist: p, width: 60, type: 0);
+    return _CollectionItemView(playlist: p, width: 60, type: 0);
   }
   Widget _contentList() {
     debugPrint('news length: ${_itemList.length.toString()}');
@@ -179,134 +140,80 @@ class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
         ));
   }
 
-  void startTimer() {
-    //间隔两秒时间
-    _timer = new Timer.periodic(Duration(milliseconds: 5000), (value) {
-      // print("定时器");
-      // _curr = (_curr + 1) % _list.length;
-      _curr++;
-      //触发轮播切换
-      _pageController.animateToPage(_curr,
-          duration: Duration(milliseconds: 500), curve: Curves.ease);
-      //刷新
-      setState(() {
-
-      });
-    });
-  }
-
-  Widget _buildIndicator() {
-    var length = _viewPageList.length;
-    return Positioned(
-      bottom: 10,
-      child: Row(
-        children: _viewPageList.map((s) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 3.0),
-            child: ClipOval(
-              child: Container(
-                width: 8,
-                height: 8,
-                color: s == _viewPageList[_curr % length]
-                    ? Colors.white
-                    : Colors.grey,
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  _cancelTimer() {
-    if (_timer != null) {
-      _timer?.cancel();
-      _timer = null;
-      startTimer();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var content;
-    var listChild;
     super.build(context);
     if (_itemList.length == 0) {
-      listChild = new Center(
-        child: new CircularProgressIndicator(),
-      );
+       content = new Center(
+         child: new CircularProgressIndicator(),
+       );
     } else {
-      listChild = _contentList();
+      content = _contentList();
     }
-    content = Column(
-      children: [
-        Expanded(
-          flex: 1,
-          child:
-          Stack(
-            alignment: Alignment.bottomCenter,
-            children: <Widget>[
-              PageView.builder(
-                // children: _list,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                      onPanDown: (details) {
-                        print("onPanDown");
-                        _cancelTimer();
-                      },
-                      child: _viewPageList[index % _viewPageList.length]
-                  );
-                },
-                scrollDirection: Axis.horizontal,
-                // reverse: true,
-                // physics: BouncingScrollPhysics(),
-                controller: _pageController,
-                onPageChanged: (index){
-                  setState(() {
-                    if (index == 0) {
-                      _curr = _viewPageList.length;
-                    } else {
-                      _curr = index;
-                    }
-                  });
-                },
-              ),
-              _buildIndicator(),
-            ],
-          )
-          ,
-        ),
-        Expanded(
-          flex: 3,
-          child: listChild,
-        )
-      ],
-    );
-
 
     return Scaffold(
       backgroundColor: const Color(Constant.APPBAR_COLOR),
       appBar: CustomAppBar(
-          title: Text(context.strings.headlines),
+          title: !isInSearch
+              ? Text(
+            // todo mzl search area style
+                searchWord == "" ? context.strings.collectionLike : searchWord,
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              )
+              : SizedBox(
+            // padding: const EdgeInsets.all(16.0),
+              height: 28.0,
+              width: 270.0,
+              child: TextField(
+                controller: searchController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'search collections',
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintStyle: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 18,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 5, horizontal: 10),
+                ),
+                style: TextStyle(
+                  color: Colors.black54,
+                ),
+                onEditingComplete: () {
+                  setState(() {
+                    // toast(searchController.text);
+                    searchWord = searchController.text;
+                    isInSearch = false;
+                  });
+                },
+              )),
           isShowLeftIcon: true,
           backgroundColor: Colors.blue,
           leftIcon: Icon(
-            Icons.person, // todo mzl
+            Icons.chevron_left_outlined,
             color: Colors.white,
           ),
+          pressedLeftIcon: () {
+            ref.read(navigatorProvider.notifier).back();
+          },
           isShowActionIcon1: false,
           // actionIcon1: isInSearch ?  : const Icon(Icons.search),
           // isShowActionIcon2: true,
           // actionIcon2: Icon(Icons.air_rounded, color: Colors.white,),
-          isShowActionIcon3: false,
-          // actionIcon3: Icon(Icons.search),
-          // pressedActionIcon3: () {
-          //   toast("搜索新闻");
-          //   setState(() {
-          //     isInSearch = !isInSearch;
-          //   });
-          // }
-          ),
+          isShowActionIcon3: true,
+          actionIcon3: Icon(Icons.search),
+          pressedActionIcon3: () {
+            toast("搜索新闻");
+            setState(() {
+              isInSearch = !isInSearch;
+            });
+          }),
       body: content,
       floatingActionButton: FloatingActionButton(
         tooltip: 'Increment',
@@ -320,25 +227,8 @@ class PageHeadlinesState extends ConsumerState<MainPageHeadlines>
   }
 }
 
-class Pages extends StatelessWidget {
-  final text;
-  Pages({this.text});
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children:<Widget>[
-            Text(text,textAlign: TextAlign.center,style: TextStyle(
-                fontSize: 30,fontWeight:FontWeight.bold),),
-          ]
-      ),
-    );
-  }
-}
-
-class _NewsListItemView extends ConsumerWidget {
-  const _NewsListItemView({
+class _CollectionItemView extends ConsumerWidget {
+  const _CollectionItemView({
     super.key,
     required this.playlist,
     required this.width,

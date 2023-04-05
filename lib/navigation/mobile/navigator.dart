@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+// import 'package:recipe/navigation/mobile/playlists/page_follow.dart';
+// import 'package:recipe/navigation/mobile/playlists/page_history.dart';
+// import 'package:recipe/navigation/mobile/playlists/page_like.dart';
 
 import '../../providers/navigator_provider.dart';
 import '../common/login/loginPage.dart';
@@ -7,12 +10,18 @@ import '../common/login/welcomePage.dart';
 import '../common/navigation_target.dart';
 // import 'artists/page_artist_detail.dart';
 import 'home/page_home.dart';
-import 'playlists/page_playlist_detail.dart';
+import 'pages/page_collection.dart';
+import 'pages/page_follow.dart';
+import 'pages/page_history.dart';
+import 'pages/page_like.dart';
+import 'pages/page_newslist_detail.dart';
+// import 'playlists/page_collection.dart';
+// import 'playlists/page_newslist_detail.dart';
 // import 'player/page_fm_playing.dart';
 // import 'player/page_playing.dart';
 // import 'player/page_playing_list.dart';
-// import 'playlists/page_album_detail.dart';
-// import 'playlists/page_playlist_detail.dart';
+// import 'pages/page_album_detail.dart';
+// import 'pages/page_newslist_detail.dart';
 // import 'settings/page_setting.dart';
 // import 'user/page_user_detail.dart';
 // import 'widgets/bottom_sheet_page.dart';
@@ -106,10 +115,22 @@ class MobileNavigatorController extends NavigatorController {
         page = PageHome(selectedTab: target);
         // page = const PageSettings();
         break;
-      case NavigationTargetPlaylist:
+      case NavigationTargetCollection:
+        page = const PageCollection();
+        break;
+      case NavigationTargetFollow:
+        page = const PageFollow();
+        break;
+      case NavigationTargetHistory:
+        page = const PageHistory();
+        break;
+      case NavigationTargetLike:
+        page = const PageLike();
+        break;
+      case NavigationTargetNewsDetail:
         // page = PageHome(selectedTab: target);
-        page = PlaylistDetailPage(
-          (target as NavigationTargetPlaylist).playlistId,
+        page = NewsDetailPage(
+          (target as NavigationTargetNewsDetail).playlistId,
         );
         break;
       case NavigationTargetPlaying:

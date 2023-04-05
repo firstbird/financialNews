@@ -6,7 +6,7 @@ import 'package:recipe/navigation/mobile/home/page_home.dart';
 import 'package:recipe/providers/navigator_provider.dart';
 
 import '../../../providers/account_provider.dart';
-import '../../mobile/playlists/page_playlist_detail.dart';
+// import '../../mobile/playlists/page_newslist_detail.dart';
 import 'bezierContainer.dart';
 import 'loginPage.dart';
 
@@ -277,11 +277,11 @@ class SignUpForm extends ConsumerWidget {
                 if (target.runtimeType == NavigationTargetWelcome) {
                   return PageHome(selectedTab: NavigationTargetHeadlines());
                 }
-                if (target.runtimeType == NavigationTargetPlaylist) {
-                  return PlaylistDetailPage(
-                    (target as NavigationTargetPlaylist).playlistId,
-                  );
-                }
+                // if (target.runtimeType == NavigationTargetNewsDetail) {
+                //   return NewsDetailPage(
+                //     (target as NavigationTargetNewsDetail).playlistId,
+                //   );
+                // }
                 return PageHome(selectedTab: NavigationTargetHeadlines());
                 // return PageHome(selectedTab: target.runtimeType == NavigationTargetWelcome ? NavigationTargetHeadlines() : target);
               }

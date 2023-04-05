@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:recipe/navigation/mobile/playlists/page_playlist_detail.dart';
+// import 'package:recipe/navigation/mobile/playlists/page_newslist_detail.dart';
 import 'package:recipe/providers/account_provider.dart';
 import 'package:recipe/providers/navigator_provider.dart';
 
@@ -296,11 +296,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 if (target.runtimeType == NavigationTargetWelcome) {
                   return PageHome(selectedTab: NavigationTargetHeadlines());
                 }
-                if (target.runtimeType == NavigationTargetPlaylist) {
-                  return PlaylistDetailPage(
-                    (target as NavigationTargetPlaylist).playlistId,
-                  );
-                }
+                // if (target.runtimeType == NavigationTargetNewsDetail) {
+                //   return NewsDetailPage(
+                //     (target as NavigationTargetNewsDetail).playlistId,
+                //   );
+                // }
                 return PageHome(selectedTab: NavigationTargetHeadlines());
                 // return PageHome(selectedTab: target.runtimeType == NavigationTargetWelcome ? NavigationTargetHeadlines() : target);
               }
