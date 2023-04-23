@@ -8,7 +8,7 @@ import 'user.dart';
 part 'news_detail.g.dart';
 
 @JsonSerializable()
-@HiveType(typeId: 1)
+@HiveType(typeId: 3)
 class NewsDetail with EquatableMixin {
   NewsDetail({
     required this.id,
@@ -25,7 +25,7 @@ class NewsDetail with EquatableMixin {
   });
 
   factory NewsDetail.fromJson(Map<String, dynamic> json) =>
-      _$PlaylistDetailFromJson(json);
+      _$NewsDetailFromJson(json);
 
   @HiveField(0)
   final int id;
@@ -75,7 +75,7 @@ class NewsDetail with EquatableMixin {
         createTime,
       ];
 
-  Map<String, dynamic> toJson() => _$PlaylistDetailToJson(this);
+  Map<String, dynamic> toJson() => _$NewsDetailToJson(this);
 
   NewsDetail copyWith({
     List<Track>? tracks,

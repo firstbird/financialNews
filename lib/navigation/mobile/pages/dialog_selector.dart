@@ -154,7 +154,7 @@ class PlaylistSelectorDialog extends ConsumerWidget {
         ),
       );
     }
-    final userId = ref.watch(userProvider)!.userId;
+    final userId = ref.watch(userProvider)!.id;
     return Loader<List<NewsDetail?>>(
       loadTask: () =>
           neteaseRepository!.userPlaylist(userId).then((value) => value),

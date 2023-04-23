@@ -474,7 +474,7 @@ class _PlayListHeaderContent extends ConsumerWidget {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        playlist.creator.nickname,
+                        playlist.creator.username,
                         style: context.primaryTextTheme.bodySmall,
                       ),
                       const Spacer(),

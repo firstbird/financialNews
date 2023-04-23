@@ -4,12 +4,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:provider/provider.dart';
 import 'package:recipe/providers/repository_provider.dart';
 import 'package:recipe/repository/data/user.dart';
 import 'package:recipe/repository/netease.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:path/path.dart' as p;
+import 'providers/keyboard_provider.dart';
+import 'providers/tab_bar_provider.dart';
 import 'repository/app_dir.dart';
 import 'package:mixin_logger/mixin_logger.dart';
 import 'package:overlay_support/overlay_support.dart';
@@ -40,11 +43,16 @@ Future<void> main() async {
         overrides: [
           sharedPreferenceProvider.overrideWithValue(preferences),
           neteaseRepositoryProvider.overrideWithValue(neteaseRepository!),
+          // ChangeNotifierProvider(create: (_) => TabBarProvider()),
+          // ChangeNotifierProvider(create: (_) => KeyboardProvider()),
         ],
         child: PageSplash(
           futures: const [],
           builder: (BuildContext context, List<dynamic> data) {
-            return const MyApp();
+            return MaterialApp(
+                    home: MyApp(),
+                  );
+              // const MyApp();
           },
         ),
       ),

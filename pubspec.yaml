@@ -41,6 +41,7 @@ dependencies:
   hooks_riverpod: ^2.0.2
   equatable: ^2.0.3
   json_annotation: ^4.3.0
+  json_serializable: ^6.6.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   mixin_logger: ^0.0.1
@@ -56,7 +57,28 @@ dependencies:
   netease_api:
     path: netease_api/
   synchronized: ^3.0.0+3
-
+  # Flutter 城市列表，联系人列表，索引&悬停 https://github.com/flutterchina/azlistview
+  azlistview: 2.0.0
+  # Flutter 常用工具库 https://github.com/Sky24n/flustars
+  flustars: 2.0.1
+  # Dart 汉字转拼音 https://github.com/flutterchina/lpinyin
+  lpinyin: 1.0.7
+  # 路由管理 https://github.com/theyakka/fluro
+  fluro: 1.6.3
+  # Flutter 屏幕适配 https://github.com/OpenFlutter/flutter_screenutil
+  flutter_screenutil: 5.7.0
+  # 展示svg图片 https://github.com/dnfield/flutter_svg
+  flutter_svg: 1.1.6
+  # 图片缓存 https://github.com/renefloor/flutter_cached_network_image
+  cached_network_image: 3.2.3
+  # 状态共享 https://github.com/rrousselGit/provider
+  provider: 6.0.5
+  # 侧滑删除 https://github.com/letsar/flutter_slidable
+  flutter_slidable: 2.0.0
+  # Flutter 轮播图 https://github.com/best-flutter/flutter_swiper
+  flutter_swiper_null_safety: 1.0.2
+  build_runner: 2.3.3
+  hive_generator: 2.0.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -89,6 +111,12 @@ flutter:
   assets:
     - assets/
     - assets/images/
+    - assets/images/mainframe/
+    - assets/images/contacts/
+    - assets/images/search/
+    - assets/images/default/
+    - assets/images/discover/
+    - mock/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

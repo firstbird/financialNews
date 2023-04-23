@@ -1,6 +1,8 @@
 const kMobileHomeTabs = [
   NavigationTargetHeadlines,
-  NavigationTargetCompanies,
+  NavigationTargetDiscover,
+  NavigationTargetCommunity,
+  NavigationTargetMessage,
   NavigationTargetUser,
 ];
 
@@ -13,9 +15,13 @@ abstract class NavigationTarget {
 
   factory NavigationTarget.welcome() => NavigationTargetWelcome();
 
-  factory NavigationTarget.discover() => NavigationTargetHeadlines();
+  factory NavigationTarget.headlines() => NavigationTargetHeadlines();
 
-  factory NavigationTarget.companies() => NavigationTargetCompanies();
+  factory NavigationTarget.discover() => NavigationTargetDiscover();
+
+  factory NavigationTarget.community() => NavigationTargetCommunity();
+
+  factory NavigationTarget.message() => NavigationTargetMessage();
 
   factory NavigationTarget.user({required int userId}) => NavigationTargetUser(userId);
 
@@ -39,12 +45,33 @@ class NavigationTargetHeadlines extends NavigationTarget {
   NavigationTargetHeadlines();
 }
 
-class NavigationTargetCompanies extends NavigationTarget {
-  NavigationTargetCompanies();
+class NavigationTargetDiscover extends NavigationTarget {
+  NavigationTargetDiscover();
+}
+
+class NavigationTargetCommunity extends NavigationTarget {
+  NavigationTargetCommunity();
+}
+
+class NavigationTargetMessage extends NavigationTarget {
+  NavigationTargetMessage();
 }
 
 class NavigationTargetSettings extends NavigationTarget {
   NavigationTargetSettings();
+}
+
+class NavigationTargetContentList extends NavigationTarget {
+  NavigationTargetContentList(this.contentType);
+
+  final int contentType;
+
+  @override
+  bool isTheSameTarget(NavigationTarget other) {
+    return super.isTheSameTarget(other) &&
+        other is NavigationTargetContentList &&
+        other.contentType == contentType;
+  }
 }
 
 class NavigationTargetNewsDetail extends NavigationTarget {

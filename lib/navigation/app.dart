@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../generated/l10n.dart';
 // import '../providers/navigator_provider.dart';
@@ -27,6 +28,7 @@ class QuietApp extends ConsumerWidget {
     //     home = const MobileWindow();
     //     break;
     // }
+    ScreenUtil.init(context);
     home = const MobileWindow();
     return GlobalHotkeys(
       child: MaterialApp(

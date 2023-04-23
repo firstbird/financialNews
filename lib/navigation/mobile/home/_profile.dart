@@ -28,14 +28,14 @@ class UserProfileSection extends ConsumerWidget {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         onTap: () => ref
             .read(navigatorProvider.notifier)
-            .navigate(NavigationTargetUser(detail.userId)),
+            .navigate(NavigationTargetUser(detail.id)),
         child: SizedBox(
           height: 72,
           child: Row(
             children: [
               const SizedBox(width: 8),
               CircleAvatar(
-                backgroundImage: CachedImage(detail.avatarUrl),
+                backgroundImage: CachedImage(detail.profileImageUrl),
                 radius: 20,
               ),
               const SizedBox(width: 12),
@@ -44,7 +44,7 @@ class UserProfileSection extends ConsumerWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(detail.nickname),
+                    Text(detail.username),
                     const SizedBox(height: 4),
                     Row(
                       children: [
@@ -58,7 +58,7 @@ class UserProfileSection extends ConsumerWidget {
                             horizontal: 4,
                           ),
                           child: Text(
-                            'Lv.${detail.level}',
+                            'Lv.${detail.userLevel}',
                             style: const TextStyle(
                               fontStyle: FontStyle.italic,
                               fontSize: 12,

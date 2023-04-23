@@ -1,10 +1,13 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'track.dart';
 
 part 'artist_detail.g.dart';
 
+@JsonSerializable()
+@HiveType(typeId: 1)
 class ArtistDetail {
   ArtistDetail({
     required this.hotSongs,
@@ -12,14 +15,18 @@ class ArtistDetail {
     required this.artist,
   });
 
+  @HiveField(0)
   final List<Track> hotSongs;
 
+  @HiveField(1)
   final bool more;
 
+  @HiveField(2)
   final Artist artist;
 }
 
 @JsonSerializable()
+@HiveType(typeId: 1)
 class Artist with EquatableMixin {
   Artist({
     required this.name,
@@ -35,23 +42,34 @@ class Artist with EquatableMixin {
     required this.alias,
   });
 
-  factory Artist.fromJson(Map<String, dynamic> json) => _$ArtistFromJson(json);
+  // factory Artist.fromJson(Map<String, dynamic> json) => _$ArtistFromJson(json);
 
+  @HiveField(0)
   final String name;
+  @HiveField(1)
   final int id;
 
+  @HiveField(2)
   final int publishTime;
+  @HiveField(3)
   final String image1v1Url;
+  @HiveField(4)
   final String picUrl;
 
+  @HiveField(5)
   final int albumSize;
+  @HiveField(6)
   final int mvSize;
+  @HiveField(7)
   final int musicSize;
 
+  @HiveField(8)
   final bool followed;
 
+  @HiveField(9)
   final String briefDesc;
 
+  @HiveField(10)
   final List<String> alias;
 
   @override
@@ -69,5 +87,7 @@ class Artist with EquatableMixin {
         alias,
       ];
 
-  Map<String, dynamic> toJson() => _$ArtistToJson(this);
+  static fromJson(Map<String, dynamic> json) {}
+
+  // Map<String, dynamic> toJson() => _$ArtistToJson(this);
 }

@@ -56,7 +56,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("将音乐文件拖放到这里进行上传"),
         "cloudMusicUsage": MessageLookupByLibrary.simpleMessage("云盘容量"),
         "collectionLike": MessageLookupByLibrary.simpleMessage("已购"),
-        "companies": MessageLookupByLibrary.simpleMessage("企业资讯"),
+        "community": MessageLookupByLibrary.simpleMessage("设计圈"),
         "copyRightOverlay":
             MessageLookupByLibrary.simpleMessage("只用作个人学习研究，禁止用于商业及非法用途"),
         "createdDate": m2,
@@ -66,7 +66,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dailyRecommendDescription":
             MessageLookupByLibrary.simpleMessage("网易云音乐每日推荐歌曲，每天 6:00 更新。"),
         "delete": MessageLookupByLibrary.simpleMessage("删除"),
-        "discover": MessageLookupByLibrary.simpleMessage("主页"),
+        "discover": MessageLookupByLibrary.simpleMessage("发现"),
         "duration": MessageLookupByLibrary.simpleMessage("时长"),
         "errorNotLogin": MessageLookupByLibrary.simpleMessage("未登录"),
         "errorToFetchData": MessageLookupByLibrary.simpleMessage("获取数据失败"),
@@ -79,8 +79,9 @@ class MessageLookup extends MessageLookupByLibrary {
         "follower": MessageLookupByLibrary.simpleMessage("粉丝"),
         "friends": MessageLookupByLibrary.simpleMessage("我的好友"),
         "functionDescription": MessageLookupByLibrary.simpleMessage("功能描述"),
-        "headlines": MessageLookupByLibrary.simpleMessage("经济头条"),
+        "headlines": MessageLookupByLibrary.simpleMessage("首页"),
         "hideCopyrightOverlay": MessageLookupByLibrary.simpleMessage("隐藏版权浮层"),
+        "homeTopTitle": MessageLookupByLibrary.simpleMessage("最新发布"),
         "keySpace": MessageLookupByLibrary.simpleMessage("空格"),
         "latestPlayHistory": MessageLookupByLibrary.simpleMessage("最近播放"),
         "library": MessageLookupByLibrary.simpleMessage("个人页"),
@@ -95,6 +96,7 @@ class MessageLookup extends MessageLookupByLibrary {
             MessageLookupByLibrary.simpleMessage("使用网易云音乐手机端扫码登录"),
         "loginWithPhone": MessageLookupByLibrary.simpleMessage("手机号登录"),
         "logout": MessageLookupByLibrary.simpleMessage("退出登录"),
+        "message": MessageLookupByLibrary.simpleMessage("消息"),
         "musicCountFormat": m3,
         "musicName": MessageLookupByLibrary.simpleMessage("音乐标题"),
         "my": MessageLookupByLibrary.simpleMessage("我的"),
@@ -153,6 +155,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "todo": MessageLookupByLibrary.simpleMessage("TBD"),
         "topSongs": MessageLookupByLibrary.simpleMessage("热门歌曲"),
         "trackNoCopyright": MessageLookupByLibrary.simpleMessage("此音乐暂无版权"),
+        "unread": MessageLookupByLibrary.simpleMessage("未读消息"),
         "volumeDown": MessageLookupByLibrary.simpleMessage("音量-"),
         "volumeUp": MessageLookupByLibrary.simpleMessage("音量+")
       };

@@ -298,7 +298,9 @@ class HomeBottomNavigationBar extends ConsumerWidget {
         (element) => element == currentTab.runtimeType,
       ),
       selectedItemColor: context.colorScheme.primary,
+      type: BottomNavigationBarType.fixed,
       unselectedItemColor: context.colorScheme.textPrimary,
+      showUnselectedLabels: true,
       onTap: (index) {
         final NavigationTarget target;
         switch (index) {
@@ -306,9 +308,15 @@ class HomeBottomNavigationBar extends ConsumerWidget {
             target = NavigationTargetHeadlines();
             break;
           case 1:
-            target = NavigationTargetCompanies();
+            target = NavigationTargetDiscover();
             break;
           case 2:
+            target = NavigationTargetCommunity();
+            break;
+          case 3:
+            target = NavigationTargetMessage();
+            break;
+          case 4:
             target = NavigationTargetUser(3);
             break;
           default:
@@ -323,8 +331,16 @@ class HomeBottomNavigationBar extends ConsumerWidget {
           label: context.strings.headlines,
         ),
         BottomNavigationBarItem(
-          icon: const Icon(Icons.account_balance),
-          label: context.strings.companies,
+          icon: const Icon(Icons.pageview_outlined),
+          label: context.strings.discover,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.group),
+          label: context.strings.community,
+        ),
+        BottomNavigationBarItem(
+          icon: const Icon(Icons.message),
+          label: context.strings.message,
         ),
         BottomNavigationBarItem(
           icon: const Icon(Icons.person),

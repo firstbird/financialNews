@@ -11,6 +11,7 @@ import '../common/navigation_target.dart';
 // import 'artists/page_artist_detail.dart';
 import 'home/page_home.dart';
 import 'pages/page_collection.dart';
+import 'pages/page_content_list.dart';
 import 'pages/page_follow.dart';
 import 'pages/page_history.dart';
 import 'pages/page_like.dart';
@@ -108,7 +109,13 @@ class MobileNavigatorController extends NavigatorController {
       case NavigationTargetHeadlines:
         page = PageHome(selectedTab: target);
         break;
-      case NavigationTargetCompanies:
+      case NavigationTargetDiscover:
+        page = PageHome(selectedTab: target);
+        break;
+      case NavigationTargetCommunity:
+        page = PageHome(selectedTab: target);
+        break;
+      case NavigationTargetMessage:
         page = PageHome(selectedTab: target);
         break;
       case NavigationTargetUser:
@@ -132,6 +139,9 @@ class MobileNavigatorController extends NavigatorController {
         page = NewsDetailPage(
           (target as NavigationTargetNewsDetail).playlistId,
         );
+        break;
+      case NavigationTargetContentList:
+        page = ContentListPage(contentType: (target as NavigationTargetContentList).contentType);
         break;
       case NavigationTargetPlaying:
         page = PageHome(selectedTab: target);

@@ -12,14 +12,14 @@ import '../../../repository.dart';
 import '../../common/navigation_target.dart';
 import '../../common/playlist/music_list.dart';
 
-class MainPageCompanies extends StatefulWidget {
-  const MainPageCompanies({super.key});
+class MainPageMessage extends StatefulWidget {
+  const MainPageMessage({super.key});
 
   @override
-  State<StatefulWidget> createState() => PageCompaniesState();
+  State<StatefulWidget> createState() => PageMessageState();
 }
 
-class PageCompaniesState extends State<MainPageCompanies>
+class PageMessageState extends State<MainPageMessage>
     with AutomaticKeepAliveClientMixin {
   bool isInSearch = false;
   final searchController = TextEditingController();
@@ -35,44 +35,11 @@ class PageCompaniesState extends State<MainPageCompanies>
     return ListView(
       children: <Widget>[
         CustomAppBar(
-            title: !isInSearch
-                ? Text(
-                    // todo mzl search area style
-                    searchWord == "" ? context.strings.companies : searchWord,
+            title: Text(context.strings.unread + "(100)",
                     style: TextStyle(
                       color: Colors.white,
                     ),
-                  )
-                : SizedBox(
-                    // padding: const EdgeInsets.all(16.0),
-                    height: 28.0,
-                    width: 270.0,
-                    child: TextField(
-                          controller: searchController,
-                          autofocus: true,
-                          decoration: InputDecoration(
-                            hintText: 'search company name',
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintStyle: TextStyle(
-                              color: Colors.black54,
-                              fontSize: 18,
-                              fontStyle: FontStyle.italic,
-                            ),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            ),
-                            style: TextStyle(
-                                color: Colors.black54,
-                            ),
-                            onEditingComplete: () {
-                              setState(() {
-                                // toast(searchController.text);
-                                searchWord = searchController.text;
-                                isInSearch = false;
-                              });
-                            },
-                )),
+                  ),
             isShowLeftIcon: true,
             backgroundColor: Colors.blue,
             leftIcon: Icon(
@@ -83,15 +50,51 @@ class PageCompaniesState extends State<MainPageCompanies>
             // actionIcon1: isInSearch ?  : const Icon(Icons.search),
             // isShowActionIcon2: true,
             // actionIcon2: Icon(Icons.air_rounded, color: Colors.white,),
-            isShowActionIcon3: true,
-            actionIcon3: Icon(Icons.search),
-            pressedActionIcon3: () {
-              toast("搜索公司");
-              setState(() {
-                isInSearch = !isInSearch;
-              });
-            }),
-        _Header('公司快讯', () {}), // 当你不知道吃什么时候
+            // isShowActionIcon3: true,
+            // actionIcon3: Icon(Icons.search),
+            // pressedActionIcon3: () {
+            //   toast("搜索公司");
+            //   setState(() {
+            //     isInSearch = !isInSearch;
+            //   });
+            // }
+            ),
+        const Padding(padding: EdgeInsets.only(top: 4)),
+        // Row(
+        //   children: [
+            Center(
+              child: SizedBox(
+                // padding: const EdgeInsets.all(16.0),
+                  height: 28.0,
+                  width: 350,
+                  child: TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                      hintText: 'search company name',
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintStyle: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 18,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 5, horizontal: 10),
+                    ),
+                    style: TextStyle(
+                      color: Colors.black54,
+                    ),
+                    onEditingComplete: () {
+                      setState(() {
+                        // toast(searchController.text);
+                        searchWord = searchController.text;
+                        isInSearch = false;
+                      });
+                    },
+                  )),
+            // ),
+          // ],
+        ),
         const CompanyNews(),
       ],
     );
@@ -237,13 +240,12 @@ class CompanyNews extends ConsumerWidget {
     return snapshot.when(
       data: (songs) {
         final double width = 500;
-        return Flexible(
-            child: Column(
+        return Column(
                 // children: songs.map(MusicTile.new).toList(),
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: songs.map<Widget>((p) {
                   return _PlayListItemView(playlist: p, width: 100, type: 1);
-                }).toList()));
+                }).toList());
       },
       error: (error, stacktrace) {
         return SizedBox(

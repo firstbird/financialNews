@@ -616,22 +616,22 @@ extension _AlbumMapper on api.Album {
 extension _UserMapper on api.Creator {
   User toUser() {
     return User(
-      userId: userId,
-      nickname: nickname,
-      avatarUrl: avatarUrl,
+      userId: userId.toString(),
+      username: nickname,
+      profileImageUrl: avatarUrl,
       followers: 0,
       followed: followed,
       backgroundUrl: backgroundUrl,
-      createTime: 0,
-      description: description,
-      detailDescription: detailDescription,
-      playlistBeSubscribedCount: 0,
-      playlistCount: 0,
-      allSubscribedCount: 0,
-      followedUsers: 0,
-      vipType: vipType,
-      level: 0,
-      eventCount: 0,
+      dateJoined: "",
+      about: description,
+      featureSignature: detailDescription,
+      // playlistBeSubscribedCount: 0,
+      // playlistCount: 0,
+      // allSubscribedCount: 0,
+      // followedUsers: 0,
+      vipType: vipType, id: userId, passwd: '', email: '', lastLogin: '', issuperuser: false, firstName: '', lastName: '', isactive: false, userLevel: 0, lft: 0, parentId: 0, userRight: 0, treeId: 0, usedInvitationId: '', mobile: '', gender: 0, zoneCode: '', region: '', tagIndex: '1',
+      // level: 0,
+      // eventCount: 0,
     );
   }
 }
@@ -639,22 +639,16 @@ extension _UserMapper on api.Creator {
 extension _UserDetailMapper on api.UserDetail {
   User toUser() {
     return User(
-      userId: profile.userId,
-      nickname: profile.nickname,
-      avatarUrl: profile.avatarUrl,
+      userId: profile.userId.toString(),
+      username: profile.nickname,
+      profileImageUrl: profile.avatarUrl,
       followers: profile.follows,
       followed: profile.followed,
-      backgroundUrl: profile.backgroundUrl,
-      createTime: createTime,
-      description: profile.description,
-      detailDescription: profile.detailDescription,
-      playlistBeSubscribedCount: profile.playlistBeSubscribedCount,
-      playlistCount: profile.playlistCount,
-      allSubscribedCount: profile.allSubscribedCount,
-      followedUsers: profile.followeds,
-      vipType: profile.vipType,
-      level: level,
-      eventCount: profile.eventCount,
+      backgroundUrl: profile.avatarUrl,
+      dateJoined: "",
+      about: profile.description,
+      featureSignature: profile.detailDescription,
+      vipType: profile.vipType, id: profile.userId, passwd: '', email: '', lastLogin: '', issuperuser: false, firstName: '', lastName: '', isactive: false, userLevel: 0, lft: 0, parentId: 0, userRight: 0, treeId: 0, usedInvitationId: '', mobile: '', gender: 0, zoneCode: '', region: '', tagIndex: '1',
     );
   }
 }

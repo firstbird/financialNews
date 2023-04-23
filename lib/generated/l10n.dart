@@ -50,6 +50,16 @@ class S {
     return Localizations.of<S>(context, S);
   }
 
+  /// `Latest`
+  String get homeTopTitle {
+    return Intl.message(
+      'Latest',
+      name: 'homeTopTitle',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `My`
   String get my {
     return Intl.message(
@@ -60,10 +70,10 @@ class S {
     );
   }
 
-  /// `Home`
+  /// `Discover`
   String get discover {
     return Intl.message(
-      'Home',
+      'Discover',
       name: 'discover',
       desc: '',
       args: [],
@@ -91,7 +101,7 @@ class S {
   }
 
   /// `Play History`
-  String get newsBrowseHistory {
+  String get latestPlayHistory {
     return Intl.message(
       'Play History',
       name: 'latestPlayHistory',
@@ -160,10 +170,10 @@ class S {
     );
   }
 
-  /// `Login to discover your pages.`
+  /// `Login to discover your playlists.`
   String get playlistLoginDescription {
     return Intl.message(
-      'Login to discover your pages.',
+      'Login to discover your playlists.',
       name: 'playlistLoginDescription',
       desc: '',
       args: [],
@@ -412,21 +422,41 @@ class S {
     );
   }
 
-  /// `Headlines`
+  /// `Hot News`
   String get headlines {
     return Intl.message(
-      'Headlines',
+      'Hot News',
       name: 'headlines',
       desc: '',
       args: [],
     );
   }
 
-  /// `Companies`
-  String get companies {
+  /// `Community`
+  String get community {
     return Intl.message(
-      'Companies',
-      name: 'companies',
+      'Community',
+      name: 'community',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Message`
+  String get message {
+    return Intl.message(
+      'Message',
+      name: 'message',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `Unread Message`
+  String get unread {
+    return Intl.message(
+      'Unread Message',
+      name: 'unread',
       desc: '',
       args: [],
     );
@@ -683,7 +713,7 @@ class S {
   }
 
   /// `Like Music`
-  String get likeNews {
+  String get likeMusic {
     return Intl.message(
       'Like Music',
       name: 'likeMusic',

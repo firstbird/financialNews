@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import 'track.dart';
@@ -6,6 +7,7 @@ import 'track.dart';
 part 'album_detail.g.dart';
 
 @JsonSerializable()
+@HiveType(typeId: 0)
 class AlbumDetail {
   AlbumDetail({
     required this.album,
@@ -15,8 +17,10 @@ class AlbumDetail {
   factory AlbumDetail.fromJson(Map<String, dynamic> json) =>
       _$AlbumDetailFromJson(json);
 
+  @HiveField(0)
   final Album album;
 
+  @HiveField(1)
   final List<Track> tracks;
 
   Map<String, dynamic> toJson() => _$AlbumDetailToJson(this);

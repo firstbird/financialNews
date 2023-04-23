@@ -59,7 +59,7 @@ class MessageLookup extends MessageLookupByLibrary {
             "Drop your music file to here to upload."),
         "cloudMusicUsage": MessageLookupByLibrary.simpleMessage("Cloud Usage"),
         "collectionLike": MessageLookupByLibrary.simpleMessage("Collections"),
-        "companies": MessageLookupByLibrary.simpleMessage("Companies"),
+        "community": MessageLookupByLibrary.simpleMessage("Community"),
         "copyRightOverlay": MessageLookupByLibrary.simpleMessage(
             "Only used for personal study and research, commercial and illegal purposes are prohibited"),
         "createdDate": m2,
@@ -72,7 +72,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "dailyRecommendDescription": MessageLookupByLibrary.simpleMessage(
             "Daily recommend music from Netease cloud music. Refresh every day at 06:00."),
         "delete": MessageLookupByLibrary.simpleMessage("delete"),
-        "discover": MessageLookupByLibrary.simpleMessage("Home"),
+        "discover": MessageLookupByLibrary.simpleMessage("Discover"),
         "duration": MessageLookupByLibrary.simpleMessage("Duration"),
         "errorNotLogin":
             MessageLookupByLibrary.simpleMessage("Please login first."),
@@ -90,9 +90,10 @@ class MessageLookup extends MessageLookupByLibrary {
         "friends": MessageLookupByLibrary.simpleMessage("Friends"),
         "functionDescription":
             MessageLookupByLibrary.simpleMessage("Description"),
-        "headlines": MessageLookupByLibrary.simpleMessage("Headlines"),
+        "headlines": MessageLookupByLibrary.simpleMessage("Hot News"),
         "hideCopyrightOverlay":
             MessageLookupByLibrary.simpleMessage("Hide Copyright Overlay"),
+        "homeTopTitle": MessageLookupByLibrary.simpleMessage("Latest"),
         "keySpace": MessageLookupByLibrary.simpleMessage("Space"),
         "latestPlayHistory":
             MessageLookupByLibrary.simpleMessage("Play History"),
@@ -112,6 +113,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "loginWithPhone":
             MessageLookupByLibrary.simpleMessage("login with phone"),
         "logout": MessageLookupByLibrary.simpleMessage("Logout"),
+        "message": MessageLookupByLibrary.simpleMessage("Message"),
         "musicCountFormat": m3,
         "musicName": MessageLookupByLibrary.simpleMessage("Music Name"),
         "my": MessageLookupByLibrary.simpleMessage("My"),
@@ -135,7 +137,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "playingList": MessageLookupByLibrary.simpleMessage("Playing List"),
         "playlist": MessageLookupByLibrary.simpleMessage("PlayList"),
         "playlistLoginDescription": MessageLookupByLibrary.simpleMessage(
-            "Login to discover your pages."),
+            "Login to discover your playlists."),
         "playlistPlayCount": m4,
         "playlistShareContent": m5,
         "playlistTrackCount": m6,
@@ -183,6 +185,7 @@ class MessageLookup extends MessageLookupByLibrary {
         "topSongs": MessageLookupByLibrary.simpleMessage("Top Songs"),
         "trackNoCopyright":
             MessageLookupByLibrary.simpleMessage("Track No Copyright"),
+        "unread": MessageLookupByLibrary.simpleMessage("Unread Message"),
         "volumeDown": MessageLookupByLibrary.simpleMessage("Volume Down"),
         "volumeUp": MessageLookupByLibrary.simpleMessage("Volume Up")
       };

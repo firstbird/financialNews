@@ -39,7 +39,7 @@ class PresetGridSection extends ConsumerWidget {
                   ),
                   _PinnedTile(
                     icon: Icons.play_circle_outline,
-                    label: context.strings.newsBrowseHistory,
+                    label: context.strings.latestPlayHistory,
                     onTap: () {
                       if (ref.read(isLoginProvider)) {
                         // context.secondaryNavigator!.push(

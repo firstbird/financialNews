@@ -16,7 +16,7 @@ final isLoginProvider = Provider<bool>((ref) {
 });
 
 final userIdProvider = Provider<int?>((ref) {
-  return ref.watch(userProvider)?.userId;
+  return ref.watch(userProvider)?.id;
 });
 
 class UserAccount extends StateNotifier<User?> {
@@ -124,7 +124,7 @@ class UserAccount extends StateNotifier<User?> {
     if (!isLogin) {
       return null;
     }
-    return state!.userId;
+    return state!.id;
   }
 
   @override

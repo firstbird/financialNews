@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../extension.dart';
 import '../../../providers/personalized_playlist_provider.dart';
 import '../widgets/heart_img_widget.dart';
-import 'main_page_companies.dart';
+import 'main_page_community.dart';
 typedef VoidCallback = void Function();
 
 ///个人中心

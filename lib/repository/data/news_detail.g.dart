@@ -8,7 +8,7 @@ part of 'news_detail.dart';
 
 class NewsDetailAdapter extends TypeAdapter<NewsDetail> {
   @override
-  final int typeId = 1;
+  final int typeId = 3;
 
   @override
   NewsDetail read(BinaryReader reader) {
@@ -34,7 +34,7 @@ class NewsDetailAdapter extends TypeAdapter<NewsDetail> {
   @override
   void write(BinaryWriter writer, NewsDetail obj) {
     writer
-      ..writeByte(15)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -74,31 +74,31 @@ class NewsDetailAdapter extends TypeAdapter<NewsDetail> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-NewsDetail _$PlaylistDetailFromJson(Map json) => NewsDetail(
+NewsDetail _$NewsDetailFromJson(Map<String, dynamic> json) => NewsDetail(
       id: json['id'] as int,
-      creator: User.fromJson(Map<String, dynamic>.from(json['creator'] as Map)),
-      coverImageUrl: json['coverUrl'] as String,
+      creator: User.fromJson(json['creator'] as Map<String, dynamic>),
+      coverImageUrl: json['coverImageUrl'] as String,
       subscribed: json['subscribed'] as bool,
       subscribedCount: json['subscribedCount'] as int,
       shareCount: json['shareCount'] as int,
-      readCount: json['playCount'] as int,
-      text: json['name'] as String,
-      title: json['description'] as String,
+      readCount: json['readCount'] as int,
+      text: json['text'] as String,
+      title: json['title'] as String,
       commentCount: json['commentCount'] as int,
       createTime: DateTime.parse(json['createTime'] as String),
     );
 
-Map<String, dynamic> _$PlaylistDetailToJson(NewsDetail instance) =>
+Map<String, dynamic> _$NewsDetailToJson(NewsDetail instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'creator': instance.creator.toJson(),
-      'coverUrl': instance.coverImageUrl,
+      'creator': instance.creator,
+      'coverImageUrl': instance.coverImageUrl,
       'subscribed': instance.subscribed,
       'subscribedCount': instance.subscribedCount,
       'shareCount': instance.shareCount,
-      'playCount': instance.readCount,
-      'name': instance.text,
-      'description': instance.title,
+      'readCount': instance.readCount,
+      'text': instance.text,
+      'title': instance.title,
       'commentCount': instance.commentCount,
       'createTime': instance.createTime.toIso8601String(),
     };

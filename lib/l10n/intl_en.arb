@@ -1,6 +1,7 @@
 {
+  "homeTopTitle": "Latest",
   "my": "My",
-  "discover": "Home",
+  "discover": "Discover",
   "localMusic": "Local Music",
   "cloudMusic": "Could Space",
   "latestPlayHistory": "Play History",
@@ -35,8 +36,10 @@
   "failedToPlayMusic": "failed to play music",
   "noMusic": "no music",
   "playlist": "PlayList",
-  "headlines": "Headlines",
-  "companies": "Companies",
+  "headlines": "Hot News",
+  "community": "Community",
+  "message": "Message",
+  "unread": "Unread Message",
   "failedToLoad": "failed to load",
   "library": "MyPage",
   "recommendPlayLists": "Recommend PlayLists",
@@ -103,4 +106,5 @@
   "follower": "Follower",
   "follow": "Follow",
   "searchHistory": "Search History"
+
 }

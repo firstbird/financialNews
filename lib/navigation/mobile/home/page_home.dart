@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:recipe/navigation/common/login/welcomePage.dart';
-import 'package:recipe/navigation/mobile/home/main_page_companies.dart';
+import 'package:recipe/navigation/mobile/home/main_page_community.dart';
+import 'package:recipe/views/mainframe/mainframe_page.dart';
 
 import '../../common/navigation_target.dart';
 import '../widgets/bottom_bar.dart';
+import 'main_page_discover.dart';
 import 'main_page_headlines.dart';
+import 'main_page_message.dart';
 import 'person_center_page.dart';
 // import 'tab_search.dart';
 
@@ -19,15 +22,22 @@ class PageHome extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget body;
     switch (selectedTab.runtimeType) {
-      case NavigationTargetUser:
-        body = const PersonCenterPage();
-        // body = WelcomePage();
-        break;
       case NavigationTargetHeadlines:
         body = const MainPageHeadlines();
         break;
-      case NavigationTargetCompanies:
-        body = const MainPageCompanies();
+      case NavigationTargetDiscover:
+        body = const MainPageDiscover();
+        break;
+      case NavigationTargetCommunity:
+        body = const MainPageCommunity();
+        break;
+      case NavigationTargetMessage:
+        // body = const MainPageMessage();
+        body = MainframePage();
+        break;
+      case NavigationTargetUser:
+        body = const PersonCenterPage();
+        // body = WelcomePage();
         break;
       default:
         // assert(false, 'unsupported tab: $selectedTab');

@@ -158,7 +158,7 @@ class PageHistoryState extends ConsumerState<PageHistory>
           title: !isInSearch
               ? Text(
             // todo mzl search area style
-                searchWord == "" ? context.strings.newsBrowseHistory : searchWord,
+                searchWord == "" ? context.strings.latestPlayHistory : searchWord,
                 style: TextStyle(
                   color: Colors.white,
                 ),

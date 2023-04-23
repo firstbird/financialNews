@@ -158,7 +158,7 @@ class PageLikeState extends ConsumerState<PageLike>
           title: !isInSearch
               ? Text(
             // todo mzl search area style
-                searchWord == "" ? context.strings.likeNews : searchWord,
+                searchWord == "" ? context.strings.collectionLike : searchWord,
                 style: TextStyle(
                   color: Colors.white,
                 ),

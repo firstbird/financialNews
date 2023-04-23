@@ -6,7 +6,7 @@ part 'track.g.dart';
 
 typedef Music = Track;
 
-@HiveType(typeId: 3)
+@HiveType(typeId: 5)
 enum TrackType {
   @HiveField(0)
   free,
@@ -135,5 +135,5 @@ class AlbumMini with EquatableMixin {
   @override
   List<Object?> get props => [id, picUri, name];
 
-  Map<String, dynamic> toJson() => _$AlbumMiniToJson(this);
+  // Map<String, dynamic> toJson() => _$AlbumMiniToJson(this);
 }
