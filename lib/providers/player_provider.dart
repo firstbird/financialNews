@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../media/tracks/tracks_player.dart';
-import '../model/persistence_player_state.dart';
+import '../model/persistence/persistence_player_state.dart';
 import 'play_history_provider.dart';
 import 'preference_provider.dart';
 

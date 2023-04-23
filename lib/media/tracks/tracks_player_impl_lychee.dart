@@ -5,7 +5,7 @@ import 'package:lychee_player/lychee_player.dart';
 import 'package:mixin_logger/mixin_logger.dart';
 
 import '../../extension.dart';
-import '../../model/persistence_player_state.dart';
+import '../../model/persistence/persistence_player_state.dart';
 import '../../repository.dart';
 import '../../utils/media_cache/media_cache.dart';
 import 'track_list.dart';

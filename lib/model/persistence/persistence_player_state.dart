@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../media/tracks/track_list.dart';
-import '../repository/data/track.dart';
+import '../../media/tracks/track_list.dart';
+import '../../repository/data/track.dart';
 
 part 'persistence_player_state.g.dart';
 
