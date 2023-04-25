@@ -1,239 +1,278 @@
-import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/adapters.dart';
-import 'package:provider/provider.dart';
-import 'package:recipe/providers/repository_provider.dart';
-import 'package:recipe/repository/data/user.dart';
-import 'package:recipe/repository/netease.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:fluwx/fluwx.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:window_manager/window_manager.dart';
-import 'package:path/path.dart' as p;
-import 'providers/keyboard_provider.dart';
-import 'providers/tab_bar_provider.dart';
-import 'repository/app_dir.dart';
-import 'package:mixin_logger/mixin_logger.dart';
-import 'package:overlay_support/overlay_support.dart';
+import 'package:tobias/tobias.dart';
 
-import 'providers/preference_provider.dart';
+import 'global.dart';
+import 'bloc/activity/activity_city_bloc.dart';
+import 'bloc/im/im_bloc.dart';
+import 'bloc/im/reply_notice_bloc.dart';
+import 'bloc/user/authentication_bloc.dart';
+import 'common/cn_localizations.dart';
+import 'common/routes.dart';
+import 'bloc/activity/activity_data_bloc.dart' as activitybloc;
+import 'page/splash.dart';
+import 'page/index.dart';
 
-import 'repository/data/news_detail.dart';
-import 'repository/network_repository.dart';
-import 'utils/callback_window_listener.dart';
-import 'utils/platform_configuration.dart';
-
-import 'navigation/common/page_splash.dart';
-import 'navigation/app.dart';
-
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // await loadFallbackFonts();
-  await NetworkRepository.initialize();
-  await initAppDir();
-  final preferences = await SharedPreferences.getInstance();
-  unawaited(_initialDesktop(preferences));
-  initLogger(p.join(appDir.path, 'logs'));
-  await _initHive();
-  // runApp(const MyApp());
-  runZonedGuarded(() {
-    runApp(
-      ProviderScope(
-        overrides: [
-          sharedPreferenceProvider.overrideWithValue(preferences),
-          neteaseRepositoryProvider.overrideWithValue(neteaseRepository!),
-          // ChangeNotifierProvider(create: (_) => TabBarProvider()),
-          // ChangeNotifierProvider(create: (_) => KeyboardProvider()),
+  SystemChrome.setPreferredOrientations([
+    // 强制竖屏
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
+
+  // _initFluwx();
+
+  if(Platform.isAndroid) {
+    SystemChrome.setSystemUIOverlayStyle(
+        SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          systemNavigationBarColor: Colors.white
+        ));
+  }
+
+  runApp(MyApp());
+}
+
+_initFluwx() async {
+  bool weixin = await isWeChatInstalled;
+  bool alipay = await isAliPayInstalled();
+  Global.isWeChatInstalled = weixin;
+  Global.isAliPayInstalled = alipay;
+  if(weixin) {
+    await registerWxApi(
+        appId: "wx08bd2f7c9a87beee",
+        doOnAndroid: true,
+        doOnIOS: true,
+        universalLink: "https://www.chulaiwanba.com/");
+  }
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+  late Future<bool> _myinitprivacy;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _myinitprivacy = _initprivacy();
+    WidgetsBinding.instance!.addObserver(this);//页面生命周期监测
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance!.removeObserver(this); //移除
+  }
+
+  @override
+  Future<void> didChangeAppLifecycleState(AppLifecycleState state) async {
+    super.didChangeAppLifecycleState(state);
+    switch (state) {
+      case AppLifecycleState.inactive:
+      //  应用程序处于闲置状态并且没有收到用户的输入事件。
+      //注意这个状态，在切换到后台时候会触发，所以流程应该是先冻结窗口，然后停止UI
+        break;
+      case AppLifecycleState.paused:
+        String? actid = await getExtMsg();
+//      应用程序处于不可见状态
+        break;
+      case AppLifecycleState.resumed:
+      //进入应用时不会触发该状态
+      //应用程序处于可见状态，并且可以响应用户的输入事件。它相当于 Android 中Activity的onResume。
+        if(Global.isWeChatInstalled) {
+          String? actid = await getExtMsg();
+
+          if (actid != null && actid != "") {
+            if (actid.indexOf("^_^") >= 0) {
+              actid = actid.split("^_^")[0].toString();
+              Navigator.pushNamed(
+                  Global.navigatorKey.currentContext!, '/ActivityInfo',
+                  arguments: {"actid": actid});
+            }
+          }
+        }
+        break;
+      case AppLifecycleState.detached:
+      //当前页面即将退出
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+        providers: [
+          // BlocProvider<AuthenticationBloc>(
+          //   create: (BuildContext context) => AuthenticationBloc()..add(LoggedState()),
+          // ),
+          BlocProvider<ImBloc>(
+            create: (BuildContext context) => ImBloc(),
+          ),
+          BlocProvider<ReplyNoticeBloc>(
+            create: (BuildContext context) => ReplyNoticeBloc(),
+          ),
+          BlocProvider<CityActivityDataBloc>(
+            create: (BuildContext context) => CityActivityDataBloc(),
+          ),
+          BlocProvider<activitybloc.ActivityDataBloc>(
+            create: (BuildContext context) => activitybloc.ActivityDataBloc(),
+          ),
         ],
-        child: PageSplash(
-          futures: const [],
-          builder: (BuildContext context, List<dynamic> data) {
-            return MaterialApp(
-                    home: MyApp(),
-                  );
-              // const MyApp();
-          },
-        ),
-      ),
-    );
-  }, (error, stack) {
-    debugPrint('uncaught error : $error $stack');
-  });
-}
 
-Future<void> _initHive() async {
-  await Hive.initFlutter(p.join(appDir.path, 'hive'));
-  Hive.registerAdapter(NewsDetailAdapter());
-  // Hive.registerAdapter(TrackTypeAdapter());
-  // Hive.registerAdapter(TrackAdapter());
-  // Hive.registerAdapter(ArtistMiniAdapter());
-  // Hive.registerAdapter(AlbumMiniAdapter());
-  // Hive.registerAdapter(DurationAdapter());
-  Hive.registerAdapter(UserAdapter());
-}
+        child:RefreshConfiguration(
+            headerBuilder: () => MaterialClassicHeader(distance: 100, ),// 配置默认头部指示器,假如你每个页面的头部指示器都一样的话,你需要设置这个
+            footerBuilder:  () => ClassicFooter( loadStyle: LoadStyle.ShowWhenLoading),        // 配置默认底部指示器
+            headerTriggerDistance: 80.0,        // 头部触发刷新的越界距离
+            maxOverScrollExtent :100, //头部最大可以拖动的范围,如果发生冲出视图范围区域,请设置这个属性
+            maxUnderScrollExtent:0, // 底部最大可以拖动的范围
+            enableScrollWhenRefreshCompleted: false, //这个属性不兼容PageView和TabBarView,如果你特别需要TabBarView左右滑动,你需要把它设置为true
+            enableLoadingWhenFailed : false, //在加载失败的状态下,用户仍然可以通过手势上拉来触发加载更多
+            hideFooterWhenNotFull: false, // Viewport不满一屏时,禁用上拉加载更多功能
+            enableBallisticLoad: true, // 可以通过惯性滑动触发加载更多
 
-Future<void> _initialDesktop(SharedPreferences preferences) async {
-  if (!(Platform.isMacOS || Platform.isLinux || Platform.isWindows)) {
-    return;
+            child:  MaterialApp(
+              key: Global.mainkey,
+              navigatorKey: Global.navigatorKey,
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                //platform: TargetPlatform.iOS,
+                bottomNavigationBarTheme: BottomNavigationBarThemeData(
+                    backgroundColor: Colors.white
+                ),
+                primaryColor: Global.profile.backColor,
+                primaryColorBrightness: Brightness.light,
+                splashColor: Color.fromRGBO(0, 0, 0, 0),
+                accentColor: Colors.black,
+                canvasColor: Colors.grey.shade100,
+                //画布颜色
+                appBarTheme: AppBarTheme(
+                    color: Colors.white,
+                    elevation: 0,
+                    iconTheme: IconThemeData(
+                        color: Colors.white
+                    )
+                ),
+
+//              textTheme: TextTheme(
+//                  body1: TextStyle(color: Global.profile.fontColor)
+//              ),
+                buttonTheme: ButtonThemeData(
+                    textTheme: ButtonTextTheme.accent
+                ),
+              ),
+              home: _buildFutureBuilder(),
+              builder: (context, widget) {
+                return MediaQuery(
+                  //设置文字大小不随系统设置改变
+                  data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+                  child: widget!,
+                );
+              },
+              localizationsDelegates: [
+                RefreshLocalizations.delegate,
+                ChineseCupertinoLocalizations.delegate, // 自定义的delegate
+                DefaultCupertinoLocalizations.delegate, // 目前只包含英文
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+
+              ///语言
+              supportedLocales: [
+                const Locale('zh', 'CH'),
+                const Locale('en', 'US'),
+              ],
+
+              ///路由表
+              onGenerateRoute: onGenerateRoute,
+              navigatorObservers: [ //这个监听器是个集合，可根据不同需求对路由做不同的设置
+                MyNavigatorObserver()
+              ],
+            )
+        ));
   }
-  await WindowManager.instance.ensureInitialized();
-  if (Platform.isWindows) {
-    final size = preferences.getWindowSize();
-    final windowOptions = WindowOptions(
-      size: size ?? const Size(1080, 720),
-      minimumSize: windowMinSize,
-      backgroundColor: Colors.transparent,
-      skipTaskbar: false,
-      titleBarStyle: TitleBarStyle.hidden,
-    );
-    await windowManager.waitUntilReadyToShow(windowOptions, () async {
-      await windowManager.show();
-      await windowManager.focus();
-    });
-  } else if (Platform.isLinux) {
-    final size = preferences.getWindowSize();
-    await windowManager.setSize(size ?? const Size(1080, 720));
-    await windowManager.center();
-  }
 
-  if (Platform.isWindows || Platform.isLinux) {
-    windowManager.addListener(
-      CallbackWindowListener(
-        onWindowResizeCallback: () async {
-          final size = await windowManager.getSize();
-          await preferences.setWindowSize(size);
-        },
-      ),
+  FutureBuilder<bool> _buildFutureBuilder() {
+    return FutureBuilder<bool>(
+      builder: (context, AsyncSnapshot<bool> async) {
+        if (async.connectionState == ConnectionState.active ||
+            async.connectionState == ConnectionState.waiting) {
+          return SizedBox();
+        }
+        if (async.connectionState == ConnectionState.done) {
+          debugPrint("done");
+          if (async.hasError) {
+            return SizedBox();
+          }
+          else if (async.hasData) {
+            bool isaggress = async.data!;
+            return isaggress ? IndexPage() : SplashPage();
+          }
+        }
+        return SizedBox();
+      },
+      future: _myinitprivacy,
     );
   }
 
-  assert(
-      () {
-    scheduleMicrotask(() async {
-      final size = await WindowManager.instance.getSize();
-      if (size.width < 960 || size.height < 720) {
-        await WindowManager.instance
-            .setSize(const Size(960, 720), animate: true);
+  Future<bool> _initprivacy() async {
+    SharedPreferences _isagreeprivacy = await SharedPreferences.getInstance();
+    var _isagree = await _isagreeprivacy.get('isagreeprivacy');
+    if (_isagree != null && _isagree.toString() == "1") {
+      return true;
+    }
+    else {
+      if(Platform.isIOS){
+        return true;
+      }else if(Platform.isAndroid){
+        return false;
       }
-    });
+    }
 
-    return true;
-  }(),
-  );
-}
-
-// app负责主题配置
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    // return MaterialApp(
-    //   title: 'Flutter Demo',
-    //   theme: ThemeData(
-    //     // This is the theme of your application.
-    //     //
-    //     // Try running your application with "flutter run". You'll see the
-    //     // application has a blue toolbar. Then, without quitting the app, try
-    //     // changing the primarySwatch below to Colors.green and then invoke
-    //     // "hot reload" (press "r" in the console where you ran "flutter run",
-    //     // or simply save your changes to "hot reload" in a Flutter IDE).
-    //     // Notice that the counter didn't reset back to zero; the application
-    //     // is not restarted.
-    //     primarySwatch: Colors.blue,
-    //   ),
-    //   home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    // );
-    return const OverlaySupport(
-
-      child: QuietApp(),
-    );
+    return false;
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+class MyNavigatorObserver extends NavigatorObserver {
+  ///route 当前路由
+  ///previousRoute   先前活动的路由
+  ///放入路由  即打开
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void didPush(Route route, Route? previousRoute) {
+    // TODO: implement didPush
+    if(Global.isInDebugMode) {
+      print('----------pop-----------');
+      print('当前活动的路由：${route.settings}');
+      print('先前活动的路由：${previousRoute?.settings}');
+      print('----------end-----------');
+    }
+    super.didPush(route, previousRoute);
   }
-
+  ///弹出当前路由
   @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+  void didPop(Route route, Route? previousRoute) {
+    // TODO: implement didPop
+    if(Global.isInDebugMode) {
+      print('----------pop-----------');
+      print('当前活动的路由：${route.settings}');
+      print('先前活动的路由：${previousRoute?.settings}');
+      print('----------end-----------');
+    }
+    super.didPop(route, previousRoute);
   }
 }
