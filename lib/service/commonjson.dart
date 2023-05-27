@@ -6,14 +6,14 @@ import '../util/showmessage_util.dart';
 class CommonJSONService{
   ///活动标签
   Future<void> getActivityTypes(Function call) async {
-    await NetUtil.getInstance().get("/Activity/getActivityTypeList", call, errorCallBack: errorResponse);
+    await NetUtil.getInstance().get("/api/Activity/getActivityTypeList", call, errorCallBack: errorResponse);
   }
   ///活动标签
   Future<void> getActivityTypesByName(Function call, String typename) async {
-    FormData formData = FormData.fromMap({
+    var formData = {
       "typename": typename
-    });
-    await NetUtil.getInstance().post( formData,"/Activity/getActivityTypeListByTypeName",  call, errorResponse);
+    };
+    await NetUtil.getInstance().postJson( formData,"/api/Activity/getActivityTypeListByTypeName",  call, errorResponse);
   }
 
   ///默认系统配置

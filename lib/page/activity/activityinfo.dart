@@ -546,7 +546,8 @@ class _ActivityState extends State<ActivityInfo> {
 //                  valueColor:  AlwaysStoppedAnimation(Global.profile.backColor),
 //                ),
                 ) ,
-                imageUrl: '${_listimgs[i]}?x-oss-process=image/resize,m_fixed,w_1080/quality,q_80',
+                // ?x-oss-process=image/resize,m_fixed,w_1080/quality,q_80
+                imageUrl: '${_listimgs[i]}',
                 fit: BoxFit.cover,
               ),
             )
@@ -760,6 +761,7 @@ class _ActivityState extends State<ActivityInfo> {
     //如果已经加入，就直接进入群聊
     GroupRelation? groupRelation = await imhelper.getGroupRelationByGroupid(Global.profile.user!.uid, _activity!.actid);
     if(groupRelation != null && groupRelation.isnotservice == 0){
+      print("[joinActivity] isnotservice == 0 /MyMessage：-----------------------------------");
       Navigator.pushNamed(context, '/MyMessage', arguments: {"GroupRelation": groupRelation}).
         then((value) => getActivityInfo());
       return;
@@ -796,6 +798,7 @@ class _ActivityState extends State<ActivityInfo> {
         print(ret);
       }
       if(ret > 0){
+        print("[joinActivity] ret > 0 /MyMessage：-----------------------------------");
         Navigator.pushNamed(context, '/MyMessage', arguments: {"GroupRelation": groupRelation, "millisecond": DateTime.now().millisecond}).
           then((value) => getActivityInfo());
       }
@@ -808,6 +811,7 @@ class _ActivityState extends State<ActivityInfo> {
   Future<void> joinGroupMessage() async {
     GroupRelation? groupRelation = await imhelper.getGroupRelationByGroupid(Global.profile.user!.uid, _activity!.actid);
     if(groupRelation != null){
+      print("[joinGroupMessage] /MyMessage：-----------------------------------");
       Navigator.pushNamed(context, '/MyMessage', arguments: {"GroupRelation": groupRelation}).
         then((value) => getActivityInfo());
       return;
@@ -818,6 +822,7 @@ class _ActivityState extends State<ActivityInfo> {
         List<GroupRelation> grouprelations = [];
         grouprelations.add(groupRelation);
         imhelper.saveGroupRelation(grouprelations);
+        print("[joinGroupMessage] groupRelation null /MyMessage：-----------------------------------");
         Navigator.pushNamed(context, '/MyMessage', arguments: {"GroupRelation": groupRelation}).
           then((value) => getActivityInfo());
         return;

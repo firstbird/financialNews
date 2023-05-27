@@ -62,7 +62,7 @@ class _IndexPageState extends State<IndexPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    // _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
+    _authenticationBloc = BlocProvider.of<AuthenticationBloc>(context);
     FToast().init(context);//初始化提示框，其他页面需要使用
     Future.delayed(Duration.zero, () {
       // this._getCategories();
@@ -74,7 +74,7 @@ class _IndexPageState extends State<IndexPage> {
 
     _appUpdate();
     _getCategoryType();
-
+    print("[index] initState GroupPurchase");
     _pages = [HomePage(parentJumpMyProfile: _pageJump, isPop: widget.isPop),GroupPurchase(),MomentList(indexkey, (){
       if(Global.profile.user != null) {
         if (!indexkey.currentState!.isEndDrawerOpen) {
@@ -421,16 +421,19 @@ class _IndexPageState extends State<IndexPage> {
               },
             );
           }),
-      //floatingActionButton: IssuedActivityButton(),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      body: PageView.builder(
+      floatingActionButton: IssuedActivityButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      body: _pages.length > 0 ? PageView.builder(
           physics: NeverScrollableScrollPhysics(),//禁止页面左右滑动切换
           controller: _pageController,
           itemCount: _pages.length,
           itemBuilder: (context,index){
+            if (index > _pages.length || index < 0) {
+              return SizedBox.shrink();
+            }
             return  _pages[index];
           }
-      ),
+      ) : SizedBox.shrink(),
     );
   }
 
@@ -466,13 +469,22 @@ class IssuedActivityButton extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: 5),
                     icon: Icon(IconFont.icon_tianjiajiahaowubiankuang, size: 25, color: Global.profile.fontColor,),
                     color: Colors.black,
-                    onPressed: (){},
+                    onPressed: (){
+                      if(Global.profile.user == null) {
+                        Navigator.pushNamed(context, '/Login');
+                      }
+                      else {
+                        Navigator.pushNamed(context, '/IssuedActivity');
+                      }
+                    },
                   ),
                   onPressed: (){
-                    if(Global.profile.user == null)
+                    if(Global.profile.user == null) {
                       Navigator.pushNamed(context, '/Login');
-                    else
+                    }
+                    else {
                       Navigator.pushNamed(context, '/IssuedActivity');
+                    }
                   },
                 ),
                 Container(

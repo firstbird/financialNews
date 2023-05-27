@@ -420,7 +420,7 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('一起出发', style: TextStyle(color: Colors.white, fontSize: 14)),
+                      Text('购买', style: TextStyle(color: Colors.white, fontSize: 14)),
                     ],
                   ),
                   decoration: BoxDecoration(
@@ -430,18 +430,23 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                 ),
                 onTap: (){
                   if(Global.profile.user != null) {
-                    Navigator.pushNamed(context, '/IssuedActivity', arguments: {
-                      "maxcost": widget.goodPiceModel.maxcost,
-                      "provinceCode": widget.goodPiceModel.province,
-                      "city": widget.goodPiceModel.city,
-                      "address": widget.goodPiceModel.address,
-                      "addresstitle": widget.goodPiceModel.addresstitle,
-                      "lat": widget.goodPiceModel.lat,
-                      "lng": widget.goodPiceModel.lng,
-                      "mincost": widget.goodPiceModel.mincost,
-                      "content": widget.goodPiceModel.title,
-                      "pic": widget.goodPiceModel.pic,
-                      "goodpriceid": widget.goodPiceModel.goodpriceid
+                    // Navigator.pushNamed(context, '/IssuedActivity', arguments: {
+                    //   "maxcost": widget.goodPiceModel.maxcost,
+                    //   "provinceCode": widget.goodPiceModel.province,
+                    //   "city": widget.goodPiceModel.city,
+                    //   "address": widget.goodPiceModel.address,
+                    //   "addresstitle": widget.goodPiceModel.addresstitle,
+                    //   "lat": widget.goodPiceModel.lat,
+                    //   "lng": widget.goodPiceModel.lng,
+                    //   "mincost": widget.goodPiceModel.mincost,
+                    //   "content": widget.goodPiceModel.title,
+                    //   "pic": widget.goodPiceModel.pic,
+                    //   "goodpriceid": widget.goodPiceModel.goodpriceid
+                    // });
+                    // todo mzl what is actid
+                    Navigator.pushNamed(context, '/CreateOrder', arguments: {
+                      "goodprice": widget.goodPiceModel,
+                      "actid": widget.goodPiceModel.goodpriceid
                     });
                   }
                   else{

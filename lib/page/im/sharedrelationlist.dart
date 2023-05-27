@@ -212,6 +212,7 @@ class _SharedRelationListState extends State<SharedRelationList> {
                     ),
                     onTap: (){
                       _imBloc.add(Already(Global.profile.user!, item.timeline_id) );
+                      print("[UserRelationList] onTap pushReplacementNamed /MyMessage：-----------------------------------");
                       Navigator.pushReplacementNamed(context, '/MyMessage', arguments: {"GroupRelation": item, "sharedcontent":
                       "|shared: ${widget.sharedtype}#${widget.contentid}#${widget.content}#${widget.image}|","localsharedcontent":
                       "|shared: ${widget.sharedtype}#${widget.contentid}#${widget.content}#${widget.localimg}|"},).then((val){

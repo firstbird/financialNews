@@ -453,6 +453,10 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
 
   _getImMsgInit() async {
     timeLineSyncs = await _imHelper.getTimeLineSync(Global.profile.user!.uid, 0, 30, _groupRelation.timeline_id );
+    print("[_getImMsgInit] timeLineSyncs size: ${timeLineSyncs.length}, uid: ${Global.profile.user!.uid}, line id: ${_groupRelation.timeline_id}");
+    if (timeLineSyncs.length == 2) {
+      print("[_getImMsgInit] timeLineSyncs content0: ${timeLineSyncs[0].content}, content1: ${timeLineSyncs[1].content}");
+    }
     if(timeLineSyncs.length == 0 || timeLineSyncs.length == 1){
       if((_groupRelation.relationtype == 0 || _groupRelation.relationtype == 3)) {
         //付费拼玩活动插入一条安全活动规范
@@ -1036,9 +1040,11 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
 
   List<Widget> buildMsgContent(List<TimeLineSync> timeLineSyncs){
     List<Widget> rows = [];
+    print("[buildMsgContent] length: ${timeLineSyncs.length}");
     for(int i=0; i < timeLineSyncs.length ; i++){
       //系统通知,两次消息间隔超过10分钟就在消息上方显示发送时间
 
+      print("[buildMsgContent] content: ${timeLineSyncs[i].content}");
       if(timeLineSyncs[i].sender == 0){
         rows.add(buildSysMsg(timeLineSyncs[i]));
         if(timeLineSyncs[i].content!.indexOf("@安全活动规范@") < 0) {
@@ -1064,6 +1070,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
           rows.add(buildHerContent(timeLineSyncs[i]));
       }
     }
+    print("[buildMsgContent] rows: ${rows.length}");
     return rows;
   }
 

@@ -27,6 +27,10 @@ class  CommonUtil{
   static double EARTH_RADIUS = 6378.137;// 单位千米
   //根据年龄计算年龄段，80后，80后
   static String getAgeGroup(String birthday){
+    // todo mzl fix birthday type
+    if (birthday == "") {
+      return "90后";
+    }
     double year = double.parse(birthday.substring(0, 4).toString());
     return (((year/10)%10)).toString().split('.')[0].toString() + '0后';
   }
@@ -398,6 +402,7 @@ class  CommonUtil{
     // }
     Uint8List imageData = await (file).readAsBytes();
     String md5name = md5.convert(imageData).toString();
+    print("[update load image] dir: ${securityToken.dir} path: ${file.path}");
     ossurl = await aliyunService.uploadImage(securityToken, file.path, '${md5name}.png', Global.profile.user!.uid);
     return ossurl;
   }

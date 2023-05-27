@@ -874,6 +874,7 @@ class _OtherProfileState extends State<OtherProfile> with TickerProviderStateMix
       groupRelations.add(groupRelation);
       int ret = await imHelper.saveGroupRelation(groupRelations);
       if(ret > 0) {
+        print("[joinMessage] ret > 0 /MyMessage：-----------------------------------");
         Navigator.pushNamed(this.context, '/MyMessage', arguments: {"GroupRelation": groupRelation});
       }
     }

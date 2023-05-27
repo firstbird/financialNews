@@ -20,7 +20,7 @@ class GPService {
     List<SearchResult> searchResults = [];
 
     await NetUtil.getInstance().get(
-        "/grouppurchase/hotsearchProduct", (Map<String, dynamic> data) {
+        "/api/grouppurchase/hotsearchProduct", (Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
           SearchResult searchResult = SearchResult.fromJson(data["data"][i]);
@@ -37,10 +37,10 @@ class GPService {
   Future<List<SearchResult>> getRecommendSearchProduct(String content,
       Function errorCallBack) async {
     List<SearchResult> searchResults = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "content": content,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/getRecommendSearchProduct", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getRecommendSearchProduct", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
@@ -55,12 +55,12 @@ class GPService {
   //收藏商品
   Future<bool> updateCollection(int productid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "productid": productid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updateProductCollection", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateProductCollection", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
 
@@ -70,12 +70,12 @@ class GPService {
   //收藏好价优惠
   Future<bool> updateGoodPriceCollection(GoodPiceModel goodPiceModel, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "goodpriceid": goodPiceModel.goodpriceid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updateGoodPriceCollection", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateGoodPriceCollection", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
 
@@ -85,7 +85,7 @@ class GPService {
   //获取用户收藏的好价
   Future<List<GoodPiceModel>> getUserGoodPriceCollectionInfo(int currentIndex, int uid, String token) async {
     List<GoodPiceModel> goodPriceList = [];
-    await NetUtil.getInstance().get("/grouppurchase/getUserGoodPriceCollectionInfo", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getUserGoodPriceCollectionInfo", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           goodPriceList.add(GoodPiceModel.fromJson(data["data"][i]));
@@ -97,12 +97,12 @@ class GPService {
   //取消收藏
   Future<bool> delCollection(int productid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "productid": productid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/delProductCollection", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delProductCollection", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     await imhelper.delProductCollectionState(productid, uid);
@@ -111,12 +111,12 @@ class GPService {
   //取消优惠收藏
   Future<bool> delGoodPriceCollection(String goodpriceid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "goodpriceid": goodpriceid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/delGoodPriceCollection", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delGoodPriceCollection", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     await imhelper.delGoodPriceCollectionState(goodpriceid, uid);
@@ -153,12 +153,12 @@ class GPService {
   Future<void> getUserGoodPriceCollection(int uid, String token) async {
     int count = await imhelper.selGoodPriceCollectionStateByUid(uid);
     if(count <= 0) {
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(
-          formData, "/grouppurchase/getUserGoodPriceCollectionInfo", (
+      };
+      await NetUtil.getInstance().postJson(
+          formData, "/api/grouppurchase/getUserGoodPriceCollectionInfo", (
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
@@ -176,7 +176,7 @@ class GPService {
   Future<int> updateMessage(String goodpriceid, int uid, String token, int touid,  String content, String captchaVerification,Function errorCallBack) async{
     int commentid = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "goodpriceid": goodpriceid,
@@ -184,8 +184,8 @@ class GPService {
       "touid": touid,
       "content": content,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updatecomment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updatecomment", (Map<String, dynamic> data) {
       commentid = int.parse(data["data"].toString());
     }, errorCallBack);
     return commentid;
@@ -194,7 +194,7 @@ class GPService {
   Future<int> updateCommentReply(int commentid, String goodpriceid, int uid, String token, int touid,  String content, String captchaVerification, Function errorCallBack) async{
     int isret = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "goodpriceid": goodpriceid,
@@ -202,8 +202,8 @@ class GPService {
       "touid": touid,
       "content": content,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updatecomment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updatecomment", (Map<String, dynamic> data) {
       isret = int.parse(data["data"].toString());
     }, errorCallBack);
     return isret;
@@ -211,14 +211,14 @@ class GPService {
   //点赞
   Future<bool> updateCommentLike(int commentid, int uid, String token, int likeuid, String goodpriceid,Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "likeuid": likeuid,
       "goodpriceid": goodpriceid
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updateCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -229,7 +229,7 @@ class GPService {
   //获取留言
   Future<List<Comment>> getCommentList(String goodpriceid, int uid, Function errorCallBack) async {
     List<Comment> listComments = [];
-    await NetUtil.getInstance().get("/grouppurchase/getcomment", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getcomment", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           Comment comment = Comment.fromJson(data["data"][i]);
@@ -254,14 +254,14 @@ class GPService {
   //取消留言
   Future<bool> delMessage(String token, int uid, int commentid, String goodpriceid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "replyid": 0,
       "goodpriceid": goodpriceid
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/delcomment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delcomment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -269,14 +269,14 @@ class GPService {
   //取消留言里的回复
   Future<bool> delMessageReply(String token, int uid, int replyid, String goodpriceid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": 0,
       "uid": uid,
       "replyid": replyid,
       "goodpriceid": goodpriceid
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/delcomment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delcomment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -284,13 +284,13 @@ class GPService {
   //取消点赞
   Future<bool> delCommentLike(int commentid, int uid, String token, int likeuid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "likeuid": likeuid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/delCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -301,12 +301,12 @@ class GPService {
   //好价点赞
   Future<bool> updateGoodPriceLike(String goodpriceid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "goodpriceid": goodpriceid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updateGoodPriceLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateGoodPriceLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate){
@@ -318,12 +318,12 @@ class GPService {
   //好价取消点赞
   Future<bool> delGoodPriceLike(String goodpriceid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "goodpriceid": goodpriceid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updateCancelLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateCancelLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -334,12 +334,12 @@ class GPService {
   //好价点不赞
   Future<bool> updateUnLike(String goodpriceid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "goodpriceid": goodpriceid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updateUnLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateUnLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate){
@@ -351,12 +351,12 @@ class GPService {
   //好价取消点不赞
   Future<bool> updateCancelUnLike(String goodpriceid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "goodpriceid": goodpriceid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updateCancelUnLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateCancelUnLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate){
@@ -369,14 +369,14 @@ class GPService {
   Future<List<GoodPiceModel>> searchProduct(String ordertype, String citycode, int currentIndex,
       bool isAllCity,String content, Function errorCallBack) async {
     List<GoodPiceModel> goodprices = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "content": content,
       "ordertype": ordertype,
       "citycode": citycode,
       "currentIndex": currentIndex,
       "isAllCity": isAllCity ? "1" : "0"
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/searchProduct", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/searchProduct", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
@@ -391,7 +391,7 @@ class GPService {
   //获取优惠商品详情
   Future<GoodPiceModel?> getGoodPriceInfo(String goodpriceid) async {
     GoodPiceModel? goodPiceModel;
-    await NetUtil.getInstance().get("/grouppurchase/getGoodPriceInfo", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getGoodPriceInfo", (Map<String, dynamic> data){
       goodPiceModel = GoodPiceModel.fromJson(data["data"]);
     },params: {"goodpriceid": goodpriceid.toString()}, errorCallBack: errorResponse);
     return goodPiceModel;
@@ -399,13 +399,13 @@ class GPService {
   //创建团购订单
   Future<String> createGPOrder(String actid, int uid, String token, int touid, Function errorCallBack) async {
     String orderid = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
       "touid": touid
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/createGPOrder", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/createGPOrder", (Map<String, dynamic> data) {
       orderid = data["data"];
     }, errorCallBack);
 
@@ -415,14 +415,14 @@ class GPService {
   //参加活动
   Future<Activity?> joinGPActivity(String actid, int uid, String token, String username, String sex, Function errorCallBack) async{
     Activity? activity;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
       "username": username,
       "sex": sex,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/joinActivity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/joinActivity", (Map<String, dynamic> data) {
       activity = Activity.fromJson(data['data']);
     }, errorCallBack);
     return activity;
@@ -430,12 +430,12 @@ class GPService {
 
   Future<bool> clientPaySuccess(String orderid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "orderid": orderid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/clientPaySuccess", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/clientPaySuccess", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
 
@@ -445,7 +445,7 @@ class GPService {
   //获取相关活动
   Future<List<Activity>> getActivityList(String goodpriceid) async {
     List<Activity> activitys = [];
-    await NetUtil.getInstance().get("/grouppurchase/getActivityList", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getActivityList", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activitys.add(Activity.fromJson(data["data"][i]));
@@ -457,7 +457,7 @@ class GPService {
   //通知服务器客户端支付成功
   Future<bool> updategoodpricestatus(int uid, String token, String goodpriceid, int status, String msg, String tag,  Function errorCallBack) async {
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "goodpriceid": goodpriceid,
       "uid": uid,
       "token": token,
@@ -465,8 +465,8 @@ class GPService {
       "msg": msg,
       "tag": tag,
       "goodpriceid": goodpriceid
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updategoodpricestatus", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updategoodpricestatus", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
 
@@ -486,7 +486,7 @@ class GPService {
     }
 
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "title": title,
@@ -510,8 +510,8 @@ class GPService {
       "address": address,
       "addresstitle": addresstitle,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/createGoodPrice", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/createGoodPrice", (Map<String, dynamic> data) {
       goodpriceid = data["data"];
     }, errorCallBack);
     if(goodpriceid != null && goodpriceid.isNotEmpty){
@@ -533,7 +533,7 @@ class GPService {
     }
 
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "title": title,
@@ -557,8 +557,8 @@ class GPService {
       "address": address,
       "addresstitle": addresstitle,
       "goodpriceid": goodpriceid,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/updateGoodPrice", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateGoodPrice", (Map<String, dynamic> data) {
       goodpriceid = data["data"];
     }, errorCallBack);
     if(goodpriceid != null && goodpriceid.isNotEmpty){
@@ -569,7 +569,7 @@ class GPService {
   //sys获取推荐商品（运维）
   Future<List<GoodPiceModel>> getGoodPriceList() async {
     List<GoodPiceModel> goodPrices = [];
-    await NetUtil.getInstance().get("/grouppurchase/getSysGoodPriceCheck", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getSysGoodPriceCheck", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           goodPrices.add(GoodPiceModel.fromJson(data["data"][i]));
@@ -582,7 +582,7 @@ class GPService {
   //获取我的推荐商品(审核中)
   Future<List<GoodPiceModel>> getMyGoodPricePendingList() async {
     List<GoodPiceModel> goodPrices = [];
-    await NetUtil.getInstance().get("/grouppurchase/getMyGoodPricePendingList", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getMyGoodPricePendingList", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           goodPrices.add(GoodPiceModel.fromJson(data["data"][i]));
@@ -595,7 +595,7 @@ class GPService {
   //获取我的推荐商品(已审核)
   Future<List<GoodPiceModel>> getMyGoodPriceFinishList() async {
     List<GoodPiceModel> goodPrices = [];
-    await NetUtil.getInstance().get("/grouppurchase/getMyGoodPriceFinishList", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getMyGoodPriceFinishList", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           goodPrices.add(GoodPiceModel.fromJson(data["data"][i]));
@@ -608,7 +608,7 @@ class GPService {
   //删除我的推荐
   Future<bool> delMyGoodPrice(String goodpriceid,  Function errorCallBack) async {
     bool ret =false;
-    await NetUtil.getInstance().get("/grouppurchase/delMyGoodPrice", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/delMyGoodPrice", (Map<String, dynamic> data){
       if (data["data"] != null) {
         ret = true;
       }
@@ -619,7 +619,7 @@ class GPService {
   //获取推荐商品
   Future<List<GoodPiceModel>> getRecommendGoodPriceList(int type,int currentIndex) async {
     List<GoodPiceModel> goodpicemodels = [];
-    await NetUtil.getInstance().get("/grouppurchase/getRecommendGoodPriceList", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getRecommendGoodPriceList", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           goodpicemodels.add(GoodPiceModel.fromJson(data["data"][i]));
@@ -632,7 +632,7 @@ class GPService {
   //获取商品规格
   Future<List<Skuspecs>> getProductSpecsList(String goodpriceid) async {
     List<Skuspecs> skuspecsList = [];
-    await NetUtil.getInstance().get("/grouppurchase/getSkuStockList", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/grouppurchase/getSkuStockList", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           skuspecsList.add(Skuspecs.fromJson(data["data"][i]));
@@ -646,11 +646,11 @@ class GPService {
   Future<List<EvaluateActivity>> getEvaluateGoodPriceList(String goodpriceid, int currentIndex,  Function errorCallBack) async{
     List<EvaluateActivity> evaluateActivities = [];
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "goodpriceid": goodpriceid,
       "currentIndex": currentIndex,
-    });
-    await NetUtil.getInstance().post(formData, "/grouppurchase/getEvaluateGoodPriceList", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getEvaluateGoodPriceList", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         EvaluateActivity evaluateActivity = EvaluateActivity.fromJson(data["data"][i]);
         evaluateActivities.add(evaluateActivity);

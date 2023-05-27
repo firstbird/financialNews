@@ -110,6 +110,7 @@ class NinePicture extends StatelessWidget {
     }
 
     if(list.length == 1){
+      print("[moment image] index length 1");
       return InkWell(
         onTap: () {
           showPhoto(context, list[0], 0);
@@ -119,7 +120,9 @@ class NinePicture extends StatelessWidget {
           child: ClipRRect(
             child: CachedNetworkImage(
               fit: BoxFit.cover,
-              imageUrl: '${list[0]['img']}?x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80',
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+              imageUrl: '${list[0]['img']}'//'${list[0]['img']}?x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80',
             ),
             borderRadius: BorderRadius.circular(8),
           ),
@@ -127,6 +130,9 @@ class NinePicture extends StatelessWidget {
       );
     }
 
+    for (var index in list.asMap().keys) {
+      print("[moment image] index: ${index}, path: ${list[index]['img']}");
+    }
     return GridView.count(
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: _crossAxisCount,
@@ -141,9 +147,13 @@ class NinePicture extends StatelessWidget {
             child: Hero(
               tag: list[index]['tag'].toString(),
               child: ClipRRect(
+                // child: Image.network(
+                //     'http://mzl-debug-bucket.oss-cn-shanghai.aliyuncs.com/images/480087626/33b3c1e5568a7c57cf97fe433e01f9ae.png?Expires=4838732879&OSSAccessKeyId=LTAI5tJAKLVgtLChmd6ayfLT&Signature=kfhax6R9NLZQuM1cUmLlg88FQ58%3D'),
                 child: CachedNetworkImage(
-                  fit: BoxFit.fitWidth,
-                  imageUrl: '${list[index]['img']}?x-oss-process=image/resize,m_fill,w_600/sharpen,50/quality,q_80',
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    imageUrl: '${list[index]['img']}' //&x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),

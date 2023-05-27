@@ -9,7 +9,37 @@ export './state/activity_city_state.dart';
 class CityActivityDataBloc extends Bloc<PostEvent, CityActivityState> {
   final ActivityService _activityService = new ActivityService();
 
-  CityActivityDataBloc():super(PostInitial());
+  CityActivityDataBloc():super(PostInitial()) {
+    on<PostFetched>((event, emit) async {
+      final currentState = state;
+      try {
+        if (event is PostFetched && !_hasReachedMax(currentState)) {
+          if (currentState is PostInitial || currentState is PostFailure) {
+            emit(PostLoading());
+            final activitys = await _activityService
+                .getActivityListByCity(0, event.locationCode);
+            emit(PostSuccess(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, isRefreshed: true));
+            return;
+          }
+          //加载更多
+          if (currentState is PostSuccess) {
+            final activitys = await _activityService
+                .getActivityListByCity(
+                currentState.activitys!.length, event.locationCode);
+             emit(activitys.isEmpty
+                ? currentState.copyWith(hasReachedMax: true)
+                : PostSuccess(
+                activitys: currentState.activitys! + activitys,
+                hasReachedMax: false,
+                isRefreshed: false
+            ));
+          }
+        }
+      } catch(_){
+        emit(PostFailure());
+      }
+    });
+  }
 
   //@override
   // TODO: implement initialState
@@ -17,40 +47,40 @@ class CityActivityDataBloc extends Bloc<PostEvent, CityActivityState> {
 
   @override
   Stream<CityActivityState> mapEventToState(PostEvent event) async* {
-    final currentState = state;
-    try {
-      if (event is PostFetched && !_hasReachedMax(currentState)) {
-        if (currentState is PostInitial || currentState is PostFailure) {
-          yield PostLoading();
-          final activitys = await _activityService
-              .getActivityListByCity(0, event.locationCode);
-          yield PostSuccess(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, isRefreshed: true);
-          return;
-        }
-        //加载更多
-        if (currentState is PostSuccess ) {
-          final activitys = await _activityService
-              .getActivityListByCity(currentState.activitys!.length, event.locationCode);
-          yield activitys.isEmpty
-              ? currentState.copyWith(hasReachedMax: true)
-              : PostSuccess(
-            activitys: currentState.activitys! + activitys,
-            hasReachedMax: false,
-            isRefreshed: false
-          );
-        }
-      }
-      if (event is Refreshed){
-        yield PostLoading();
-        final activitys = await _activityService
-            .getActivityListByCity(0, event.locationCode);
-        yield PostSuccess(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, isRefreshed: true);
-        return;
-      }
-    }
-    catch(_){
-      yield PostFailure();
-    }
+    // final currentState = state;
+    // try {
+    //   if (event is PostFetched && !_hasReachedMax(currentState)) {
+    //     if (currentState is PostInitial || currentState is PostFailure) {
+    //       yield PostLoading();
+    //       final activitys = await _activityService
+    //           .getActivityListByCity(0, event.locationCode);
+    //       yield PostSuccess(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, isRefreshed: true);
+    //       return;
+    //     }
+    //     //加载更多
+    //     if (currentState is PostSuccess ) {
+    //       final activitys = await _activityService
+    //           .getActivityListByCity(currentState.activitys!.length, event.locationCode);
+    //       yield activitys.isEmpty
+    //           ? currentState.copyWith(hasReachedMax: true)
+    //           : PostSuccess(
+    //         activitys: currentState.activitys! + activitys,
+    //         hasReachedMax: false,
+    //         isRefreshed: false
+    //       );
+    //     }
+    //   }
+    //   if (event is Refreshed){
+    //     yield PostLoading();
+    //     final activitys = await _activityService
+    //         .getActivityListByCity(0, event.locationCode);
+    //     yield PostSuccess(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, isRefreshed: true);
+    //     return;
+    //   }
+    // }
+    // catch(_){
+    //   yield PostFailure();
+    // }
   }
 
   @override

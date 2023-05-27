@@ -47,16 +47,16 @@ class ImService {
             sequence_id = temsequence_id;
           }
 
-          FormData formData = FormData.fromMap({
+          var formData = {
             "token": token,
             "uid": uid,
             "timeline_id": groupRelation.timeline_id,//取消唯一ID，可以批量获取数据，暂时不使用
             "sequence_id": sequence_id, //服务器已读的
-          });
+          };
 
           ///通过自增的已读ID获取未读消息.活动
           if(groupRelation.relationtype == 0 || groupRelation.relationtype == 3) {
-            await NetUtil.getInstance().post(formData, "/IM/getGroupConversationTimelineId", (Map<String, dynamic> data) async {
+            await NetUtil.getInstance().postJson(formData, "/api/IM/getGroupConversationTimelineId", (Map<String, dynamic> data) async {
               List<TimeLineSync> timelinesynclist = [];
               for (int i = 0; i < data["data"].length; i++) {
                 TimeLineSync timeLineSync = TimeLineSync.fromMapByServer(
@@ -78,8 +78,8 @@ class ImService {
           }
           //社团
           if(groupRelation.relationtype == 1){
-            await NetUtil.getInstance().post(
-                formData, "/IM/getCommunityConversationTimelineId", (
+            await NetUtil.getInstance().postJson(
+                formData, "/api/IM/getCommunityConversationTimelineId", (
                 Map<String, dynamic> data) async {
               List<TimeLineSync> timelinesynclist = [];
               for (int i = 0; i < data["data"].length; i++) {
@@ -110,8 +110,8 @@ class ImService {
           }
           //私聊
           if(groupRelation.relationtype == 2){
-            await NetUtil.getInstance().post(
-                formData, "/IM/getSingleConversationTimelineId", (
+            await NetUtil.getInstance().postJson(
+                formData, "/api/IM/getSingleConversationTimelineId", (
                 Map<String, dynamic> data) async {
               List<TimeLineSync> timelinesynclist = [];
               for (int i = 0; i < data["data"].length; i++) {
@@ -147,7 +147,7 @@ class ImService {
       await postReadMessage(
           timeLineSync.timeline_id!, token, uid, errorCallBack);
     }
-    return true;
+    return count > 0;
   }
   //保存消息
   Future<bool> saveCommunityTimeLineSync(TimeLineSync timeLineSync,  token, uid, errorCallBack) async {
@@ -159,7 +159,7 @@ class ImService {
           timeLineSync.timeline_id!, token, uid, errorCallBack);
     }
 
-    return true;
+    return count > 0;
   }
   //保存消息
   Future<bool> saveSingleTimeLineSync(TimeLineSync timeLineSync,  token, uid, errorCallBack) async {
@@ -171,17 +171,17 @@ class ImService {
           timeLineSync.timeline_id!, token, uid, errorCallBack);
     }
 
-    return true;
+    return count > 0;
   }
   //同步群聊关系，活动群，社团群，私聊群
   Future<List<GroupRelation>?> syncRelation(int uid, String token, Function errorCallBack) async {
     List<GroupRelation>? grouprelationlist = null;
     //如果本地没有数据，并且
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/listMyGroupConversations", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/listMyGroupConversations", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         grouprelationlist = [];
@@ -198,11 +198,11 @@ class ImService {
   Future<List<GroupRelation>?> syncActivityRelation(int uid, String token, Function errorCallBack) async {
     List<GroupRelation>? grouprelationlist = null;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/listActivityGroupConversations", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/listActivityGroupConversations", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         grouprelationlist = [];
@@ -219,11 +219,11 @@ class ImService {
   Future<List<GroupRelation>?> syncActivityRelationInit(int uid, String token, Function errorCallBack) async {
     List<GroupRelation>? grouprelationlist = null;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/listActivityGroupConversationsInit", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/listActivityGroupConversationsInit", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         grouprelationlist = [];
@@ -240,11 +240,11 @@ class ImService {
   Future<List<GroupRelation>?> syncCommunityRelation(int uid, String token, Function errorCallBack) async {
     List<GroupRelation>? grouprelationlist = null;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/listCommunityGroupConversations", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/listCommunityGroupConversations", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         grouprelationlist =  [];
@@ -261,11 +261,11 @@ class ImService {
   Future<List<GroupRelation>?> syncSingleRelation(int uid, String token, Function errorCallBack) async {
     List<GroupRelation>? grouprelationlist = null;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/listSingleGroupConversations", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/listSingleGroupConversations", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         grouprelationlist = [];
@@ -281,13 +281,13 @@ class ImService {
   //获取群聊成员
   Future<List<User>> getGroupAllUsers(String timeline_id, String token, int uid, Function errorCallBack) async {
     List<User> users= [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "timeline_id": timeline_id,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getGroupAllUsers", (
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getGroupAllUsers", (
         Map<String, dynamic> data){
       if(data["data"] != null){
         for(int i=0; i<data["data"].length; i++){
@@ -335,14 +335,14 @@ class ImService {
     bool ret = false;
     int readindex = await imhelper.getMaxsequence_id(timeline_id);
     if(readindex!=null){
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
         "timeline_id": timeline_id,
         "sequence_id": readindex, //已经下载的消息索引，下载后标记为已经读取到本地
-      });
+      };
 
-      await NetUtil.getInstance().post(formData, "/IM/updateGroupMessageAlready", (
+      await NetUtil.getInstance().postJson(formData, "/api/IM/updateGroupMessageAlready", (
           Map<String, dynamic> data){
         ret = true;
       }, errorCallBack);
@@ -354,14 +354,14 @@ class ImService {
     bool ret = false;
     int readindex = await imhelper.getMaxsequence_id(timeline_id);
     if(readindex!=null){
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
         "timeline_id": timeline_id,
         "sequence_id": readindex, //已经下载的消息索引，下载后标记为已经读取到本地
-      });
+      };
 
-      await NetUtil.getInstance().post(formData, "/IM/postSingleReadMessage", (
+      await NetUtil.getInstance().postJson(formData, "/api/IM/postSingleReadMessage", (
           Map<String, dynamic> data){
         ret = true;
       }, errorCallBack);
@@ -373,14 +373,14 @@ class ImService {
     bool ret = false;
     int readindex = await imhelper.getMaxsequence_id(timeline_id);
     if(readindex!=null){
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
         "timeline_id": timeline_id,
         "sequence_id": readindex, //已经下载的消息索引，下载后标记为已经读取到本地
-      });
+      };
 
-      await NetUtil.getInstance().post(formData, "/IM/updateCommunityMessageAlready", (
+      await NetUtil.getInstance().postJson(formData, "/api/IM/updateCommunityMessageAlready", (
           Map<String, dynamic> data){
         ret = true;
       }, errorCallBack);
@@ -392,14 +392,14 @@ class ImService {
     bool ret = false;
     int readindex = await imhelper.getMaxsequence_id(timeline_id);
     if(readindex!=null){
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
         "timeline_id": timeline_id,
         "sequence_id": readindex, //服务器已读的
-      });
+      };
 
-      await NetUtil.getInstance().post(formData, "/IM/LoadedMessage", (
+      await NetUtil.getInstance().postJson(formData, "/api/IM/LoadedMessage", (
           Map<String, dynamic> data){
         ret = true;
       }, errorCallBack);
@@ -412,32 +412,40 @@ class ImService {
   Future<String> postSendMessage(String timeline_id, String token, int uid, String content, int contenttype,
       int relationtype, String captchaVerification, Function errorCallBack) async {
     String ret = "";
-    FormData formData = FormData.fromMap({
-      "token": token,
-      "uid": uid,
-      "timeline_id": timeline_id,
-      "content": content,
-      "contenttype": contenttype,
-      "captchaVerification": captchaVerification
-    });
+    // var formData = {
+    //   "token": token,
+    //   "uid": uid,
+    //   "timeline_id": timeline_id,
+    //   "content": content,
+    //   "contenttype": contenttype,
+    //   "captchaVerification": captchaVerification
+    // });
+    var formData = {
+        "token": token,
+        "uid": uid,
+        "timeline_id": timeline_id,
+        "content": content,
+        "contenttype": contenttype,
+        "captchaVerification": captchaVerification
+    };
 
     if(relationtype == 0 || relationtype == 3) {//拼玩和团购
-      await NetUtil.getInstance().post(
-          formData, "/IM/sendGroupMessage", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/sendGroupMessage", (Map<String, dynamic> data) {
         ret = data["data"];
       }, errorCallBack);
       return ret;
     }
     else if (relationtype == 1){
-      await NetUtil.getInstance().post(
-          formData, "/IM/sendCommunityMessage", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/sendCommunityMessage", (Map<String, dynamic> data) {
         ret = data["data"];
       }, errorCallBack);
       return ret;
     }
     else if (relationtype == 2){
-      await NetUtil.getInstance().post(
-          formData, "/IM/sendSingleMessage", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/sendSingleMessage", (Map<String, dynamic> data) {
         ret = data["data"];
       }, errorCallBack);
       return ret;
@@ -449,17 +457,17 @@ class ImService {
   Future<bool> recallMessage(String timeline_id, String token, int uid, String username, String source_id,
       int relationtype, Function errorCallBack) async {
     bool ret = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "timeline_id": timeline_id,
       "username": username,
       "source_id": source_id,
       "relationtype": relationtype
-    });
+    };
 
-    await NetUtil.getInstance().post(
-        formData, "/IM/recallMessage", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(
+        formData, "/api/IM/recallMessage", (Map<String, dynamic> data) {
       ret = true;
     }, errorCallBack);
     return ret;
@@ -467,12 +475,12 @@ class ImService {
   //获取订单详情
   Future<String> getActivityInfo(String actid, String token, int uid, Function errorCallBack) async {
     String retmsg = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "actid": actid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/orderActivityVerify", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/orderActivityVerify", (
         Map<String, dynamic> data){
       retmsg = data["data"];
     }, errorCallBack);
@@ -489,12 +497,12 @@ class ImService {
     else{
       ShowMessage.showCenterToast("取消中");
     }
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateActivityLocked", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateActivityLocked", (Map<String, dynamic> data) {
       ShowMessage.cancel();
       retmsg = data["data"];
     }, errorCallBack);
@@ -504,26 +512,26 @@ class ImService {
   //聊天中拉黑用户
   Future<bool> updateBlockUser(String timeline_id, String token, int uid, int relationtype, Function errorCallBack) async {
     bool ret = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "timeline_id": timeline_id,
-    });
+    };
     if(relationtype == 2) {
-      await NetUtil.getInstance().post(
-          formData, "/IM/updateBlockUser", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/updateBlockUser", (Map<String, dynamic> data) {
         ret = true;
       }, errorCallBack);
     }
     else if(relationtype == 0 || relationtype == 3){
-      await NetUtil.getInstance().post(
-          formData, "/IM/updateBlockActivity", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/updateBlockActivity", (Map<String, dynamic> data) {
         ret = true;
       }, errorCallBack);
     }
     else if(relationtype == 1){
-      await NetUtil.getInstance().post(
-          formData, "/IM/updateBlockCommunity", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/updateBlockCommunity", (Map<String, dynamic> data) {
         ret = true;
       }, errorCallBack);
     }
@@ -533,26 +541,26 @@ class ImService {
   //聊天中取消拉黑用户
   Future<bool> updateCancelBlockUser(String timeline_id, String token, int uid, int relationtype, Function errorCallBack) async {
     bool ret = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "timeline_id": timeline_id,
-    });
+    };
     if(relationtype == 2) {
-      await NetUtil.getInstance().post(
-          formData, "/IM/updateCancelBlockUser", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/updateCancelBlockUser", (Map<String, dynamic> data) {
         ret = true;
       }, errorCallBack);
     }
     else if (relationtype == 0 || relationtype == 3) {
-      await NetUtil.getInstance().post(
-          formData, "/IM/updateCancelBlockActivity", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/updateCancelBlockActivity", (Map<String, dynamic> data) {
         ret = true;
       }, errorCallBack);
     }
     else if (relationtype == 1) {
-      await NetUtil.getInstance().post(
-          formData, "/IM/updateCancelBlockCommunity", (Map<String, dynamic> data) {
+      await NetUtil.getInstance().postJson(
+          formData, "/api/IM/updateCancelBlockCommunity", (Map<String, dynamic> data) {
         ret = true;
       }, errorCallBack);
     }
@@ -564,16 +572,16 @@ class ImService {
   Future<String> reportOtherIm(int uid,  String token,  String timeline_id, int reporttype, String reportcontent,
       String images, Function errorCallBack) async {
     String ret = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "timeline_id": timeline_id,
       "reporttype": reporttype,
       "reportcontent": reportcontent,
       "images": images,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/reportOtherIm", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/reportOtherIm", (Map<String, dynamic> data) {
       ret = data["data"];
     }, errorCallBack);
     return ret;
@@ -583,12 +591,12 @@ class ImService {
   Future<ImReport?> getMyReportInfo(int uid, String token, String reportid, Function errorCallBack) async{
     ImReport? myReport = null;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "reportid": reportid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/getMyImReportInfo", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getMyImReportInfo", (Map<String, dynamic> data) {
       myReport = ImReport.fromJson(data["data"]);
     }, errorCallBack);
     return myReport;
@@ -598,11 +606,11 @@ class ImService {
   Future<List<ImReport>?> getMyReport(int uid, String token, Function errorCallBack) async{
     List<ImReport> myReports = [];
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/getMyImReport", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getMyImReport", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         ImReport myReport = ImReport.fromJson(data["data"][i]);
         myReports.add(myReport);
@@ -614,15 +622,15 @@ class ImService {
   Future<String> reportBUG(int uid,  String token, String reportcontent,
       String images, String captchaVerification, Function errorCallBack) async {
     String ret = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "reportcontent": reportcontent,
       "images": images,
       "captchaVerification": captchaVerification
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/reportBUG", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/reportBUG", (Map<String, dynamic> data) {
       ret = data["data"];
     }, errorCallBack);
     return ret;
@@ -632,16 +640,16 @@ class ImService {
   Future<String> reportSuggest(int uid,  String token, String reportcontent,
       String images, String captchaVerification, Function errorCallBack) async {
     String ret = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "reportcontent": reportcontent,
       "images": images,
       "captchaVerification": captchaVerification
 
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/reportSuggest", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/reportSuggest", (Map<String, dynamic> data) {
       ret = data["data"];
     }, errorCallBack);
     return ret;
@@ -651,18 +659,27 @@ class ImService {
   Future<String> reportMoment(int uid,  String token, String content, String voice,
       String images, String coverimgwh, String category, String captchaVerification, Function errorCallBack) async {
     String ret = "";
-    FormData formData = FormData.fromMap({
-      "uid": uid,
-      "token": token,
-      "content": content,
-      "voice": voice,
-      "category": category,
-      "images": images,
-      "coverimgwh": coverimgwh,
-      "captchaVerification": captchaVerification
-    });
-
-    await NetUtil.getInstance().post(formData, "/IM/reportMoment", (Map<String, dynamic> data) {
+    // var formData = {
+    //   "uid": uid,
+    //   "token": token,
+    //   "content": content,
+    //   "voice": voice,
+    //   "category": category,
+    //   "images": images,
+    //   "coverimgwh": coverimgwh,
+    //   "captchaVerification": captchaVerification
+    // });
+    var formData = {
+        "uid": uid,
+        "token": token,
+        "content": content,
+        "voice": voice,
+        "category": category,
+        "images": images,
+        "coverimgwh": coverimgwh,
+        "captchaVerification": captchaVerification
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/reportMoment", (Map<String, dynamic> data) {
       ret = data["data"];
     }, errorCallBack);
     return ret;
@@ -671,13 +688,13 @@ class ImService {
   //删除moment
   Future<bool> delMoment(String token, int uid,  String momentid, Function errorCallBack) async {
     bool ret = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "momentid": momentid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/delMoment", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delMoment", (Map<String, dynamic> data) {
       ret = true;
     }, errorCallBack);
 
@@ -688,13 +705,13 @@ class ImService {
   //获取suggest列表
   Future<List<Bug>> getBugList(int uid,  String token, int currIndex, Function errorCallBack) async {
     List<Bug> bugs = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "currIndex": currIndex,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getBugList", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getBugList", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         Bug bug = Bug.fromJson(data["data"][i]);
         bugs.add(bug);
@@ -705,13 +722,13 @@ class ImService {
 
   Future<Bug?> getBugInfo(int uid,  String token, String bugid, Function errorCallBack) async {
     Bug? bug;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "bugid": bugid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getBugInfo", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getBugInfo", (Map<String, dynamic> data) {
       bug = Bug.fromJson(data["data"]);
     }, errorCallBack);
     return bug;
@@ -720,13 +737,13 @@ class ImService {
   //获取suggest列表
   Future<List<Suggest>> getSuggestList(int uid,  String token, int currIndex, Function errorCallBack) async {
     List<Suggest> suggests = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "currIndex": currIndex,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getSuggestList", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getSuggestList", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         Suggest suggest = Suggest.fromJson(data["data"][i]);
         suggests.add(suggest);
@@ -737,13 +754,13 @@ class ImService {
 
   Future<Suggest?> getSuggestInfo(int uid,  String token, String suggestid, Function errorCallBack) async {
     Suggest? suggest;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "suggestid": suggestid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getSuggestInfo", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getSuggestInfo", (Map<String, dynamic> data) {
       suggest = Suggest.fromJson(data["data"]);
     }, errorCallBack);
     return suggest;
@@ -752,12 +769,16 @@ class ImService {
   //获取moment列表
   Future<List<Moment>> getMomentList(int currIndex, String subject, Function errorCallBack) async {
     List<Moment> moments = [];
-    FormData formData = FormData.fromMap({
-      "currIndex": currIndex,
-      "subject" : subject
-    });
+    // var formData = {
+    //   "currIndex": currIndex,
+    //   "subject" : subject
+    // });
+    var formData = {
+        "currIndex": currIndex,
+        "subject" : subject
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getMomentList", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getMomentList", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         Moment moment = Moment.fromJson(data["data"][i]);
         moments.add(moment);
@@ -768,11 +789,11 @@ class ImService {
 
   Future<Moment?> getMomentInfo(String momentid, Function errorCallBack) async {
     Moment? moment;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "momentid": momentid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getMomentInfo", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getMomentInfo", (Map<String, dynamic> data) {
       moment = Moment.fromJson(data["data"]);
     }, errorCallBack);
     return moment;
@@ -780,11 +801,11 @@ class ImService {
 
   Future<List<Moment>> getMomentListByUser(int uid, Function errorCallBack) async {
     List<Moment> moments = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid" :  uid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getMomentListByUser", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getMomentListByUser", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         Moment moment = Moment.fromJson(data["data"][i]);
         moments.add(moment);
@@ -797,12 +818,12 @@ class ImService {
   //BUG点赞
   Future<bool> updateBugLike(String bugid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "bugid": bugid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateBugLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateBugLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate){
@@ -815,12 +836,12 @@ class ImService {
   //取消点赞
   Future<bool> delBugLike(String bugid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "bugid": bugid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delBugLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delBugLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -832,12 +853,12 @@ class ImService {
   //BUG点赞
   Future<bool> updateSuggestLike(String suggestid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "suggestid": suggestid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateSuggestLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateSuggestLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate){
@@ -850,12 +871,12 @@ class ImService {
   //取消点赞
   Future<bool> delSuggestLike(String suggestid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "suggestid": suggestid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delSuggestLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delSuggestLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -867,12 +888,12 @@ class ImService {
   //moment点赞
   Future<bool> updateMomentLike(String momentid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "momentid": momentid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateMomentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateMomentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate){
@@ -885,12 +906,12 @@ class ImService {
   //取消点赞
   Future<bool> delMomentLike(String momentid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "momentid": momentid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delMomentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delMomentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -903,7 +924,7 @@ class ImService {
   Future<int> updateBugMessage(String bugid, int uid, String token, int touid, String content,  String captchaVerification, Function errorCallBack) async{
     int commentid = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "bugid": bugid,
@@ -911,8 +932,8 @@ class ImService {
       "touid": touid,
       "content": content,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateBugComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateBugComment", (Map<String, dynamic> data) {
       commentid = int.parse(data["data"].toString());
     }, errorCallBack);
     return commentid;
@@ -923,7 +944,7 @@ class ImService {
       String captchaVerification, Function errorCallBack) async{
     int isret = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "bugid": bugid,
@@ -931,8 +952,8 @@ class ImService {
       "touid": touid,
       "content": content,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateBugComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateBugComment", (Map<String, dynamic> data) {
       isret = int.parse(data["data"].toString());
     }, errorCallBack);
     return isret;
@@ -943,7 +964,7 @@ class ImService {
       Function errorCallBack) async{
     int commentid = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "suggestid": suggestid,
@@ -952,8 +973,8 @@ class ImService {
       "content": content,
       "captchaVerification": captchaVerification
 
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateSuggestComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateSuggestComment", (Map<String, dynamic> data) {
       commentid = int.parse(data["data"].toString());
     }, errorCallBack);
     return commentid;
@@ -963,7 +984,7 @@ class ImService {
       String content, String captchaVerification,Function errorCallBack) async{
     int isret = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "suggestid": suggestid,
@@ -972,8 +993,8 @@ class ImService {
       "content": content,
       "captchaVerification": captchaVerification
 
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateSuggestComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateSuggestComment", (Map<String, dynamic> data) {
       isret = int.parse(data["data"].toString());
     }, errorCallBack);
     return isret;
@@ -982,7 +1003,7 @@ class ImService {
   Future<int> updateMomentMessage(String momentid, int uid, String token, int touid, String content,  String captchaVerification, Function errorCallBack) async{
     int commentid = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "momentid": momentid,
@@ -990,8 +1011,8 @@ class ImService {
       "touid": touid,
       "content": content,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateMomentComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateMomentComment", (Map<String, dynamic> data) {
       commentid = int.parse(data["data"].toString());
     }, errorCallBack);
     return commentid;
@@ -1002,7 +1023,7 @@ class ImService {
       String captchaVerification, Function errorCallBack) async{
     int isret = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "momentid": momentid,
@@ -1010,8 +1031,8 @@ class ImService {
       "touid": touid,
       "content": content,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateMomentComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateMomentComment", (Map<String, dynamic> data) {
       isret = int.parse(data["data"].toString());
     }, errorCallBack);
     return isret;
@@ -1021,14 +1042,14 @@ class ImService {
   //取消留言
   Future<bool> delMessage(String token, int uid, int commentid, String bugid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "replyid": 0,
       "bugid": bugid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delBugComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delBugComment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -1036,14 +1057,14 @@ class ImService {
 
   Future<bool> delMessageReply(String token, int uid, int replyid, String bugid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": 0,
       "uid": uid,
       "replyid": replyid,
       "bugid": bugid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delBugComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delBugComment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -1051,14 +1072,14 @@ class ImService {
 
   Future<bool> delMessageSuggest(String token, int uid, int commentid, String suggestid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "replyid": 0,
       "suggestid": suggestid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delSuggestComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delSuggestComment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -1066,14 +1087,14 @@ class ImService {
 
   Future<bool> delMessageReplySuggest(String token, int uid, int replyid, String suggestid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": 0,
       "uid": uid,
       "replyid": replyid,
       "suggestid": suggestid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delSuggestComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delSuggestComment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -1081,14 +1102,14 @@ class ImService {
 
   Future<bool> delMomentMessage(String token, int uid, int commentid, String momentid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "replyid": 0,
       "momentid": momentid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delMomentComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delMomentComment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -1096,14 +1117,14 @@ class ImService {
 
   Future<bool> delMomentMessageReply(String token, int uid, int replyid, String momentid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": 0,
       "uid": uid,
       "replyid": replyid,
       "momentid": momentid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delMomentComment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delMomentComment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -1113,7 +1134,7 @@ class ImService {
   //获取留言
   Future<List<Comment>> getBugCommentList(String bugid, int uid, Function errorCallBack) async {
     List<Comment> listComments = [];
-    await NetUtil.getInstance().get("/IM/getBugComment", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/IM/getBugComment", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           Comment comment = Comment.fromJson(data["data"][i]);
@@ -1139,7 +1160,7 @@ class ImService {
   //获取留言
   Future<List<Comment>> getSuggestCommentList(String actid, int uid, Function errorCallBack) async {
     List<Comment> listComments = [];
-    await NetUtil.getInstance().get("/IM/getSuggestComment", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/IM/getSuggestComment", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           Comment comment = Comment.fromJson(data["data"][i]);
@@ -1165,7 +1186,8 @@ class ImService {
   //获取动态留言
   Future<List<Comment>> getMomentCommentList(String momentid, Function errorCallBack) async {
     List<Comment> listComments = [];
-    await NetUtil.getInstance().get("/IM/getMomentComment", (Map<String, dynamic> data){
+    print("[GET getMomentCommentList] momentid: ${momentid}");
+    await NetUtil.getInstance().get("/api/IM/getMomentComment", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           Comment comment = Comment.fromJson(data["data"][i]);
@@ -1192,14 +1214,14 @@ class ImService {
   //留言点赞
   Future<bool> updateBugCommentLike(int commentid, int uid, String token, int likeuid, String bugid,Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "likeuid": likeuid,
       "bugid": bugid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateBugCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateBugCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -1211,13 +1233,13 @@ class ImService {
   //取消点赞
   Future<bool> delBugCommentLike(int commentid, int uid, String token, int likeuid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "likeuid": likeuid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delBugCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delBugCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -1228,14 +1250,14 @@ class ImService {
   //留言点赞
   Future<bool> updateSuggestCommentLike(int commentid, int uid, String token, int likeuid, String actid,Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "likeuid": likeuid,
       "suggestid": actid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateSuggestCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateSuggestCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -1246,13 +1268,13 @@ class ImService {
   //取消点赞
   Future<bool> delSuggestCommentLike(int commentid, int uid, String token, int likeuid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "likeuid": likeuid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delSuggestCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delSuggestCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -1263,14 +1285,14 @@ class ImService {
   //留言点赞
   Future<bool> updateMomentCommentLike(int commentid, int uid, String token, int likeuid, String momentid,Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "likeuid": likeuid,
       "momentid": momentid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/updateMomentCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/updateMomentCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -1282,13 +1304,13 @@ class ImService {
   //取消点赞
   Future<bool> delMomentCommentLike(int commentid, int uid, String token, int likeuid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "likeuid": likeuid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/delMomentCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/delMomentCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -1301,7 +1323,7 @@ class ImService {
   Future<String> createRedPacketOrder(int uid,  String token,  String timeline_id, double amount, int redpackettype,
       int redpacketnum, String content, int timeline_type, Function errorCallBack) async {
     String orderinfo = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "timeline_id": timeline_id,
@@ -1310,9 +1332,9 @@ class ImService {
       "redpackettype": redpackettype,
       "timeline_type": timeline_type,
       "content": content
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/user/createRedPacketOrder", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/user/createRedPacketOrder", (Map<String, dynamic> data) {
       orderinfo = data["data"];
     }, errorCallBack);
     return orderinfo;
@@ -1321,14 +1343,14 @@ class ImService {
   //验证红包是否成功
   Future<String> payredpacketsuccess(int uid,  String token,  String result, String sign, Function errorCallBack) async {
     String redpacketid = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "result": result,
       "sign": sign
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/AliPay/payredpacketsuccess", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/AliPay/payredpacketsuccess", (Map<String, dynamic> data) {
       redpacketid = data["data"];
     }, errorCallBack);
     return redpacketid;
@@ -1337,13 +1359,13 @@ class ImService {
   //获取红包详情
   Future<RedPacketModel?> getRedPacket(int uid,  String token,  String redpacketid, Function errorCallBack) async {
     RedPacketModel? redPacketModel;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "redpacketid": redpacketid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getUserRedPacketByRedpacketid", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getUserRedPacketByRedpacketid", (Map<String, dynamic> data) {
       if(data != null){
         redPacketModel = RedPacketModel.fromJson(data["data"]);
       }
@@ -1354,13 +1376,13 @@ class ImService {
   //领取红包
   Future<double> receiveRedPacket(int uid,  String token,  String redpacketid, Function errorCallBack) async {
     double receiveMoney = 0;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "redpacketid": redpacketid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/receiveRedPacket", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/receiveRedPacket", (Map<String, dynamic> data) {
       if(data != null){
         receiveMoney = double.parse(data["data"].toString());
 
@@ -1372,13 +1394,13 @@ class ImService {
   //获取红包领用情况
   Future<List<RedPacketDetail>> getRedPacketDetail(int uid,  String token,  String redpacketid, Function errorCallBack) async {
     List<RedPacketDetail> redPacketDetails = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "redpacketid": redpacketid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/IM/getRedPacketDetailList", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getRedPacketDetailList", (Map<String, dynamic> data) {
       if(data != null){
         for(int i=0; i<data["data"].length; i++){
           redPacketDetails.add(RedPacketDetail.fromJson(data["data"][i]));
@@ -1412,7 +1434,7 @@ class ImService {
 
 
     Community? community = null;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "communityname": communityname,
@@ -1423,8 +1445,8 @@ class ImService {
       "joinrule": joinrule,
       "members": temMember,
       "membernames": temMemberName
-    });
-    await NetUtil.getInstance().post(formData, "/Community/createCommunity", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/Community/createCommunity", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         community = Community.fromJson(data["data"]);
@@ -1437,13 +1459,13 @@ class ImService {
   Future<bool> updateCommunityPicture(String token, int uid, String cid,
       String imgpath, Function errorCallBack) async {
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "cid": cid,
       "path": imgpath,
-    });
-    await NetUtil.getInstance().post(formData, "/Community/updateCommunityPicture", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/Community/updateCommunityPicture", (
         Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
@@ -1455,12 +1477,12 @@ class ImService {
       int currentIndex) async {
     List<User> userList = [];
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "cid": cid,
       "currentIndex": currentIndex,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/Community/getCommunityMember", (
+    await NetUtil.getInstance().postJson(formData, "/Community/getCommunityMember", (
         Map<String, dynamic> data) async {
       if (data != null) {
         if (data["data"] != null) {
@@ -1478,13 +1500,13 @@ class ImService {
   Future<bool> delCommunityMember(String token, int uid, String cid,
       int memberid, Function errorCallBack) async {
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "cid": cid,
       "memberid": memberid,
-    });
-    await NetUtil.getInstance().post(formData, "/Community/delCommunityMember", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/Community/delCommunityMember", (
         Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
@@ -1496,12 +1518,12 @@ class ImService {
     bool isUpdate = false;
     ShowMessage.showCenterToast("退出中...");
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "cid": cid,
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Community/delQuiteCommunity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/Community/delQuiteCommunity", (Map<String, dynamic> data) {
       ShowMessage.cancel();
       isUpdate = true;
     }, errorCallBack);
@@ -1522,15 +1544,15 @@ class ImService {
 
     temMember = temMember.substring(0, temMember.length -1);
     temmembernames = temmembernames.substring(0, temmembernames.length -1);
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "timeline_id": timeline_id,
       "members": temMember,
       "oldmembers": oldmembers,
       "membernames": temmembernames,
-    });
-    await NetUtil.getInstance().post(formData, "/Community/joinCommunity", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/Community/joinCommunity", (
         Map<String, dynamic> data) {
       ret = true;
     }, errorCallBack);
@@ -1540,11 +1562,11 @@ class ImService {
   //
   Future<List<SearchResult>> hotsearchMoment() async {
     List<SearchResult> searchResults = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
 
-    });
-    await NetUtil.getInstance().post(formData,
-        "/IM/hotsearchMoment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData,
+        "/api/IM/hotsearchMoment", (Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
           SearchResult searchResult = SearchResult.fromJson(data["data"][i]);
@@ -1560,10 +1582,10 @@ class ImService {
   Future<List<SearchResult>> getRecommendSearchMoment(String content,
       Function errorCallBack) async {
     List<SearchResult> searchResults = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "content": content,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/getRecommendSearchMoment", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getRecommendSearchMoment", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
@@ -1579,11 +1601,11 @@ class ImService {
   //搜索动态
   Future<List<Moment>> searchMoment(int currentIndex, String content, Function errorCallBack) async {
     List<Moment> moments = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "content": content,
       "currentIndex": currentIndex,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/searchMoment", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/searchMoment", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {

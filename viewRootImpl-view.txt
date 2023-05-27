@@ -1,0 +1,50 @@
+Targets
+    Occurrences of '/api/grouppurchase/' in Project with mask '*'
+Found Occurrences  (41 usages found)
+    Usage in string constants  (41 usages found)
+        recipe  (41 usages found)
+            lib\service  (41 usages found)
+                activity.dart  (4 usages found)
+                    516 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getUserGoodPriceComnnentLike", (
+                    1318 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getNewCommentList", (
+                    1532 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getGoodPriceCommentLikeList", (
+                    1783 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getCommentReplyList", (
+                gpservice.dart  (33 usages found)
+                    23 "/api/grouppurchase/hotsearchProduct", (Map<String, dynamic> data) {
+                    43 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getRecommendSearchProduct", (
+                    63 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateProductCollection", (Map<String, dynamic> data) {
+                    78 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateGoodPriceCollection", (Map<String, dynamic> data) {
+                    88 await NetUtil.getInstance().get("/api/grouppurchase/getUserGoodPriceCollectionInfo", (Map<String, dynamic> data){
+                    105 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delProductCollection", (Map<String, dynamic> data) {
+                    119 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delGoodPriceCollection", (Map<String, dynamic> data) {
+                    161 formData, "/api/grouppurchase/getUserGoodPriceCollectionInfo", (
+                    188 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updatecomment", (Map<String, dynamic> data) {
+                    206 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updatecomment", (Map<String, dynamic> data) {
+                    221 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateCommentLike", (Map<String, dynamic> data) {
+                    232 await NetUtil.getInstance().get("/api/grouppurchase/getcomment", (Map<String, dynamic> data){
+                    264 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delcomment", (Map<String, dynamic> data) {
+                    279 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delcomment", (Map<String, dynamic> data) {
+                    293 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/delCommentLike", (Map<String, dynamic> data) {
+                    309 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateGoodPriceLike", (Map<String, dynamic> data) {
+                    326 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateCancelLike", (Map<String, dynamic> data) {
+                    342 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateUnLike", (Map<String, dynamic> data) {
+                    359 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateCancelUnLike", (Map<String, dynamic> data) {
+                    379 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/searchProduct", (
+                    394 await NetUtil.getInstance().get("/api/grouppurchase/getGoodPriceInfo", (Map<String, dynamic> data){
+                    408 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/createGPOrder", (Map<String, dynamic> data) {
+                    448 await NetUtil.getInstance().get("/api/grouppurchase/getActivityList", (Map<String, dynamic> data){
+                    469 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updategoodpricestatus", (Map<String, dynamic> data) {
+                    514 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/createGoodPrice", (Map<String, dynamic> data) {
+                    561 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateGoodPrice", (Map<String, dynamic> data) {
+                    572 await NetUtil.getInstance().get("/api/grouppurchase/getSysGoodPriceCheck", (Map<String, dynamic> data){
+                    585 await NetUtil.getInstance().get("/api/grouppurchase/getMyGoodPricePendingList", (Map<String, dynamic> data){
+                    598 await NetUtil.getInstance().get("/api/grouppurchase/getMyGoodPriceFinishList", (Map<String, dynamic> data){
+                    611 await NetUtil.getInstance().get("/api/grouppurchase/delMyGoodPrice", (Map<String, dynamic> data){
+                    622 await NetUtil.getInstance().get("/api/grouppurchase/getRecommendGoodPriceList", (Map<String, dynamic> data){
+                    635 await NetUtil.getInstance().get("/api/grouppurchase/getSkuStockList", (Map<String, dynamic> data){
+                    653 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getEvaluateGoodPriceList", (Map<String, dynamic> data) {
+                userservice.dart  (4 usages found)
+                    837 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getMyPendingOrder", (
+                    855 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getMyFinishOrder", (
+                    873 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getMyRefundOrder", (
+                    891 await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getMyConfirmOrder", (

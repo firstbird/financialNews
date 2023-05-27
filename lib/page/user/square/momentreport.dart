@@ -396,6 +396,7 @@ class _MomentReportState extends State<MomentReport> {
           int width = resultList[i].orientatedWidth;
           int height = resultList[i].orientatedHeight;
           String url = await CommonUtil.upLoadImage((await resultList[i].file)!, _securityToken!, _aliyunService);
+          print("[upload image] url: ${url}");
           if(!_imagesUrl.contains(url)) {
             _imagesUrl.add(url);
             _imagesWH.add("${width},${height}");

@@ -179,6 +179,7 @@ class _SettingState extends State<Setting> {
         //print(ret);
       }
       if (ret > 0) {
+        print("[telCustomerCare] vcode ret > 0 /MyMessage：-----------------------------------");
         Navigator.pushNamed(this.context, '/MyMessage', arguments: {"GroupRelation": groupRelation});
       }
     }

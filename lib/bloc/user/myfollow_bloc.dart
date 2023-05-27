@@ -15,7 +15,36 @@ class MyFollowBloc extends Bloc<MyFollowEvent, MyFollowState> {
   final UserService _userService = new UserService();
   final ActivityService _activityService = new ActivityService();
 
-  MyFollowBloc():super(PostInitial());
+  MyFollowBloc():super(PostInitial()) {
+    on<PostFetched>((event, emit) async {
+      final currentState = state;
+      try {
+        if (event is PostFetched) {
+          if (currentState is PostInitial) {
+            if (event.user == null) {
+              emit(NoLogin());
+              return;
+            }
+            emit(PostLoading());
+            users = await _userService.getFollowUsers(
+                0, event.user!.uid, event.user!.token!);
+            if (users != null && users.length > 0) {
+              activitys = await _activityService.getActivityListByFollow(
+                  0, users);
+            }
+            emit(PostSuccess(users: users, activitys: activitys, hasReachedActivityMax: false,
+                hasReachedUserMax: false));
+            return;
+          }
+          //加载更多
+        }
+      }catch(_){
+        emit(PostFailure());
+      }
+    });
+
+
+  }
 
   // @override
   // // TODO: implement initialState

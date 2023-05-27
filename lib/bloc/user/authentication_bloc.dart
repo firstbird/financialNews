@@ -24,47 +24,27 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   final ActivityService activityService = ActivityService();
   final UserService _userService = UserService();
 
-  AuthenticationBloc():super(AuthenticationUninitialized());
-
-  @override
-  AuthenticationState get initialState => AuthenticationUninitialized();
-
-  @override
-  Stream<AuthenticationState> mapEventToState(
-      AuthenticationEvent event,
-      ) async* {
-    //主动刷新
-    if(event is Refresh){
-      yield AuthenticationAuthenticated();
-      return;
-    }
-
-    if(event is Refresh1){
-      yield AuthenticationAuthenticated();
-      return;
-    }
-
-    if (event is LoggedState) {
-      final bool hasToUser = await userRepository.hasToUser();
-
-      if (hasToUser) {
-        yield AuthenticationAuthenticated();
-      } else {
-        yield LoginOuted();
-      }
-    }
+  AuthenticationBloc():super(AuthenticationUninitialized()) {
+    ///主动刷新
+    on<Refresh>((event, emit) async {
+        emit(AuthenticationAuthenticated());
+    });
+    on<Refresh1>((event, emit) async {
+      emit(AuthenticationAuthenticated());
+    });
     ///信息更新
-    if (event is LoggedIn) {
+    on<LoggedIn>((event, emit) async {
       userRepository.persistToken(event.user);
-      yield AuthenticationAuthenticated();
-    }
+      emit(AuthenticationAuthenticated());
+    });
     ///注销登录
-    if (event is LoggedOut) {
-      yield LoginOuted();
-    }
+    on<LoggedOut>((event, emit) async {
+      emit(LoginOuted());
+    });
     ///登录按钮
-    if(event is LoginButtonPressed) {
-      // yield LoginLoading();
+    on<LoginButtonPressed>((event, emit) async {
+      emit(LoginLoading());
+      print("[login] on LoginButtonPressed event: ${event.props[0]}--${event.props[1]}--${event.props[2]}--${event.props[3]}");
       try {
         User? user = await userRepository.loginToUser(
             mobile: event.props[0].toString(),
@@ -76,184 +56,430 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
             errorCallBack: errorCallBack
         );
         if(user != null) {
+          print("[auth] login to user ${user.toString()}");
           await LoginSuccess(user);
-          yield AuthenticationAuthenticated();
+          emit(AuthenticationAuthenticated());
         }
         else{
           ///验证未通过
-          yield AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+          print("[auth] login to user failed, error: ${error}, errorstatuscode: ${errorstatusCode}");
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
       } catch (error) {
         ///验证未通过
-        yield AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorstatusCode);
+        print("[auth] login to user failed with exception, error: ${error}, errorstatuscode: ${errorstatusCode}");
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorstatusCode));
       }
-    }
+    });
+    on<LoggedState>((event, emit) async {
+      final bool hasToUser = await userRepository.hasToUser();
+
+      if (hasToUser) {
+        emit(AuthenticationAuthenticated());
+      } else {
+        emit(LoginOuted());
+      }
+    });
     ///支付宝登录
-    if(event is LoginAli){
+    on<LoginAli>((event, emit) async {
       String authurl = await _userService.getAliUserAuth();
       User? user = await _userService.updateLoginali(authurl, errorCallBack);
       if(user != null){
         await LoginSuccess(user);
-        yield AuthenticationAuthenticated();
+        emit(AuthenticationAuthenticated());
       }
-    }
+    });
+
     ///微信登录
-    if(event is LoginWeiXin){
+    on<LoginWeiXin>((event, emit) async {
       User? user = await _userService.loginweixin(event.auth_code, errorCallBack);
       if(user != null){
         await LoginSuccess(user);
-        yield AuthenticationAuthenticated();
+        emit(AuthenticationAuthenticated());
       }
-    }
+    });
     ///ios登录
-    if(event is LoginIos){
+    on<LoginIos>((event, emit) async {
       User? user = await _userService.loginIos(event.identityToken, event.iosuserid,  errorCallBack);
       if(user != null){
         await LoginSuccess(user);
-        yield AuthenticationAuthenticated();
+        emit(AuthenticationAuthenticated());
       }
-    }
+    });
 
     ///更新照片
-    if(event is UpdateImagePressed){
+    on<UpdateImagePressed>((event, emit) async {
       try {
         bool ret = await userRepository.updateImage(event.user, event.serverimgpath, errorCallBack);
         if(ret) {
           await userRepository.updateUserPicture(event.user, event.imgpath);
-          yield AuthenticationAuthenticated(isUserImage: true);
+          emit(AuthenticationAuthenticated(isUserImage: true));
         }
         else{
           ///验证未通过
-          yield AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
       } catch (error) {
         ///验证未通过
-        yield AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode);
+         emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
-    }
+    });
     ///更新昵称
-    if(event is UpdateUserNamePressed){
+    on<UpdateUserNamePressed>((event, emit) async {
       try {
         bool ret = await userRepository.updateUserName(event.user, event.username, errorCallBack);
         if(ret) {
           event.user.username = event.username;
           userRepository.persistToken(event.user);
-          yield AuthenticationAuthenticated();
+          emit(AuthenticationAuthenticated());
         }
         else{
           ///验证未通过
-          yield AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
       } catch (error) {
         ///验证未通过
-        yield AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode);
+         emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
-    }
+    });
     ///更新个人简介
-    if(event is UpdateUserSignaturePressed){
+    // if(event is UpdateUserSignaturePressed){
+    on<UpdateUserSignaturePressed>((event, emit) async {
       try {
         bool ret = await userRepository.UpdateUserSignaturePressed(event.user, event.signature, errorCallBack);
         if(ret) {
           event.user.signature = event.signature;
           userRepository.persistToken(event.user);
-          yield AuthenticationAuthenticated();
+          emit(AuthenticationAuthenticated());
         }
         else{
           ///验证未通过
-          yield AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
       } catch (error) {
         ///验证未通过
-        yield AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode);
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
-    }
+    });
     ///更新位置
-    if(event is UpdateUserLocationPressed){
+    // if(event is UpdateUserLocationPressed){
+    on<UpdateUserLocationPressed>((event, emit) async {
       try {
         bool ret = await userRepository.updateLocation(event.user, event.province, event.city,  errorCallBack);
         if(ret) {
           event.user.province = event.province;
           event.user.city = event.city;
           userRepository.persistToken(event.user);
-          yield AuthenticationAuthenticated();
+          emit(AuthenticationAuthenticated());
         }
         else{
           ///验证未通过
-          yield AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
       } catch (error) {
         ///验证未通过
-        yield AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode);
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
-    }
+    });
     ///更新密码
-    if(event is UpdateUserPasswordPressed){
+    on<UpdateUserPasswordPressed>((event, emit) async {
       try {
         bool ret = await userRepository.UpdateUserPasswordPressed(event.user, event.password,  errorCallBack);
         if(ret) {
-          yield AuthenticationAuthenticated();
+          emit(AuthenticationAuthenticated());
         }
         else{
           ///验证未通过
-          yield AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
       } catch (error) {
         ///验证未通过
-        yield AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode);
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
-    }
+    });
     ///更新性别
-    if(event is UpdateUserSexPressed){
+    on<UpdateUserSexPressed>((event, emit) async {
       try {
         bool ret = await userRepository.UpdateUserSexPressed(event.user, event.sex,  errorCallBack);
         if(ret) {
           event.user.sex = event.sex;
           userRepository.persistToken(event.user);
-          yield AuthenticationAuthenticated();
+          emit(AuthenticationAuthenticated());
         }
         else{
           ///验证未通过
-          yield AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
       } catch (error) {
         ///验证未通过
-        yield AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode);
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
-    }
+    });
     ///更新生日
-    if(event is UpdateUserBirthdayPressed){
+    on<UpdateUserBirthdayPressed>((event, emit) async {
       try {
         bool ret = await userRepository.UpdateUserBirthdayPressed(event.user, event.birthday,  errorCallBack);
         if(ret) {
           event.user.birthday = event.birthday;
           userRepository.persistToken(event.user);
-          yield AuthenticationAuthenticated();
+          emit(AuthenticationAuthenticated());
         }
         else{
           ///验证未通过
-          yield AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
       } catch (error) {
         ///验证未通过
-        yield AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode);
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
-    }
+    });
     ///更新定位
-    if(event is UpdateLocation){
-      yield UpdateLocationed(locationName: event.locationName, locationCode: event.locationCode);
-    }
+    on<UpdateLocation>((event, emit) async {
+      emit(UpdateLocationed(locationName: event.locationName, locationCode: event.locationCode));
+    });
     //初始化用户信息更新
-    if(event is initUpdate){
-      yield AuthenticationAuthenticated();
-    }
+    on<initUpdate>((event, emit) async {
+      emit(AuthenticationAuthenticated());
+    });
+
+  }
+
+  @override
+  AuthenticationState get initialState => AuthenticationUninitialized();
+
+  @override
+  Stream<AuthenticationState> mapEventToState(
+      AuthenticationEvent event,
+      ) async* {
+    //主动刷新
+    // if(event is Refresh){
+    //   emit(AuthenticationAuthenticated();
+    //   return;
+    // }
+    //
+    // if(event is Refresh1){
+    //   emit(AuthenticationAuthenticated();
+    //   return;
+    // }
+
+    // if (event is LoggedState) {
+    //   final bool hasToUser = await userRepository.hasToUser();
+    //
+    //   if (hasToUser) {
+    //     emit(AuthenticationAuthenticated();
+    //   } else {
+    //     emit(LoginOuted();
+    //   }
+    // }
+    ///信息更新
+    // if (event is LoggedIn) {
+    //   userRepository.persistToken(event.user);
+    //   emit(AuthenticationAuthenticated();
+    // }
+    // ///注销登录
+    // if (event is LoggedOut) {
+    //   emit(LoginOuted();
+    // }
+    ///登录按钮
+    // if(event is LoginButtonPressed) {
+    //   // emit(LoginLoading();
+    //   try {
+    //     User? user = await userRepository.loginToUser(
+    //         mobile: event.props[0].toString(),
+    //         password: event.props[1].toString(),
+    //         vcode: event.props[2].toString(),
+    //         type: event.props[3] as int,
+    //         country: event.country,
+    //         captchaVerification: event.captchaVerification,
+    //         errorCallBack: errorCallBack
+    //     );
+    //     if(user != null) {
+    //       await LoginSuccess(user);
+    //       emit(AuthenticationAuthenticated();
+    //     }
+    //     else{
+    //       ///验证未通过
+    //       emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode);
+    //     }
+    //
+    //   } catch (error) {
+    //     ///验证未通过
+    //     emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorstatusCode);
+    //   }
+    // }
+    ///支付宝登录
+    // if(event is LoginAli){
+    //   String authurl = await _userService.getAliUserAuth();
+    //   User? user = await _userService.updateLoginali(authurl, errorCallBack);
+    //   if(user != null){
+    //     await LoginSuccess(user);
+    //     emit(AuthenticationAuthenticated();
+    //   }
+    // }
+    // ///微信登录
+    // if(event is LoginWeiXin){
+    //   User? user = await _userService.loginweixin(event.auth_code, errorCallBack);
+    //   if(user != null){
+    //     await LoginSuccess(user);
+    //     emit(AuthenticationAuthenticated());
+    //   }
+    // }
+    // ///ios登录
+    // if(event is LoginIos){
+    //   User? user = await _userService.loginIos(event.identityToken, event.iosuserid,  errorCallBack);
+    //   if(user != null){
+    //     await LoginSuccess(user);
+    //     emit(AuthenticationAuthenticated());
+    //   }
+    // }
+    //
+    // ///更新照片
+    // if(event is UpdateImagePressed){
+    //   try {
+    //     bool ret = await userRepository.updateImage(event.user, event.serverimgpath, errorCallBack);
+    //     if(ret) {
+    //       await userRepository.updateUserPicture(event.user, event.imgpath);
+    //       emit(AuthenticationAuthenticated(isUserImage: true));
+    //     }
+    //     else{
+    //       ///验证未通过
+    //       emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+    //     }
+    //
+    //   } catch (error) {
+    //     ///验证未通过
+    //     emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+    //   }
+    // }
+    // ///更新昵称
+    // if(event is UpdateUserNamePressed){
+    //   try {
+    //     bool ret = await userRepository.updateUserName(event.user, event.username, errorCallBack);
+    //     if(ret) {
+    //       event.user.username = event.username;
+    //       userRepository.persistToken(event.user);
+    //       emit(AuthenticationAuthenticated());
+    //     }
+    //     else{
+    //       ///验证未通过
+    //       emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+    //     }
+    //
+    //   } catch (error) {
+    //     ///验证未通过
+    //     emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+    //   }
+    // }
+    // ///更新个人简介
+    // if(event is UpdateUserSignaturePressed){
+    //   try {
+    //     bool ret = await userRepository.UpdateUserSignaturePressed(event.user, event.signature, errorCallBack);
+    //     if(ret) {
+    //       event.user.signature = event.signature;
+    //       userRepository.persistToken(event.user);
+    //       emit(AuthenticationAuthenticated());
+    //     }
+    //     else{
+    //       ///验证未通过
+    //       emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+    //     }
+    //
+    //   } catch (error) {
+    //     ///验证未通过
+    //     emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+    //   }
+    // }
+    // ///更新位置
+    // if(event is UpdateUserLocationPressed){
+    //   try {
+    //     bool ret = await userRepository.updateLocation(event.user, event.province, event.city,  errorCallBack);
+    //     if(ret) {
+    //       event.user.province = event.province;
+    //       event.user.city = event.city;
+    //       userRepository.persistToken(event.user);
+    //       emit(AuthenticationAuthenticated());
+    //     }
+    //     else{
+    //       ///验证未通过
+    //       emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+    //     }
+    //
+    //   } catch (error) {
+    //     ///验证未通过
+    //     emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+    //   }
+    // }
+    // ///更新密码
+    // if(event is UpdateUserPasswordPressed){
+    //   try {
+    //     bool ret = await userRepository.UpdateUserPasswordPressed(event.user, event.password,  errorCallBack);
+    //     if(ret) {
+    //       emit(AuthenticationAuthenticated());
+    //     }
+    //     else{
+    //       ///验证未通过
+    //       emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+    //     }
+    //
+    //   } catch (error) {
+    //     ///验证未通过
+    //     emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+    //   }
+    // }
+    // ///更新性别
+    // if(event is UpdateUserSexPressed){
+    //   try {
+    //     bool ret = await userRepository.UpdateUserSexPressed(event.user, event.sex,  errorCallBack);
+    //     if(ret) {
+    //       event.user.sex = event.sex;
+    //       userRepository.persistToken(event.user);
+    //       emit(AuthenticationAuthenticated());
+    //     }
+    //     else{
+    //       ///验证未通过
+    //       emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+    //     }
+    //
+    //   } catch (error) {
+    //     ///验证未通过
+    //     emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+    //   }
+    // }
+    // ///更新生日
+    // if(event is UpdateUserBirthdayPressed){
+    //   try {
+    //     bool ret = await userRepository.UpdateUserBirthdayPressed(event.user, event.birthday,  errorCallBack);
+    //     if(ret) {
+    //       event.user.birthday = event.birthday;
+    //       userRepository.persistToken(event.user);
+    //       emit(AuthenticationAuthenticated());
+    //     }
+    //     else{
+    //       ///验证未通过
+    //       emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+    //     }
+    //
+    //   } catch (error) {
+    //     ///验证未通过
+    //     emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+    //   }
+    // }
+    // ///更新定位
+    // if(event is UpdateLocation){
+    //   emit(UpdateLocationed(locationName: event.locationName, locationCode: event.locationCode));
+    // }
+    // //初始化用户信息更新
+    // if(event is initUpdate){
+    //   emit(AuthenticationAuthenticated());
+    // }
   }
 
   @override
@@ -265,6 +491,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   Future<void> LoginSuccess(User user) async {
     // UserRepository userRepository = new UserRepository();
     // userRepository.persistToken(user);
+    print("[auth] loginSuccess, username: ${user.username}");
     //本地无数据就从服务器下载
     userRepository.persistToken(user);
 
@@ -274,42 +501,52 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     GPService gpService = GPService();
     // UmengCommonSdk.onEvent('bool', {'name':'jack', 'age':18, 'male':true});
 
+    print("[auth] loginSuccess, gpService");
     if(user.likeact! > 0) {
       activityService.getUserLike(user.uid, user.token!); //点赞的活动
     }
+    print("[auth] loginSuccess, check likeact done");
     if(user.likebug > 0) {
       activityService.getUserLikeBug(user.uid, user.token!); //点赞的活动
     }
 
+    print("[auth] loginSuccess, check likebug done");
     if(user.likemoment > 0) {
       activityService.getUserLikeMoment(user.uid, user.token!); //点赞的活动
     }
 
+    print("[auth] loginSuccess, check likemoment done");
     if(user.likesuggest > 0) {
       activityService.getUserLikeSuggest(user.uid, user.token!); //点赞的活动
     }
+    print("[auth] loginSuccess, check likesuggest done");
     if(user.collectionact! > 0) {
       activityService.getUserCollection(user.uid, user.token!); //收藏的活动
     }
+    print("[auth] loginSuccess, check collectionact done");
     if(user.likecomment > 0 || user.likeevaluate! > 0) {
       activityService.getUserComnnentLike(
           user.uid, user.token!, user.likecomment,
           user.likeevaluate!); //获取用户留言和评论的点赞情况comment和evaluate
     }
+    print("[auth] loginSuccess, check likecomment and likeevaluate done");
     if(user.likegoodpricecomment  > 0) {
       activityService.getUserGoodPriceComnnentLike(
           user.uid, user.token!, user.likegoodpricecomment); //获取用户留言和评论的点赞情况goodprice
     }
+    print("[auth] loginSuccess, check likegoodpricecomment done");
     if(user.likebugcomment > 0 || user.likesuggestcomment > 0 || user.likemomentcomment > 0) {
       activityService.getUserBugAndSuggestAndMomentComnnentLike(
           user.uid, user.token!, user.likebugcomment,
           user.likesuggestcomment,user.likemomentcomment); //获取用户留言和评论的点赞情况comment和evaluate
     }
 
+    print("[auth] loginSuccess, check likebugcomment and likesuggestcomment and likemomentcomment done");
     if(user.collectionproduct! > 0) {
       gpService.getUserGoodPriceCollection(
           user.uid, user.token!); //获取用户收藏的优惠商品
     }
+    print("[auth] loginSuccess, check collectionproduct done");
     if(user.notinteresteduids != null && user.notinteresteduids!.isNotEmpty){
 
     }
@@ -317,24 +554,28 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
 //          CommunityService communityService = CommunityService();
 //          await communityService.getMyCommunityListByUser(0, user.uid);
     //我的关注
+    print("[auth] loginSuccess, check notinteresteduids done");
     if(user.following! > 0) {
       userRepository.getfollow(user, errorCallBack);
     }
+    print("[auth] loginSuccess, check following done");
     //我的不感兴趣,不需要重新获取数据
     if(user.notinteresteduids != null && user.notinteresteduids!.isNotEmpty) {
       await userRepository.updateNotInteresteduids(user, errorCallBack);
     }
+    print("[auth] loginSuccess, check noti done");
     //我的好价不感兴趣,不需要重新获取数据
     if(user.goodpricenotinteresteduids != null && user.goodpricenotinteresteduids!.isNotEmpty) {
       await userRepository.updateGoodPriceNotInteresteduids(user, errorCallBack);
     }
+    print("[auth] loginSuccess, check goodpricenotinteresteduids done");
     //我的黑名单,不需要重新获取数据
     if(user.blacklist != null && user.blacklist!.isNotEmpty) {
       await userRepository.updateBlacklist(user, errorCallBack);
     }
 
-
     NetworkManager.init(user, Global.mainContext!);
+    print("[auth] NetworkManager.init done: ${user.username}");
 
   }
 

@@ -19,8 +19,8 @@ const _themes = <MaterialColor>[
 
 class Global {
 
-  static String serviceurl = "https://api.chulaiwanba.com/";
-  static String serviceIM =  "ws://ws.chulaiwanba.com:8082/ws";
+  static String serviceurl = "http://192.168.1.111:8080";//"https://api.chulaiwanba.com/";// 10.0.2.2
+  static String serviceIM =  "ws://192.168.1.111:8080/my-websocket";//ws://ws.chulaiwanba.com:8082/ws
   // static String serviceurl = "http://192.168.10.108:8080/";
   // static String serviceIM =  "ws://192.168.10.108:8082/ws";
 

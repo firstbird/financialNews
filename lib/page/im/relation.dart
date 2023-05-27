@@ -343,6 +343,7 @@ class _RelationListState extends State<RelationList> {
         ),
         onTap: () {
           _imBloc.add(Already(Global.profile.user!, item.timeline_id));
+          print("[getRelationList] onTap null /MyMessage：item.newmsg： ${item.newmsg}-----------------------------------");
           Navigator.pushNamed(
               context, '/MyMessage', arguments: {"GroupRelation": item}).then((
               val) {

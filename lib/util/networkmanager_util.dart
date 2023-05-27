@@ -39,7 +39,7 @@ class NetworkManager{
     String type = msgs[0].toString();
     String content = "0";
     String notice = "";
-    print("onMessage:" + msgs.toString());
+    print("[networkmanager] onMessage:" + msgs.toString());
     if(msgs.length > 1) {
       content = msgs[1].split('※notice_json※')[0];
       notice = msgs[1].split('※notice_json※')[1];
@@ -138,6 +138,9 @@ class NetworkManager{
           pingInterval: Duration(milliseconds: 3000));
       channel!.stream
           .listen((data) => onMessage(data), onError: onError, onDone: onDone);
+      channel!.sink.add(
+        "hello haha"
+      );
       channel!.sink.add(
         jsonEncode(
           {

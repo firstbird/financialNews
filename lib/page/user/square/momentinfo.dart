@@ -195,7 +195,7 @@ class _MomentInfoState extends State<MomentInfo> {
                 },
                 child: CachedNetworkImage(
                   placeholder: (context,url)=>   Container() ,
-                  imageUrl: '${_listimgs[i]}?x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80',
+                  imageUrl: '${_listimgs[i]}',//x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80',
                   fit: BoxFit.cover,
                 ),
               )

@@ -598,6 +598,7 @@ class _IssuedActivityState extends State<IssuedActivity> {
                     _lng,
                     widget.goodpriceid,
                     "", _paytype, (String statusCode, String msg){
+                      print("[issuedactivity] statusCode: ${statusCode}, msg: ${msg}");
                       if(statusCode == "-1008"){
                         loadingBlockPuzzle(context);
                       }
@@ -615,6 +616,7 @@ class _IssuedActivityState extends State<IssuedActivity> {
               }
               catch(e)
               {
+                print("[issuedactivity] exception: ${e.toString()}");
                 _isButtonEnable = true;
                 ShowMessage.showToast("网络不给力，请再试一下!");}
                 setState(() {

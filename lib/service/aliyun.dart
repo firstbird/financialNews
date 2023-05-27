@@ -12,11 +12,11 @@ class AliyunService {
   //用户照片
   Future<SecurityToken?> getUserProfileSecurityToken(String token,  int uid) async {
     SecurityToken? securityToken;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid
-    });
-    await NetUtil.getInstance().post(formData, "/user/getUserProfileSecurityToken", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/getUserProfileSecurityToken", (Map<String, dynamic> data) {
       securityToken = SecurityToken(data["data"]["ossAccessKeyId"], data["data"]["policy"], data["data"]["signature"], data["data"]["dir"], data["data"]["host"], data["data"]["expire"]);
     }, errorResponse);
     return securityToken;
@@ -24,11 +24,11 @@ class AliyunService {
   //活动图片，评价图片等，长期缓存的图片
   Future<SecurityToken?> getActivitySecurityToken(String token,  int uid) async {
     SecurityToken? securityToken;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid
-    });
-    await NetUtil.getInstance().post(formData, "/Community/getActivitySecurityToken", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/Community/getActivitySecurityToken", (Map<String, dynamic> data) {
       securityToken = SecurityToken(data["data"]["ossAccessKeyId"], data["data"]["policy"], data["data"]["signature"], data["data"]["dir"], data["data"]["host"], data["data"]["expire"]);
     }, errorResponse);
     return securityToken;
@@ -36,11 +36,11 @@ class AliyunService {
   //bug照片
   Future<SecurityToken?> getBugSecurityToken(String token, int uid) async {
     SecurityToken? securityToken;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid
-    });
-    await NetUtil.getInstance().post(formData, "/user/getBugSecurityToken", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/getBugSecurityToken", (Map<String, dynamic> data) {
       securityToken = SecurityToken(data["data"]["ossAccessKeyId"], data["data"]["policy"], data["data"]["signature"], data["data"]["dir"], data["data"]["host"], data["data"]["expire"]);
     }, errorResponse);
     return securityToken;
@@ -48,11 +48,11 @@ class AliyunService {
   //moment照片
   Future<SecurityToken?> getMomentSecurityToken(String token, int uid) async {
     SecurityToken? securityToken;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid
-    });
-    await NetUtil.getInstance().post(formData, "/user/getMomentSecurityToken", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/getMomentSecurityToken", (Map<String, dynamic> data) {
       securityToken = SecurityToken(data["data"]["ossAccessKeyId"], data["data"]["policy"], data["data"]["signature"], data["data"]["dir"], data["data"]["host"], data["data"]["expire"]);
     }, errorResponse);
     return securityToken;
@@ -62,11 +62,11 @@ class AliyunService {
   //IM声音
   Future<SecurityToken?> getSoundSecurityToken(String token, int uid) async {
     SecurityToken? securityToken;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid
-    });
-    await NetUtil.getInstance().post(formData, "/IM/getSoundSecurityToken", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getSoundSecurityToken", (Map<String, dynamic> data) {
       securityToken = SecurityToken(data["data"]["ossAccessKeyId"], data["data"]["policy"], data["data"]["signature"], data["data"]["dir"], data["data"]["host"], data["data"]["expire"]);
     }, errorResponse);
     return securityToken;
@@ -75,7 +75,7 @@ class AliyunService {
 
   Future<String> uploadImage(SecurityToken securityToken, String filePath, String filename, int uid) async {
     String returl = "";
-    String imgkey = '${securityToken.dir}${uid}/${filename}';
+    String imgkey = '${securityToken.dir}/${uid}/${filename}';
     FormData formData = await new FormData.fromMap({
       'key': imgkey, //"可以填写文件夹名（对应于oss服务中的文件夹）/" + fileName
       'policy': securityToken.policy,
@@ -85,6 +85,7 @@ class AliyunService {
       'file':  await MultipartFile.fromFile(filePath, filename: filename, contentType: new  MediaType("image", "png"))//必须放在参数最后
     });
     await NetUtil.aliyunOSSpost(formData, securityToken.host, (String data){
+      print("[aliyun post image] return data: ${data}");
       returl = imgkey;
     }, errorResponse);
     return returl;
@@ -92,7 +93,7 @@ class AliyunService {
 
   Future<String> uploadSound(SecurityToken securityToken, String filePath, String filename, int uid) async {
     String retUrl = "";
-    String soundkey = '${securityToken.dir}${uid}/${filename}';
+    String soundkey = '${securityToken.dir}/${uid}/${filename}';
     String soundUrl = securityToken.host + '/' + soundkey;
     FormData formData = await new FormData.fromMap({
       'key': soundkey, //"可以填写文件夹名（对应于oss服务中的文件夹）/" + fileName

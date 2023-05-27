@@ -182,6 +182,8 @@ class ImHelper{
   ///获取最新未读数据timeline
   ///更新timeline表
   Future<int> saveMessage( List<TimeLineSync> timelinesync) async {
+    print("[saveMessage] size: ${timelinesync.length}, global user: ${Global
+        .profile.user!.uid}");
     var dbClient = await _sql.db;
     var result = 0;
     //初始化一条安全交易规范提示
@@ -192,12 +194,18 @@ class ImHelper{
                 "WHERE sequence_id=${timelinesync.sequence_id} and uid=${Global
                 .profile.user!.uid} and timeline_id='${timelinesync
                 .timeline_id}'"));
-        if (tem == null || tem == 0)
+        if (tem == null || tem == 0) {
+          print("[saveMessage] insert: ${timelinesync.content}");
           if (await dbClient.insert(
               TableHelper.im_timeline_sync_relation, timelinesync.toMap()) >
               0) {
             result++;
           }
+        } else {
+          print("[saveMessage] error: sequence_id: ${timelinesync.sequence_id}, global uid: ${Global
+              .profile.user!.uid}, timeline_id: ${timelinesync
+              .timeline_id}");
+        }
       }
     }
 
@@ -207,11 +215,13 @@ class ImHelper{
   Future<int> saveMessageCustomer( List<TimeLineSync> timelinesync) async {
     var dbClient = await _sql.db;
     var result = 0;
+    print("[saveMessageCustomer] size: ${timelinesync.length}");
     //初始化一条安全交易规范提示
     if(timelinesync != null && timelinesync.length > 0) {
       for (TimeLineSync timelinesync in timelinesync) {
         timelinesync.sequence_id = - new DateTime.now().millisecondsSinceEpoch;;
 
+        print("[saveMessageCustomer] insert: ${timelinesync.content}");
         if (await dbClient.insert(
             TableHelper.im_timeline_sync_relation, timelinesync.toMap()) >
             0) {
@@ -227,6 +237,7 @@ class ImHelper{
     var dbClient = await _sql.db;
     var result = 0;
 
+    print("[saveSelfMessage] insert content: ${timelinesync.content}");
     result = await dbClient.insert(
         TableHelper.im_timeline_sync_relation, timelinesync.toMap());
 

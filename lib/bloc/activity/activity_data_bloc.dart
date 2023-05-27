@@ -14,8 +14,73 @@ class ActivityDataBloc extends Bloc<ActivityDataEvent, ActivityDataState> {
   final ImHelper _imHelper = new ImHelper();
   List<int> notinteresteduids = [];
   ActivityDataBloc() : super(PostUninitialized()) {
-      on<Refresh>((event, emit) {
+      on<Fetch>((event, emit) async {
         //TODO
+        print('on Fetch event: $event');
+        final currentState = state;
+        if (!_hasReachedMax(currentState)) {
+          if (currentState is PostUninitialized) {
+            emit(PostLoading());
+            final activitys = await _activityService.getActivityListByUpdateTime(0);
+            if(Global.profile.user != null) {
+              notinteresteduids = await _imHelper.getNotInteresteduids(Global.profile.user!.uid);
+            }
+            currentlength = activitys.length;
+            emit(PostLoaded(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, error: false,
+            notinteresteduids: notinteresteduids));
+            return;
+          }
+          //加载更多
+          if (currentState is PostLoaded ) {
+            final activitys = await _activityService.getActivityListByUpdateTime(currentlength);
+            if(activitys != null)
+              currentlength += activitys.length;
+            if(Global.profile.user != null) {
+              notinteresteduids = await _imHelper.getNotInteresteduids(Global.profile.user!.uid);
+            }
+            emit(activitys.isEmpty
+                ? currentState.copyWith(hasReachedMax: true)
+                : PostLoaded(activitys: currentState.activitys! + activitys, hasReachedMax: false, notinteresteduids: notinteresteduids
+            ));
+          }
+        }
+      });
+      on<Refresh>((event, emit) async {
+        //TODO
+        final currentState = state;
+        print('on Refresh event: $event， currentState： $currentState');
+        if (currentState is PostLoaded) {
+          print('on Refresh send get http message currentState is PostLoaded');
+          final activitys = await _activityService.getActivityListByUpdateTime(0);
+          currentlength = activitys.length;
+          if(Global.profile.user != null) {
+            notinteresteduids = await _imHelper.getNotInteresteduids(Global.profile.user!.uid);
+          }
+          print('on Refresh send get http message back len: $currentlength currentState is PostLoaded');
+          emit(PostLoaded(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, error: false, notinteresteduids: notinteresteduids));
+        }
+        if (currentState is PostUninitedError) {
+          emit(PostLoading());
+          print('on Refresh send get http message currentState is PostUninitedError');
+          final activitys = await _activityService.getActivityListByUpdateTime(0);
+          currentlength = activitys.length;
+          if(Global.profile.user != null) {
+            notinteresteduids = await _imHelper.getNotInteresteduids(Global.profile.user!.uid);
+          }
+          print('on Refresh send get http message back len: $currentlength currentState is PostUninitedError');
+          emit(PostLoaded(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, error: false, notinteresteduids: notinteresteduids));
+        }
+        if (currentState is PostUninitialized) {
+          emit(PostLoading());
+          print('on Refresh send get http message currentState is PostUninitialized');
+          final activitys = await _activityService.getActivityListByUpdateTime(0);
+          currentlength = activitys.length;
+          if(Global.profile.user != null) {
+            notinteresteduids = await _imHelper.getNotInteresteduids(Global.profile.user!.uid);
+          }
+          print('on Refresh send get http message back len: $currentlength currentState is PostUninitialized');
+          emit(PostLoaded(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, error: false, notinteresteduids: notinteresteduids));
+        }
       });
   }
   int currentlength = 0;

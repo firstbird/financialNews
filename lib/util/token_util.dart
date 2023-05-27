@@ -154,6 +154,7 @@ class TokenUtil{
         GroupRelation? groupRelation = await _imHelper.getGroupRelationByGroupid(Global.profile.user!.uid, timeline_id);
         if(groupRelation != null){
           Global.timeline_id = timeline_id;
+          print("[deeplinkNav] deeplink /MyMessage：-----------------------------------");
           Navigator.pushNamed(Global.navigatorKey.currentContext!, '/MyMessage', arguments: {"GroupRelation": groupRelation}).then((val) {});
         }
       }

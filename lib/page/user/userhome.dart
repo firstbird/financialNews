@@ -341,7 +341,7 @@ class _MyHomeState extends State<MyHome> {
                   style: TextStyle(fontSize: 14, color: Colors.black), direction: Axis.vertical, onTap: (){
                     Navigator.pushNamed(context, '/MyBrowHistory');
                   },),
-                IconText('关注', icon: Text('${CommonUtil.getNum(Global.profile.user!.following!)}',
+                IconText('关注', icon: Text('${CommonUtil.getNum(Global.profile.user!.following ?? 0)}',
                   style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold), ),
                   style: TextStyle(fontSize: 14, color: Colors.black), direction: Axis.vertical, onTap: (){
                     Navigator.pushNamed(context, '/MyFollowUser').then((value){
@@ -350,7 +350,7 @@ class _MyHomeState extends State<MyHome> {
                       });
                     });
                   },),
-                IconText('粉丝', icon: Text('${CommonUtil.getNum(Global.profile.user!.followers!)}', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),),
+                IconText('粉丝', icon: Text('${CommonUtil.getNum(Global.profile.user!.followers ?? 0)}', style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),),
                   style: TextStyle(fontSize: 14, color: Colors.black), direction: Axis.vertical, onTap: (){
                     Navigator.pushNamed(context, '/MyFansUser', arguments: {"uid": Global.profile.user!.uid}).then((value){
                       setState(() {

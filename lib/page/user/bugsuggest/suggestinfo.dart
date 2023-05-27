@@ -169,6 +169,7 @@ class _SuggestInfoState extends State<SuggestInfo> {
     }
 
 
+    //?x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80',
     if(Global.isInDebugMode) {
       print('${_listimgs[0]}?x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80');
     }
@@ -190,7 +191,7 @@ class _SuggestInfoState extends State<SuggestInfo> {
 //                  valueColor:  AlwaysStoppedAnimation(Global.profile.backColor),
 //                ),
                   ) ,
-                  imageUrl: '${_listimgs[i]}?x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80',
+                  imageUrl: '${_listimgs[i]}',
                   fit: BoxFit.cover,
                 ),
               )

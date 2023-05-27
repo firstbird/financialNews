@@ -476,6 +476,7 @@ class _MyUserIdEditState extends State<MyUserId> {
         //print(ret);
       }
       if (ret > 0) {
+        print("[_telCustomerCare] usersafe vcode ret > 0 /MyMessage：-----------------------------------");
         Navigator.pushNamed(this.context, '/MyMessage', arguments: {"GroupRelation": groupRelation});
       }
     }

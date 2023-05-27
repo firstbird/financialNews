@@ -20,7 +20,7 @@ class UserRepository {
   ///登录并返回1.密码 2.验证码
   Future<User?> loginToUser({String mobile = "", String password = "", String vcode = "", int type = 1, String captchaVerification = "", String country = "", Function? errorCallBack}) async {
     if(type == 1) {
-      user = await _userService.login(mobile, password, captchaVerification, errorCallBack!);
+      user = await _userService.login(mobile, password, country, captchaVerification, errorCallBack!);
     }
     else{
       user = await _userService.loginMobile(mobile, vcode, country, errorCallBack!);

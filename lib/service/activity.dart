@@ -41,28 +41,48 @@ class ActivityService{
 
     Activity? activity;
 
-    FormData formData = FormData.fromMap({
-      "token": token,
-      "province": province,
-      "city": city,
-      "uid": uid,
-      "content": content,
-      "actimagespath": imageUrls,
-      "coverimg": coverimg,
-      "coverimgWH": coverimgWH,
-      "startyear": startyear,
-      "endyear": endyear,
-      "ispublic": ispublic,
-      "address": address,
-      "addresstitle": addresstitle,
-      "lat": lat,
-      "lng": lng,
-      "paytype": paytype,
-      "goodpriceid": goodpriceid,
-      "captchaVerification": captchaVerification
-    });
+    // var formData = {
+    //   "token": token,
+    //   "province": province,
+    //   "city": city,
+    //   "uid": uid,
+    //   "content": content,
+    //   "actimagespath": imageUrls,
+    //   "coverimg": coverimg,
+    //   "coverimgWH": coverimgWH,
+    //   "startyear": startyear,
+    //   "endyear": endyear,
+    //   "ispublic": ispublic,
+    //   "address": address,
+    //   "addresstitle": addresstitle,
+    //   "lat": lat,
+    //   "lng": lng,
+    //   "paytype": paytype,
+    //   "goodpriceid": goodpriceid,
+    //   "captchaVerification": captchaVerification
+    // });
+    var formData = {
+        "token": token,
+        "province": province,
+        "city": city,
+        "uid": uid,
+        "content": content,
+        "actimagespath": imageUrls,
+        "coverimg": coverimg,
+        "coverimgWH": coverimgWH,
+        "startyear": startyear,
+        "endyear": endyear,
+        "ispublic": ispublic,
+        "address": address,
+        "addresstitle": addresstitle,
+        "lat": lat,
+        "lng": lng,
+        "paytype": paytype,
+        "goodpriceid": goodpriceid,
+        "captchaVerification": captchaVerification
+    };
 
-    await NetUtil.getInstance().post(formData, "/Activity/createActivity", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/createActivity", (
         Map<String, dynamic> data) {
       activity = Activity.fromJson(data["data"]);
     }, errorCallBack);
@@ -76,7 +96,7 @@ class ActivityService{
     if(Global.profile.user != null){
       uid = Global.profile.user!.uid;
     }
-    await NetUtil.getInstance().get("/Activity/getActivity",(Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getActivity",(Map<String, dynamic> data){
       if (data["data"] != null) {
         activity = Activity.fromJson(data["data"]);
       }
@@ -91,7 +111,7 @@ class ActivityService{
     if(Global.profile.user != null){
       uid = Global.profile.user!.uid;
     }
-    await NetUtil.getInstance().get("/Activity/getActivityMember",(Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getActivityMember",(Map<String, dynamic> data){
       if (data["data"] != null) {
         activity = Activity.fromJson(data["data"]);
       }
@@ -106,7 +126,7 @@ class ActivityService{
     if(Global.profile.user != null){
       uid = Global.profile.user!.uid;
     }
-    await NetUtil.getInstance().get("/Activity/getActivityAndPendingOrder",(Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getActivityAndPendingOrder",(Map<String, dynamic> data){
       if (data["data"] != null) {
         activity = Activity.fromJson(data["data"]);
       }
@@ -117,7 +137,7 @@ class ActivityService{
   //已修改成未登录用户根据热度进行排序
   Future<List<Activity>> getActivityListByUpdateTime(int currentIndex) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getActivityListByUpdateTime", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getActivityListByUpdateTime", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -129,7 +149,7 @@ class ActivityService{
   //获取用户活动
   Future<List<Activity>> getActivityListByUser(int currentIndex, int uid) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getActivityListByUser", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getActivityListByUser", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -141,7 +161,7 @@ class ActivityService{
 
   Future<List<Activity>> getActivityListByUserCount5(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getActivityListByUserCount5", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getActivityListByUserCount5", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -153,7 +173,7 @@ class ActivityService{
   //查询所有我的活动
   Future<List<Activity>> getAllActivityListByUserCount5(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getAllActivityListByUserCount5", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getAllActivityListByUserCount5", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -165,7 +185,7 @@ class ActivityService{
 
   Future<List<Activity>> getActivityFinishListByUserCount5(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getActivityFinishListByUserCount5", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getActivityFinishListByUserCount5", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -177,7 +197,7 @@ class ActivityService{
   //获取用户加入的活动
   Future<List<Activity>> getJoinActivityListByUser(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getJoinActivityListByUser", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getJoinActivityListByUser", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -190,7 +210,7 @@ class ActivityService{
   //获取用户加入的活动数量5
   Future<List<Activity>> getJoinActivityListByUserCount5(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getJoinActivityListByUserCount5", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getJoinActivityListByUserCount5", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -202,7 +222,7 @@ class ActivityService{
 
   Future<List<Activity>> getJoinActivityFinishListByUserCount5(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getJoinActivityFinishListByUserCount5", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getJoinActivityFinishListByUserCount5", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -214,7 +234,7 @@ class ActivityService{
 
   Future<List<Activity>> getALLJoinActivityListByUserCount5(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getALLJoinActivityListByUserCount5", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getALLJoinActivityListByUserCount5", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -227,7 +247,7 @@ class ActivityService{
   //获取用户收藏的活动
   Future<List<Activity>> getCollectionActivityListByUser(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getCollectionActivityListByUser", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getCollectionActivityListByUser", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -240,7 +260,7 @@ class ActivityService{
   //获取用户收藏的活动数量5
   Future<List<Activity>> getCollectionActivityListByUserCount5(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getCollectionActivityListByUserCount5", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getCollectionActivityListByUserCount5", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -252,7 +272,7 @@ class ActivityService{
 
   Future<List<Activity>> getActivityListByCity(int currentIndex, String citycode) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/getActivityListByCity", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getActivityListByCity", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -270,12 +290,12 @@ class ActivityService{
       ids += users[i].uid.toString() + ",";
     }
     ids = ids.substring(0, ids.length-1);
-    FormData formData = FormData.fromMap({
+    var formData = {
       "currentIndex": currentIndex,
       "ids": ids,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/Activity/getActivityFollowList", (Map<String, dynamic> data) async {
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getActivityFollowList", (Map<String, dynamic> data) async {
       if(data != null){
         if(data["data"] != null){
           for(int i=0; i<data["data"].length; i++){
@@ -290,7 +310,7 @@ class ActivityService{
 
   Future<List<Activity>> getActivityListByCid(String cid) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/Activity/selectActivityByCid", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/selectActivityByCid", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -302,7 +322,7 @@ class ActivityService{
 
   Future<Map> getLikeCollectionState(String actid, int uid) async{
     Map<String, bool> ret = HashMap();
-//    await NetUtil.getInstance().get("/Activity/getLikeCollectionState", (Map<String, dynamic> data){
+//    await NetUtil.getInstance().get("/api/Activity/getLikeCollectionState", (Map<String, dynamic> data){
 //      if (data["data"] != null) {
 //        ret["islike"] = data["data"]["islike"];
 //        ret["iscollection"] = data["data"]["iscollection"];
@@ -333,12 +353,12 @@ class ActivityService{
   Future<void> getUserLike(int uid, String token) async {
     int count = await imhelper.selActivityStateCount(uid);
     if(count <= 0) {
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(
-          formData, "/Activity/getUserLike", (Map<String, dynamic> data) async {
+      };
+      await NetUtil.getInstance().postJson(
+          formData, "/api/Activity/getUserLike", (Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
             for (int i = 0; i < data["data"].length; i++) {
@@ -355,12 +375,12 @@ class ActivityService{
   Future<void> getUserLikeBug(int uid, String token) async {
     int count = await imhelper.selBugSuggestStateCount(uid, 0);
     if(count <= 0) {
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(
-          formData, "/Activity/getUserLikeBug", (Map<String, dynamic> data) async {
+      };
+      await NetUtil.getInstance().postJson(
+          formData, "/api/Activity/getUserLikeBug", (Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
             for (int i = 0; i < data["data"].length; i++) {
@@ -377,12 +397,12 @@ class ActivityService{
   Future<void> getUserLikeSuggest(int uid, String token) async {
     int count = await imhelper.selBugSuggestStateCount(uid, 1);
     if(count <= 0) {
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(
-          formData, "/Activity/getUserLikeSuggest", (Map<String, dynamic> data) async {
+      };
+      await NetUtil.getInstance().postJson(
+          formData, "/api/Activity/getUserLikeSuggest", (Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
             for (int i = 0; i < data["data"].length; i++) {
@@ -399,12 +419,12 @@ class ActivityService{
   Future<void> getUserLikeMoment(int uid, String token) async {
     int count = await imhelper.selBugSuggestStateCount(uid, 2);//评价
     if(count <= 0) {
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(
-          formData, "/Activity/getUserLikeMoment", (Map<String, dynamic> data) async {
+      };
+      await NetUtil.getInstance().postJson(
+          formData, "/api/Activity/getUserLikeMoment", (Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
             for (int i = 0; i < data["data"].length; i++) {
@@ -422,11 +442,11 @@ class ActivityService{
   Future<void> getUserCollection(int uid, String token) async {
     int count = await imhelper.selActivityCollectionCount(uid);
     if(count <= 0) {
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(formData, "/Activity/getUserCollection", (
+      };
+      await NetUtil.getInstance().postJson(formData, "/api/Activity/getUserCollection", (
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
@@ -446,11 +466,11 @@ class ActivityService{
     int evaluatecount = await imhelper.selActivityEvaluateCountState(uid);
 
     if(commentcount <= 0 && likecomment > 0) {
-      FormData formData = new FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(formData, "/Activity/getUserComnnentLike", (
+      };
+      await NetUtil.getInstance().postJson(formData, "/api/Activity/getUserComnnentLike", (
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
@@ -465,11 +485,11 @@ class ActivityService{
     }
 
     if(evaluatecount <= 0 && likeevaluate > 0) {
-      FormData formData1 = new FormData.fromMap({
+      var formData1 = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(formData1, "/Activity/getUserEvaluateLike", (
+      };
+      await NetUtil.getInstance().postJson(formData1, "/api/Activity/getUserEvaluateLike", (
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
@@ -489,11 +509,11 @@ class ActivityService{
     int commentcount = await imhelper.selGoodPriceCommentCountState(uid);
 
     if(commentcount <= 0 && likecomment > 0) {
-      FormData formData = new FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(formData, "/grouppurchase/getUserGoodPriceComnnentLike", (
+      };
+      await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getUserGoodPriceComnnentLike", (
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
@@ -515,11 +535,11 @@ class ActivityService{
     int momentcommentcount = await imhelper.selBugAndSuggestCommentCountState(uid, 2);
 
     if(bugcommentcount <= 0 && bugcommentlike > 0) {
-      FormData formData = new FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(formData, "/Activity/getUserBugComnnentLike", (
+      };
+      await NetUtil.getInstance().postJson(formData, "/api/Activity/getUserBugComnnentLike", (
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
@@ -534,11 +554,11 @@ class ActivityService{
     }
 
     if(suggestcommentcount <= 0 && suggestcommentlike > 0) {
-      FormData formData1 = new FormData.fromMap({
+      var formData1 = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(formData1, "/Activity/getUserSuggestComnnentLike", (
+      };
+      await NetUtil.getInstance().postJson(formData1, "/api/Activity/getUserSuggestComnnentLike", (
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
@@ -553,11 +573,11 @@ class ActivityService{
     }
 
     if(momentcommentcount <=0 && momentcommentlike > 0){
-      FormData formData1 = new FormData.fromMap({
+      var formData1 = {
         "token": token,
         "uid": uid,
-      });
-      await NetUtil.getInstance().post(formData1, "/Activity/getUserMomentCommentLike", (
+      };
+      await NetUtil.getInstance().postJson(formData1, "/api/Activity/getUserMomentCommentLike", (
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
@@ -575,12 +595,12 @@ class ActivityService{
   //点赞
   Future<bool> updateLike(String actid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate){
@@ -592,12 +612,12 @@ class ActivityService{
   //取消点赞
   Future<bool> delLike(String actid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -608,12 +628,12 @@ class ActivityService{
   //收藏
   Future<bool> updateCollection(Activity activity, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": activity.actid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateCollection", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateCollection", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
 
@@ -623,12 +643,12 @@ class ActivityService{
   //取消收藏
   Future<bool> delCollection(String actid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delCollection", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delCollection", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     await imhelper.delActivityCollectionState(actid, uid);
@@ -638,7 +658,7 @@ class ActivityService{
   Future<int> updateMessage(String actid, int uid, String token, int touid,  String content, String captchaVerification, Function errorCallBack) async{
     int commentid = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "actid": actid,
@@ -646,8 +666,8 @@ class ActivityService{
       "touid": touid,
       "content": content,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updatecomment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updatecomment", (Map<String, dynamic> data) {
       commentid = int.parse(data["data"].toString());
     }, errorCallBack);
     return commentid;
@@ -656,7 +676,7 @@ class ActivityService{
   Future<int> updateCommentReply(int commentid, String actid, int uid, String token, int touid,  String content,String captchaVerification, Function errorCallBack) async{
     int isret = 0;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "commentid": commentid,
       "token": token,
       "actid": actid,
@@ -664,8 +684,8 @@ class ActivityService{
       "touid": touid,
       "content": content,
       "captchaVerification": captchaVerification
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updatecomment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updatecomment", (Map<String, dynamic> data) {
       isret = int.parse(data["data"].toString());
       }, errorCallBack);
     return isret;
@@ -673,14 +693,14 @@ class ActivityService{
   //取消留言
   Future<bool> delMessage(String token, int uid, int commentid, String actid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "replyid": 0,
       "actid": actid
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delcomment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delcomment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -688,14 +708,14 @@ class ActivityService{
   //取消留言里的回复
   Future<bool> delMessageReply(String token, int uid, int replyid, String actid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": 0,
       "uid": uid,
       "replyid": replyid,
       "actid": actid
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delcomment", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delcomment", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -703,7 +723,7 @@ class ActivityService{
   //获取留言
   Future<List<Comment>> getCommentList(String actid, int uid, Function errorCallBack) async {
     List<Comment> listComments = [];
-    await NetUtil.getInstance().get("/Activity/getcomment", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getcomment", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           Comment comment = Comment.fromJson(data["data"][i]);
@@ -728,14 +748,14 @@ class ActivityService{
   //点赞
   Future<bool> updateCommentLike(int commentid, int uid, String token, int likeuid, String actid,Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "uid": uid,
       "likeuid": likeuid,
       "actid": actid
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -746,13 +766,13 @@ class ActivityService{
   //取消点赞
   Future<bool> delCommentLike(int commentid, int uid, String token, int likeuid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "commentid": commentid,
       "likeuid": likeuid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delCommentLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delCommentLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -763,14 +783,14 @@ class ActivityService{
   //点赞
   Future<bool> updateEvaluateLike(int evaluateid, int uid, String token, int likeuid, String actid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "evaluateid": evaluateid,
       "uid": uid,
       "likeuid": likeuid,
       "actid": actid
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateEvaluateLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateEvaluateLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -781,13 +801,13 @@ class ActivityService{
   //取消点赞
   Future<bool> delEvaluateLike(int evaluateid, int uid, String token, int likeuid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "evaluateid": evaluateid,
       "likeuid": likeuid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delEvaluateLike", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delEvaluateLike", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     if(isUpdate) {
@@ -798,12 +818,12 @@ class ActivityService{
   //删除活动
   Future<bool> delActivity(String actid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delActivity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delActivity", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -811,12 +831,12 @@ class ActivityService{
   //刷新活动时间
   Future<bool> updateActivityTime(String actid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateActivityTime", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateActivityTime", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -825,13 +845,13 @@ class ActivityService{
   //编辑活动
   Future<bool> updateActivity(String actid, int uid, String token, String content, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
       "content": content
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateActivity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateActivity", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -839,13 +859,13 @@ class ActivityService{
   //更新活动状态
   Future<bool> updateActivityStatus(String actid, int uid, String token, int status, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
       "status": status
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateActivityStatus", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateActivityStatus", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -854,12 +874,12 @@ class ActivityService{
   //更新活动状态
   Future<bool> updateActivityStatusEnd(String actid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/updateActivityStatusEnd", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/updateActivityStatusEnd", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -868,13 +888,13 @@ class ActivityService{
   //参加活动
   Future<GroupRelation?> joinActivity(String actid, int uid, String token, String username, String sex, Function errorCallBack) async{
     GroupRelation? groupRelation;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "actid": actid,
       "uid": uid,
       "username": username,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/joinActivity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/joinActivity", (Map<String, dynamic> data) {
       if(data['data'] != null) {
         groupRelation = GroupRelation.fromJson(data['data']);
       }
@@ -888,12 +908,12 @@ class ActivityService{
   //是否已经参加活动
   Future<GroupRelation?> getGroupConversation(String actid, int uid, String token, Function errorCallBack) async{
     GroupRelation? groupRelation;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "timeline_id": actid,
       "uid": uid
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/getGroupConversation", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getGroupConversation", (Map<String, dynamic> data) {
       if(data['data'] != null)
         groupRelation = GroupRelation.fromJson(data['data']);
     }, errorCallBack);
@@ -904,7 +924,7 @@ class ActivityService{
   //获取指定回复
   Future<CommentReply?> getReply(int replyid, Function errorCallBack) async {
     CommentReply? commentReply;
-    await NetUtil.getInstance().get("/Activity/getReply", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getReply", (Map<String, dynamic> data){
       if (data["data"] != null) {
         commentReply = CommentReply.fromJson(data["data"]);
       }
@@ -919,12 +939,12 @@ class ActivityService{
     if(replyid == null){
       replyid = -1;
     }
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": Global.profile.user!.uid,
       "replyid": replyid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/Activity/getCommentReplyList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getCommentReplyList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
@@ -943,12 +963,12 @@ class ActivityService{
     if(commentid == null){
       commentid = -1;
     }
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": Global.profile.user!.uid,
       "commentid": commentid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/Activity/getNewCommentList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getNewCommentList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
@@ -967,12 +987,12 @@ class ActivityService{
     if(replyid == null){
       replyid = -1;
     }
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": Global.profile.user!.uid,
       "replyid": replyid,
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/Activity/getSysNotice", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getSysNotice", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
@@ -988,11 +1008,11 @@ class ActivityService{
   Future<UserNotice?> syncUserNotice(int uid, String token, Function errorCallBack) async {
     UserNotice? userNotice = null;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/syncUserNotice", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/syncUserNotice", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         userNotice = UserNotice.fromJson(
@@ -1140,13 +1160,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_commentindex)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "commentid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getNewCommentList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getNewCommentList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1177,13 +1197,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_bugcomment)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "commentid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/IM/getNewBugCommentList", (
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getNewBugCommentList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1214,13 +1234,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_suggestcomment)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "commentid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/IM/getNewSuggestCommentList", (
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getNewSuggestCommentList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1251,13 +1271,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_momentcomment)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "commentid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/IM/getNewMomentCommentList", (
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getNewMomentCommentList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1289,13 +1309,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_goodpricecommentindex)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "commentid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/grouppurchase/getNewCommentList", (
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getNewCommentList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1325,13 +1345,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_actlike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getActivityLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getActivityLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1361,13 +1381,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_buglike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getBugLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getBugLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1397,13 +1417,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_suggestlike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getSuggestLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getSuggestLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1433,13 +1453,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_momentlike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getMomentLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getMomentLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1468,13 +1488,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_commentlike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getActivityCommentLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getActivityCommentLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1503,13 +1523,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_goodpricecommentlike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/grouppurchase/getGoodPriceCommentLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getGoodPriceCommentLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1538,13 +1558,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_evaluate)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getEvaluateLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getEvaluateLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1573,13 +1593,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_bugcommentlike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getBugCommentLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getBugCommentLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1608,13 +1628,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_suggestcommentlike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getSuggestCommentLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getSuggestCommentLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1643,13 +1663,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_momentcommentlike)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "likeid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getMomentCommentLikeList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getMomentCommentLikeList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1678,13 +1698,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_follow)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "id": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/user/follwerInfo", (
+    await NetUtil.getInstance().postJson(formData, "/api/user/follwerInfo", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1718,13 +1738,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_replyindex)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "replyid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getCommentReplyList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getCommentReplyList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1754,13 +1774,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_goodpricereplyindex)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "replyid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/grouppurchase/getCommentReplyList", (
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/getCommentReplyList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1790,13 +1810,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_bugreply)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "replyid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/IM/getNewBugReplyList", (
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getNewBugReplyList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1826,13 +1846,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_suggestreply)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "replyid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/IM/getNewSuggestReplyList", (
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getNewSuggestReplyList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1862,13 +1882,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.unread_momentreply)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "replyid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/IM/getNewMomentReplyList", (
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getNewMomentReplyList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1898,13 +1918,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_sysnoticeindex)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "replyid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getSysNotice", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getSysNotice", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1933,14 +1953,14 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (id != null && id > userNotice.read_shared)
       sequence_id = id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "readindex": sequence_id, //服务器已读的
-    });
+    };
 
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/user/getUserShared", (
+    await NetUtil.getInstance().postJson(formData, "/api/user/getUserShared", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -1959,13 +1979,13 @@ class ActivityService{
   //获取未评价的订单
   Future<List<Order>> getUnEvaluateOrderList(int uid, String token,  Function errorCallBack) async {
     List<Order> unevaluateorderlist = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
-    });
+    };
 
     ///获取未评论活动
-    await NetUtil.getInstance().post(formData, "/Activity/getUnEvaluateOrderList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getUnEvaluateOrderList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
@@ -1993,14 +2013,14 @@ class ActivityService{
         print("load activityEvaluates....");
       }
       List<ActivityEvaluate> activityEvaluates = [];
-      FormData formData = FormData.fromMap({
+      var formData = {
         "uid": uid,
         "token": token,
         "readindex": 0
-      });
+      };
 
       ///获取未评论活动
-      await NetUtil.getInstance().post(formData, "/Activity/getUnActvityEvaluateList", (
+      await NetUtil.getInstance().postJson(formData, "/api/Activity/getUnActvityEvaluateList", (
           Map<String, dynamic> data){
         if (data["data"] != null) {
           issuccess = true;
@@ -2030,17 +2050,17 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (id != null && id > userNotice.evaluate_activity)
       sequence_id = id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "readindex": sequence_id, //服务器已读的
-    });
+    };
     ///判断服务器未评论活动是否大于本地
     List<ActivityEvaluate> activityEvaluates = [];
 
 
     ///获取为评论活动
-    await NetUtil.getInstance().post(formData, "/Activity/getUnActvityEvaluateList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getUnActvityEvaluateList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -2071,13 +2091,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_evaluate)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "evaluateid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getNewEvaluateList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getNewEvaluateList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;
@@ -2107,13 +2127,13 @@ class ActivityService{
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
     if (temsequence_id != null && temsequence_id > userNotice.read_evaluatereply)
       sequence_id = temsequence_id;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "replyid": sequence_id, //服务器已读的
-    });
+    };
     ///通过自增的已读ID获取未读消息
-    await NetUtil.getInstance().post(formData, "/Activity/getNewEvaluateReplyList", (
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getNewEvaluateReplyList", (
         Map<String, dynamic> data){
       if (data["data"] != null) {
         issuccess = true;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
@@ -2150,11 +2170,11 @@ class ActivityService{
   Future<List<GroupRelation>?> syncActivityRelationInit(int uid, String token, Function errorCallBack) async {
     List<GroupRelation>? grouprelationlist = null;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/IM/listActivityGroupConversationsInit", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/IM/listActivityGroupConversationsInit", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         grouprelationlist = [];
@@ -2197,14 +2217,14 @@ class ActivityService{
       readindex = await imhelper.getMaxReplyid(replyMsgType);
 
     if(readindex!=null){
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
         "type": replyMsgType.toString(),
         "readindex": readindex, //已经下载的消息索引，下载后标记为已经读取到本地
-      });
+      };
 
-      await NetUtil.getInstance().post(formData, "/Activity/noticeAlready", (
+      await NetUtil.getInstance().postJson(formData, "/api/Activity/noticeAlready", (
           Map<String, dynamic> data){
         ret = true;
       }, errorCallBack);
@@ -2246,14 +2266,14 @@ class ActivityService{
     }
 
     if(readindex!=null){
-      FormData formData = FormData.fromMap({
+      var formData = {
         "token": token,
         "uid": uid,
         "likeType": likeType.toString(),
         "readindex": readindex, //已经下载的消息索引，下载后标记为已经读取到本地
-      });
+      };
 
-      await NetUtil.getInstance().post(formData, "/Activity/noticeAllike", (
+      await NetUtil.getInstance().postJson(formData, "/api/Activity/noticeAllike", (
           Map<String, dynamic> data){
         ret = true;
       }, errorCallBack);
@@ -2265,10 +2285,10 @@ class ActivityService{
   Future<List<SearchResult>> getRecommendSearchActivity(String content,
       Function errorCallBack) async {
     List<SearchResult> searchResults = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "content": content,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/getRecommendSearchActivity", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getRecommendSearchActivity", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
@@ -2286,7 +2306,7 @@ class ActivityService{
     List<SearchResult> searchResults = [];
 
     await NetUtil.getInstance().get(
-        "/Activity/hotsearchActivity", (Map<String, dynamic> data) {
+        "/api/Activity/hotsearchActivity", (Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
           SearchResult searchResult = SearchResult.fromJson(data["data"][i]);
@@ -2302,14 +2322,14 @@ class ActivityService{
   //搜索活动
   Future<List<Activity>> searchActivity(String ordertype, String citycode, int currentIndex, bool isAllCity,String content, Function errorCallBack) async {
     List<Activity> activitys = [];
-    FormData formData = FormData.fromMap({
+    var formData = {
       "content": content,
       "ordertype": ordertype,
       "citycode": citycode,
       "currentIndex": currentIndex,
       "isAllCity": isAllCity ? "1" : "0"
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/searchActivity", (
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/searchActivity", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
@@ -2324,12 +2344,17 @@ class ActivityService{
   //搜索相识活动
   Future<List<Activity>> searchMoreLikeActivity(String citycode, int currentIndex, String content, String actid,Function errorCallBack) async {
     List<Activity> activitys = [];
-    FormData formData = FormData.fromMap({
-      "content": content,
-      "citycode": citycode,
-      "currentIndex": currentIndex,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/searchMoreLikeActivity", (
+    // var formData = {
+    //   "content": content,
+    //   "citycode": citycode,
+    //   "currentIndex": currentIndex,
+    // });
+    var formData = {
+        "content": content,
+        "citycode": citycode,
+        "currentIndex": currentIndex,
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/searchMoreLikeActivity", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
@@ -2346,15 +2371,15 @@ class ActivityService{
   //评价活动
   Future<bool> evaluateActivity(int uid, String token,  String content, String orderid, String imagepaths, int liketype,  Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "content": content,
       "orderid": orderid,
       "imagepaths": imagepaths,
       "liketype": liketype,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/saveEvaluateInActivity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/saveEvaluateInActivity", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
 
@@ -2366,14 +2391,14 @@ class ActivityService{
   Future<bool> evaluateReply(int evaluateid, int uid, String token, int touid,  String content, Function errorCallBack) async{
     bool isUpdate = false;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "evaluateid": evaluateid,
       "token": token,
       "uid": uid,
       "touid": touid,
       "content": content,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/saveEvaluateReply", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/saveEvaluateReply", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -2383,12 +2408,12 @@ class ActivityService{
   Future<bool> delQuiteActivity(String actid, int uid, String token, Function errorCallBack) async{
     bool isUpdate = false;
     ShowMessage.showCenterToast("退出活动");
-    FormData formData = FormData.fromMap({
+    var formData = {
       "actid": actid,
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delQuiteActivity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delQuiteActivity", (Map<String, dynamic> data) {
       ShowMessage.cancel();
       isUpdate = true;
     }, errorCallBack);
@@ -2399,13 +2424,13 @@ class ActivityService{
   //删除并退出活动
   Future<bool> delActivityOrder(String actid, int uid, String token, String orderid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "actid": actid,
       "token": token,
       "uid": uid,
       "orderid": orderid
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/delActivityOrder", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/delActivityOrder", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
 
@@ -2415,13 +2440,13 @@ class ActivityService{
   //退款
   Future<bool> refundActivityOrder(String actid, int uid, String token, String orderid, Function errorCallBack) async{
     bool isUpdate = false;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "actid": actid,
       "token": token,
       "uid": uid,
       "orderid": orderid
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/refundActivityOrder", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/refundActivityOrder", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
 
@@ -2433,13 +2458,13 @@ class ActivityService{
   Future<bool> manageDelQuiteActivity(String actid, int uid, String token, String uids, Function errorCallBack) async{
     bool isUpdate = false;
     ShowMessage.showCenterToast("移除成员");
-    FormData formData = FormData.fromMap({
+    var formData = {
       "actid": actid,
       "token": token,
       "uid": uid,
       "uids": uids
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/manageDelQuiteActivity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/manageDelQuiteActivity", (Map<String, dynamic> data) {
       ShowMessage.cancel();
       isUpdate = true;
     }, errorCallBack);
@@ -2451,13 +2476,13 @@ class ActivityService{
   Future<bool> activityFundTransfer(String actid, int uid, String token, String orderid, Function errorCallBack) async{
     bool isUpdate = false;
     ShowMessage.showCenterToast("付款中");
-    FormData formData = FormData.fromMap({
+    var formData = {
       "actid": actid,
       "token": token,
       "uid": uid,
       "orderid": orderid
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/activityFundTransfer", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/activityFundTransfer", (Map<String, dynamic> data) {
       ShowMessage.cancel();
       isUpdate = true;
     }, errorCallBack);
@@ -2470,12 +2495,12 @@ class ActivityService{
   Future<List<EvaluateActivity>> getEvaluateActivityList(String actid, int uid, int currentIndex,  Function errorCallBack) async{
     List<EvaluateActivity> evaluateActivities = [];
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "actid": actid,
       "uid": uid,
       "currentIndex": currentIndex,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/getEvaluateActivity", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getEvaluateActivity", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         EvaluateActivity evaluateActivity = EvaluateActivity.fromJson(data["data"][i]);
         evaluateActivities.add(evaluateActivity);
@@ -2502,10 +2527,10 @@ class ActivityService{
   Future<List<EvaluateActivityReply>> getEvaluateReplyList(int evaluateid,  Function errorCallBack) async{
     List<EvaluateActivityReply> evaluateReplys = [];
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "evaluateid": evaluateid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/getEvaluateReplyList", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getEvaluateReplyList", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         EvaluateActivityReply reply = EvaluateActivityReply.fromJson(data["data"][i]);
         evaluateReplys.add(reply);
@@ -2519,10 +2544,10 @@ class ActivityService{
   Future<EvaluateActivity?> getEvaluateActivityByEvaluateid(int evaluateid) async{
     EvaluateActivity? evaluateActivity;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "evaluateid": evaluateid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/getEvaluateActivityByEvaluateid", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getEvaluateActivityByEvaluateid", (Map<String, dynamic> data) {
       evaluateActivity = EvaluateActivity.fromJson(data["data"]);
 
     }, errorResponse);
@@ -2533,13 +2558,13 @@ class ActivityService{
   //获取支付宝用户信息
   Future<String> updateAliPayInfo(int uid,  String token,  String auth_code, Function errorCallBack) async {
     String aliuserid = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "auth_code": auth_code
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/AliPay/updateAliPayInfo", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/AliPay/updateAliPayInfo", (Map<String, dynamic> data) {
       aliuserid = data["data"];
     }, errorCallBack);
     return aliuserid;
@@ -2551,7 +2576,7 @@ class ActivityService{
   Future<Map<dynamic, dynamic>?> getActivityOrder(int uid,  String token,  String actid, String goodpriceid, String specsid,
       int productnum, String orderid, int paymenttype, String speacename, Function errorCallBack) async {
     Map<dynamic, dynamic>? orderinfo = null;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "actid": actid,
@@ -2561,9 +2586,9 @@ class ActivityService{
       "orderid": orderid,
       "paymenttype": paymenttype,
       "speacename": speacename
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/Activity/getActivityOrder", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getActivityOrder", (Map<String, dynamic> data) {
       if(paymenttype == 0) {
         //支付宝
         orderinfo = Map();
@@ -2582,13 +2607,13 @@ class ActivityService{
   //获取用户活动待付款订单
   Future<Order?> getActivityPendingOrder(int uid,  String token,  String actid, Function errorCallBack) async {
     Order? order;
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "token": token,
       "actid": actid
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/Activity/getActivityPendingOrder", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getActivityPendingOrder", (Map<String, dynamic> data) {
       order = Order.fromJson( data["data"]);
     }, errorCallBack);
     return order;
@@ -2601,7 +2626,7 @@ class ActivityService{
   Future<String> reportActivity(int uid,  int touid, String token,  String actid, int reporttype, String reportcontent,
       String images, int imagetype, int sourcetype, String captchaVerification, Function errorCallBack) async {
     String ret = "";
-    FormData formData = FormData.fromMap({
+    var formData = {
       "uid": uid,
       "touid": touid,
       "token": token,
@@ -2612,9 +2637,9 @@ class ActivityService{
       "imagetype": imagetype,
       "sourcetype": sourcetype,
       "captchaVerification": captchaVerification
-    });
+    };
 
-    await NetUtil.getInstance().post(formData, "/Activity/reportActivity", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/reportActivity", (Map<String, dynamic> data) {
       ret = data["data"];
     }, errorCallBack);
     return ret;
@@ -2624,11 +2649,11 @@ class ActivityService{
   Future<List<Report>> getMyReport(int uid, String token, Function errorCallBack) async{
     List<Report> myReports = [];
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/getMyReport", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getMyReport", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         Report myReport = Report.fromJson(data["data"][i]);
         myReports.add(myReport);
@@ -2640,13 +2665,13 @@ class ActivityService{
   Future<Report?> getMyReportInfo(int uid, String token, String reportid, int sourcetype, Function errorCallBack) async{
     Report? myReport = null;
 
-    FormData formData = FormData.fromMap({
+    var formData = {
       "token": token,
       "uid": uid,
       "reportid": reportid,
       "sourcetype": sourcetype
-    });
-    await NetUtil.getInstance().post(formData, "/Activity/getMyReportInfo", (Map<String, dynamic> data) {
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getMyReportInfo", (Map<String, dynamic> data) {
       myReport = Report.fromJson(data["data"]);
     }, errorCallBack);
     return myReport;

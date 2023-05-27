@@ -117,9 +117,9 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          // BlocProvider<AuthenticationBloc>(
-          //   create: (BuildContext context) => AuthenticationBloc()..add(LoggedState()),
-          // ),
+          BlocProvider<AuthenticationBloc>(
+            create: (BuildContext context) => AuthenticationBloc()..add(LoggedState()),
+          ),
           BlocProvider<ImBloc>(
             create: (BuildContext context) => ImBloc(),
           ),

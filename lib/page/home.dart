@@ -358,7 +358,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 tabs: <Widget>[
                   //_item("关注", 0), Alignment.bottomRight, 0, "关注", 0
                   TabBarItem(key: _itemKey1, title: "关注", bottomAlignment: Alignment.bottomRight, itemtype: 0, itemindex: 0,),
-                  TabBarItem(key: _itemKey2, title: "推荐", bottomAlignment: Alignment.center, itemtype: 0, itemindex: 1,),
+                  TabBarItem(key: _itemKey2, title: "相亲帖", bottomAlignment: Alignment.center, itemtype: 0, itemindex: 1,),
                   TabBarItem(key: _itemCityKey2, title: _title, bottomAlignment: Alignment.bottomLeft, itemtype: 1, itemindex: 2)
                 ]),
           ),
