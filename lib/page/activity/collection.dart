@@ -165,7 +165,7 @@ class _MyCollectionActivityState extends State<MyCollectionActivity>  {
               child:  ClipRRect(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                   child: CachedNetworkImage(
-                    imageUrl: '${activity.coverimg}?x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80',//缩放压缩
+                    imageUrl: '${activity.coverimg}',
                     fit: BoxFit.cover,
                   )
               ),

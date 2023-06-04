@@ -1,5 +1,7 @@
 ﻿import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../bloc/user/authentication_bloc.dart';
 import 'my_divider.dart';
 import '../service/userservice.dart';
 import '../common/json/interest_json.dart';
@@ -64,7 +66,7 @@ class _InterestSelState extends State<InterestSel> {
                 child: TextButton(
                     // color: Global.profile.backColor,
                     child: Text(
-                      '保存',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),
+                      '保存',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Global.profile.backColor),
                     ),
                     // shape: RoundedRectangleBorder(
                     //     side: BorderSide.none,
@@ -76,7 +78,10 @@ class _InterestSelState extends State<InterestSel> {
                         borderRadius: BorderRadius.circular(9.0),
                       ),
                     ),
-
+                    // style: ButtonStyle(
+                    //   textStyle: MaterialStateProperty.all(
+                    //       TextStyle(fontSize: 18, color: Colors.red)),
+                    // ),
                     onPressed: () async{
                       UserService userService = new UserService();
                       String strInterest = "";
@@ -85,14 +90,17 @@ class _InterestSelState extends State<InterestSel> {
                       }
                       if(strInterest != "")
                         strInterest = strInterest.substring(0, strInterest.length - 1);
-                      bool ret = await userService.updateInterest(Global.profile.user!.token!, Global.profile.user!.uid
-                          , strInterest, (String statusCode, String msg){
-                            ShowMessage.showToast(msg);
-                          });
-                      if(ret){
+                      BlocProvider.of<AuthenticationBloc>(context).add(
+                          UpdateUserInterest(user: Global.profile.user!, interest: strInterest));
+                      // bool ret = await userService.updateInterest(Global.profile.user!.token!, Global.profile.user!.uid
+                      //     , strInterest, (String statusCode, String msg){
+                      //       ShowMessage.showToast(msg);
+                      //     });
+                      // if(ret){
+                        print("[save user interest] interest: ${strInterest}");
                         Global.profile.user!.interest = strInterest;
                         Navigator.pop(context, strInterest);
-                      }
+                      // }
                     }),
                 )
               )

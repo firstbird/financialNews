@@ -202,7 +202,8 @@ class NinePicture extends StatelessWidget {
               child: ClipRRect(
                 child: CachedNetworkImage(
                   fit: BoxFit.cover,
-                  imageUrl: '${list[index]['img']}?x-oss-process=image/resize,m_fill,w_800/sharpen,50/quality,q_80',
+                  //?x-oss-process=image/resize,m_fill,w_800/sharpen,50/quality,q_80',
+                  imageUrl: '${list[index]['img']}',
                 ),
                 borderRadius: BorderRadius.circular(8),
               ),

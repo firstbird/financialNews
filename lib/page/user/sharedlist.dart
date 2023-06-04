@@ -175,6 +175,7 @@ class _SharedListState extends State<SharedList> {
       temheight = getImageWH(userShared);
     }
 
+    //?x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80',//缩放压缩
     return GestureDetector(
       onTap: (){
         Navigator.pushNamed(context, '/ActivityInfo', arguments: {"actid": userShared.contentid}).then((val){});
@@ -190,7 +191,7 @@ class _SharedListState extends State<SharedList> {
               child:  ClipRRect(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                   child: CachedNetworkImage(
-                    imageUrl: '${userShared.image}?x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80',//缩放压缩
+                    imageUrl: '${userShared.image}',
                     fit: BoxFit.cover,
                   )
               ),

@@ -190,7 +190,7 @@ class CircleHeadImage extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(50)),
           child: temimageUrl==null|| temimageUrl.isEmpty?Image(
             image: AssetImage(Global.headimg),
-          ):CachedNetworkImage(imageUrl: '${temimageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80'),
+          ):CachedNetworkImage(imageUrl: '${temimageUrl}'),//?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80
         ),
       ),
       onTap: () {

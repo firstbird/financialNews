@@ -525,9 +525,11 @@ class _ActivityState extends State<ActivityInfo> {
       }
     }
 
+    // ?x-oss-process=image/resize,m_fixed,w_1080/quality,q_80
     return Column(
       children: _listimgs.asMap().keys.map((i) {
         initheigth = i > 0 ? 0 : initheigth;
+        print("[activity info detail] url: ${_listimgs[i]}");
         return Container(
           height: i == 0 ?initheigth: null,
           margin: EdgeInsets.only(top: 10),
@@ -547,7 +549,7 @@ class _ActivityState extends State<ActivityInfo> {
 //                ),
                 ) ,
                 // ?x-oss-process=image/resize,m_fixed,w_1080/quality,q_80
-                imageUrl: '${_listimgs[i]}',
+                imageUrl: '${_listimgs[i]}', //'${_listimgs[i]}',
                 fit: BoxFit.cover,
               ),
             )
@@ -1315,7 +1317,7 @@ class _ActivityState extends State<ActivityInfo> {
         Text(activity.mincost.toString() + "—" + activity.maxcost.toString(), style: TextStyle(color: Colors.red, fontSize: 12,fontWeight: FontWeight.bold),)
       ],
     );
-
+    print("[activity info] activity coverimg: ${activity.coverimg}");
     return GestureDetector(
       onTap: (){
         Navigator.pushNamed(context, '/ActivityInfo', arguments: {"actid": activity.actid}).then((val){
@@ -1333,7 +1335,7 @@ class _ActivityState extends State<ActivityInfo> {
                 child:  ClipRRect(
                     borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                     child: activity.coverimg != "" ? CachedNetworkImage(
-                      imageUrl: '${activity.coverimg}?x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80',//缩放压缩
+                      imageUrl: '${activity.coverimg}',
                       fit: BoxFit.cover,
                     ):Image.asset("images/icon_nullimg.png", width: _pageWidth, fit: BoxFit.cover,)
                 ),

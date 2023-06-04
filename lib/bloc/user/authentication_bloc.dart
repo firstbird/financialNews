@@ -249,6 +249,25 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     on<initUpdate>((event, emit) async {
       emit(AuthenticationAuthenticated());
     });
+    ///更新兴趣
+    on<UpdateUserInterest>((event, emit) async {
+      try {
+        bool ret = await userRepository.UpdateUserInterest(event.user, event.interest, errorCallBack);
+        if(ret) {
+          event.user.interest = event.interest;
+          userRepository.persistToken(event.user);
+          emit(AuthenticationAuthenticated());
+        }
+        else{
+          ///验证未通过
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+        }
+
+      } catch (error) {
+        ///验证未通过
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+      }
+    });
 
   }
 

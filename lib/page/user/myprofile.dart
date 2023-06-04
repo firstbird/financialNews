@@ -403,13 +403,58 @@ class _MyProfileState extends State<MyProfile> with TickerProviderStateMixin {
                         //     borderRadius:  BorderRadius.all(Radius.circular(5))
                         // ),
                         // color: Global.profile.backColor,
-                        style: TextButton.styleFrom(
-                          primary: Global.profile.backColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                        ),
-                        child: Text(title,  style: TextStyle(color: Global.profile.fontColor,fontSize: 14, fontWeight: FontWeight.bold)),
+                        style: ButtonStyle(
+                            textStyle: MaterialStateProperty.all(
+                            TextStyle(fontSize: 18, color: Colors.red)),
+                            //设置按钮上字体与图标的颜色
+                            ///设置文本不通状态时颜色
+                            foregroundColor: MaterialStateProperty.resolveWith(
+                            (states) {
+                            if (states.contains(MaterialState.focused) &&
+                            !states.contains(MaterialState.pressed)) {
+                            //获取焦点时的颜色
+                            return Colors.blue;
+                            } else if (states.contains(MaterialState.pressed)) {
+                            //按下时的颜色
+                            return Colors.deepPurple;
+                            }
+                            //默认状态使用灰色
+                            return Colors.grey;
+                            },
+                            ),
+                            //按钮背景颜色
+                            backgroundColor: MaterialStateProperty.resolveWith((states) {
+                            //设置按下时的背景颜色
+                            if (states.contains(MaterialState.pressed)) {
+                            return Colors.yellow[300];
+                            }
+                            //默认不使用背景颜色
+                            return null;
+                            }),
+                            ///设置水波纹颜色
+                            overlayColor: MaterialStateProperty.all(Colors.yellow),
+                            ///按钮大小
+                            minimumSize: MaterialStateProperty.all(Size(320, 36)),
+                            //设置阴影  不适用于这里的TextButton
+                            elevation: MaterialStateProperty.all(0),
+                            //设置按钮内边距
+                            padding: MaterialStateProperty.all(EdgeInsets.all(10)),
+                            ///设置按钮圆角
+                            shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5))),
+                            ///设置按钮边框颜色和宽度
+                            side: MaterialStateProperty.all(
+                            BorderSide(color: Colors.red, width: 1)),
+                            ),
+
+                        // TextButton.styleFrom(
+                        //   primary: Global.profile.backColor,
+                        //   foregroundColor: Global.profile.backColor,
+                        //   shape: RoundedRectangleBorder(
+                        //     borderRadius: BorderRadius.circular(5.0),
+                        //   ),
+                        // ),
+                        child: Text(title,  style: TextStyle(color: Global.profile.backColor,fontSize: 14, fontWeight: FontWeight.bold)),
                         onPressed: (){
                           Navigator.pushNamed(context, '/MyProfileEdit').then((value){
                             setState(() {

@@ -39,7 +39,7 @@ class Profile {
 //      setProfilepicture();
     }
     //backColor = Color(0xffff2442);
-    backColor = Color(0xffff2442);
+    backColor = Color(0xffff7383);//0xffff2442
     fontColor = Color(fontColorval);
     disableColor = backColor!.withAlpha(100);
 

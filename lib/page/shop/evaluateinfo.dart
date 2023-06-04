@@ -166,7 +166,7 @@ class _EvaluateInfoState extends State<EvaluateInfo> {
           child: ClipRRect(
             borderRadius: BorderRadius.all(Radius.circular(0)),
             child: CachedNetworkImage(
-              imageUrl: '${e.toString()}?x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80',
+              imageUrl: '${e.toString()}',//?x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80',
               fit: BoxFit.cover,
             ),
           ),

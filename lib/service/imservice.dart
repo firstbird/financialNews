@@ -306,7 +306,7 @@ class ImService {
     List<String> listcommunity = [];
 
     await NetUtil.getInstance().get(
-        "/Community/getCommunityListByUser", (Map<String, dynamic> data) {
+        "/api/Community/getCommunityListByUser", (Map<String, dynamic> data) {
       if (data["data"] != null) {
         for (int i = 0; i < data["data"].length; i++) {
           Community community = Community.fromJson(data["data"][i]);
@@ -1446,7 +1446,7 @@ class ImService {
       "members": temMember,
       "membernames": temMemberName
     };
-    await NetUtil.getInstance().postJson(formData, "/Community/createCommunity", (
+    await NetUtil.getInstance().postJson(formData, "/api/Community/createCommunity", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         community = Community.fromJson(data["data"]);
@@ -1465,7 +1465,7 @@ class ImService {
       "cid": cid,
       "path": imgpath,
     };
-    await NetUtil.getInstance().postJson(formData, "/Community/updateCommunityPicture", (
+    await NetUtil.getInstance().postJson(formData, "/api/Community/updateCommunityPicture", (
         Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
@@ -1482,7 +1482,7 @@ class ImService {
       "currentIndex": currentIndex,
     };
 
-    await NetUtil.getInstance().postJson(formData, "/Community/getCommunityMember", (
+    await NetUtil.getInstance().postJson(formData, "/api/Community/getCommunityMember", (
         Map<String, dynamic> data) async {
       if (data != null) {
         if (data["data"] != null) {
@@ -1506,7 +1506,7 @@ class ImService {
       "cid": cid,
       "memberid": memberid,
     };
-    await NetUtil.getInstance().postJson(formData, "/Community/delCommunityMember", (
+    await NetUtil.getInstance().postJson(formData, "/api/Community/delCommunityMember", (
         Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
@@ -1523,7 +1523,7 @@ class ImService {
       "token": token,
       "uid": uid,
     };
-    await NetUtil.getInstance().postJson(formData, "/Community/delQuiteCommunity", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/Community/delQuiteCommunity", (Map<String, dynamic> data) {
       ShowMessage.cancel();
       isUpdate = true;
     }, errorCallBack);
@@ -1552,7 +1552,7 @@ class ImService {
       "oldmembers": oldmembers,
       "membernames": temmembernames,
     };
-    await NetUtil.getInstance().postJson(formData, "/Community/joinCommunity", (
+    await NetUtil.getInstance().postJson(formData, "/api/Community/joinCommunity", (
         Map<String, dynamic> data) {
       ret = true;
     }, errorCallBack);

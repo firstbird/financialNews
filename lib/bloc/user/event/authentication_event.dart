@@ -204,6 +204,24 @@ class UpdateLocation extends AuthenticationEvent{
   String toString() =>
       'UpdateLocation { locationCode: $locationCode, locationName: $locationName }';
 }
+
+///更新个人爱好
+class UpdateUserInterest extends AuthenticationEvent{
+  final User user;
+  final String interest;
+
+  const UpdateUserInterest({
+    required this.user,
+    required this.interest,
+  });
+  @override
+  List<Object> get props => [user, interest];
+
+  @override
+  String toString() =>
+      'UpdateUserInterest { user: $user, password: $interest }';
+}
+
 ///主动刷新
 ///个人主页默认为保存状态，需手动下拉刷新更新数据
 class Refresh extends AuthenticationEvent{

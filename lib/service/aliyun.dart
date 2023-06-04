@@ -28,7 +28,7 @@ class AliyunService {
       "token": token,
       "uid": uid
     };
-    await NetUtil.getInstance().postJson(formData, "/Community/getActivitySecurityToken", (Map<String, dynamic> data) {
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/getActivitySecurityToken", (Map<String, dynamic> data) {
       securityToken = SecurityToken(data["data"]["ossAccessKeyId"], data["data"]["policy"], data["data"]["signature"], data["data"]["dir"], data["data"]["host"], data["data"]["expire"]);
     }, errorResponse);
     return securityToken;

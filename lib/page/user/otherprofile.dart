@@ -596,7 +596,7 @@ class _OtherProfileState extends State<OtherProfile> with TickerProviderStateMix
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
-                              child: Text('${user!.interest!=null && user!.interest!="" ? "喜欢" + CommonUtil.getInterest(user!.interest!):"喜欢什么就是不告诉你"}',
+                              child: Text('${user!.interest!=null && user!.interest!="" ? "喜欢: " + CommonUtil.getInterest(user!.interest!):"喜欢什么就是不告诉你"}',
                                 style: TextStyle(color: Colors.black, fontSize: 13), overflow: TextOverflow.ellipsis,)
                             ),
                           ],
