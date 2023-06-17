@@ -41,7 +41,7 @@ class MapLocationPicker extends StatefulWidget {
 
 class _MapLocationPickerState extends State<MapLocationPicker> with SingleTickerProviderStateMixin, _BLoCMixin, _AnimationMixin {
   double _currentZoom = 15.0;
-  final AMapApiKey amapApiKeys = AMapApiKey(androidKey: 'a957b3baabd609fb68b51968fd066aa2', iosKey: '8108c7ed76ba703c5229f5569df0045b');
+  final AMapApiKey amapApiKeys = AMapApiKey(androidKey: '569950465f236aa4691670135965f9a5', iosKey: '8108c7ed76ba703c5229f5569df0045b');
   final AMapPrivacyStatement aMapPrivacyStatement = AMapPrivacyStatement(hasContains: true, hasShow: true, hasAgree: true);
   AMapController? _controller;
   final PanelController _panelController = PanelController();
@@ -81,6 +81,7 @@ class _MapLocationPickerState extends State<MapLocationPicker> with SingleTicker
     // TODO: implement initState
     super.initState();
 
+    print("[MapLocationPickerState] init");
     _currentCenterCoordinate =  widget.latLng!;
     _kInitialPosition = CameraPosition(
       target: widget.latLng!,

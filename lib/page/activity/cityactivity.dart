@@ -78,7 +78,73 @@ class _CityActivityState extends State<CityActivity>  with  AutomaticKeepAliveCl
   Widget build(BuildContext context) {
     super.build(context);//页面不会被dispose
     Widget maxWidget = SizedBox.shrink();
+    Widget searchWidget = Container(
+      width: double.infinity,
+      decoration: new BoxDecoration(
+          color: Colors.white
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                  child: InkWell(
+                    child: Container(
+                        padding: EdgeInsets.only(left: 10),
+                        alignment: Alignment.center,
+                        height: 39,
+                        decoration: new BoxDecoration(
+                          color: Colors.black12.withAlpha(10),
+                          borderRadius: new BorderRadius.all(new Radius.circular(9.0)),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.search, color: Colors.black38, size: 19,),
+                            Text('搜索帖子', style: TextStyle(color: Colors.black38, fontSize: 14),)
+                          ],
+                        )
+                    ),
+                    onTap: (){
+                      Navigator.pushNamed(context, '/SearchProduct');
+                    },
+                  )
+              ),
+              SizedBox(width: 10,),
+              InkWell(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                        Global.profile.locationGoodPriceName.length > 3 ? Global.profile.locationGoodPriceName.substring(0, 3) : Global.profile.locationGoodPriceName,
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)
+                    ),
+                    Icon(Icons.keyboard_arrow_down,),
+                  ],),
+                onTap: (){
+                  Navigator.pushNamed(context, '/ListViewProvince', arguments:null).then((dynamic value){
+                    if(value != null) {
+                      if(Global.profile.locationActivityCode != value["code"].toString()){
+                        Global.profile.locationActivityCode = value["code"].toString();
+                        Global.profile.locationActivityName = value["name"].toString();
+                        Global.saveProfile();
+                        print("[city activity]update profile location code: ${Global.profile.locationActivityCode}");
+                        _cityActivityDataBloc.add(Refreshed(Global.profile.locationActivityCode));
+                        // _getGoodPriceList();
+                      }
+                    }
+                  });
+                },
+              )
 
+            ],
+          ),
+        ],
+      ),
+    );
+    double statusBarHeight = MediaQuery.of(context).padding.top;
     citycode = Global.profile.locationCode;
 //    print(_scrollController.position.viewportDimension	);
     return Scaffold(
@@ -93,6 +159,16 @@ class _CityActivityState extends State<CityActivity>  with  AutomaticKeepAliveCl
             });
           },
           child: Icon(IconFont.icon_rocket, color: Colors.black45,)) : SizedBox.shrink(),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(statusBarHeight + 100),
+        child: Container(
+          color: Colors.white,
+          padding: EdgeInsets.only(left: 10, right: 10),
+          margin: EdgeInsets.only(top: statusBarHeight+10),
+          height: 50,
+          child: searchWidget,
+        ),
+      ),
       body: RefreshIndicator(
           color: Global.profile.backColor,
           onRefresh: () async{

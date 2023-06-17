@@ -25,6 +25,7 @@ import '../page/home.dart';
 import '../page/user/square/momentlist.dart';
 
 import '../global.dart';
+import 'activity/cityactivity.dart';
 import 'im/relation.dart';
 import 'shop/grouppurchase.dart';
 import 'user/userhome.dart';
@@ -56,6 +57,7 @@ class _IndexPageState extends State<IndexPage> {
   List<String> _categorytypes = [];
   List<String> _selectList = [];
   GlobalKey<ScaffoldState> indexkey = new GlobalKey<ScaffoldState>();
+  GlobalKey<MomentListState> momentStateKey = GlobalKey<MomentListState>();
   AuthenticationBloc? _authenticationBloc;
 
   @override
@@ -75,17 +77,21 @@ class _IndexPageState extends State<IndexPage> {
     _appUpdate();
     _getCategoryType();
     print("[index] initState GroupPurchase");
-    _pages = [HomePage(parentJumpMyProfile: _pageJump, isPop: widget.isPop),GroupPurchase(),MomentList(indexkey, (){
-      if(Global.profile.user != null) {
-        if (!indexkey.currentState!.isEndDrawerOpen) {
-          print(Global.profile.user!.subject);
-          _selectList = Global.profile.user!.subject.split(",");
-          setState(() {
-
-          });
-        }
-      }
-    }),RelationList(), MyHome()];
+    _pages = [HomePage(parentJumpMyProfile: _pageJump, isPop: widget.isPop),GroupPurchase(),
+      CityActivity(parentJumpShop: _pageJump),
+    //   MomentList(momentStateKey, (){
+    //   if(Global.profile.user != null) {
+    //     if (!indexkey.currentState!.isEndDrawerOpen) {
+    //       print(Global.profile.user!.subject);
+    //       _selectList = Global.profile.user!.subject.split(",");
+    //       setState(() {
+    //
+    //       });
+    //     }
+    //   }
+    // },
+    // "allCode"),
+      RelationList(), MyHome()];
     WidgetsBinding.instance!.addPostFrameCallback((data){
       _pageJump(0);
     });
@@ -391,11 +397,11 @@ class _IndexPageState extends State<IndexPage> {
                     activeIcon: Icon(IconFont.icon_shouye1,color: Global.profile.backColor,size: 23 ), label: '首页'),
                 BottomNavigationBarItem(icon: Icon(IconFont.icon_icon_shangcheng_xian, color: Colors.black45,size: 23 ),
                   activeIcon: Icon(IconFont.icon_icon_shangcheng_mian,color: Global.profile.backColor,size: 23 ),
-                  label: '活动',
+                  label: '服务',
                 ),
                 BottomNavigationBarItem(icon: Icon(IconFont.icon_yumaobi1, size: 23, color: Colors.black45, ),
                   activeIcon: Icon(IconFont.icon_yumaobi_tianchong,color:  Global.profile.backColor,size: 23 ),
-                  label: '动态',
+                  label: '广场',
                 ),
                 BottomNavigationBarItem(
                   icon:  newImMode > 0 && Global.profile.user != null ? Badge(

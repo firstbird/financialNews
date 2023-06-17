@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:recipe/page/user/square/momentlist.dart';
 import 'package:uni_links/uni_links.dart';
 
 import '../page/user/pictureshow.dart';
@@ -56,11 +57,15 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   StreamSubscription? _sub;
   bool _initialUriIsHandled = false;
   TokenUtil _tokenUtil = new TokenUtil();
+  final _customViewKey1 = GlobalKey<MomentListState>();
+  final _customViewKey2 = GlobalKey<MomentListState>();
+  final _customViewKey3 = GlobalKey<MomentListState>();
 
   @override
   void initState() {
     // 生命周期函数
     super.initState();
+    print("[home init state]");
     _activityBloc = BlocProvider.of<ActivityDataBloc>(context);
     _initMap();
     _tabController = new TabController(vsync: this, length: 3);
@@ -102,8 +107,11 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     _handleIncomingLinks();
     _handleInitialUri();
 
+    print("[home update privacy] -----------------------------");
     AMapFlutterLocation.updatePrivacyShow(true, true);
     AMapFlutterLocation.updatePrivacyAgree(true);
+    // await AmapLocation.instance.updatePrivacyShow(true);
+    // await AmapLocation.instance.updatePrivacyAgree(true);
     await _locationCity();
     setState(() {
 
@@ -171,6 +179,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
       if(Global.profile.locationCode == null || Global.profile.locationCode == ""){
         Global.profile.locationCode = "allCode";
         Global.profile.locationName = "全国";
+        print("[profile location] _locationCity: ${Global.profile.locationCode}");
 
         if(Global.profile.locationGoodPriceCode == null || Global.profile.locationGoodPriceCode == ""){
           Global.profile.locationGoodPriceName = "全国";
@@ -192,6 +201,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
                     Global.profile.locationCode = CommonUtil.getCityNameByGaoDe(
                         result["adCode"].toString());
+                    print("[profile location] _locationCity getCityNameByGaoDe: ${Global.profile.locationCode}");
                     Global.profile.locationName = result["city"].toString();
                     Global.profile.locationGoodPriceCode =
                         CommonUtil.getCityNameByGaoDe(
@@ -330,8 +340,32 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
         //physics: new NeverScrollableScrollPhysics(),
         children: <Widget>[
           MyFollow(),
-          Recommend(isPop: widget.isPop, parentJumpShop: widget.parentJumpMyProfile,),
-          CityActivity(parentJumpShop: widget.parentJumpMyProfile),
+          // Recommend(isPop: widget.isPop, parentJumpShop: widget.parentJumpMyProfile,),
+          MomentList(null, (){
+            if(Global.profile.user != null) {
+              print("[MomentList init] tab1 init func -----");
+              // if (!indexkey.currentState!.isEndDrawerOpen) {
+              //   print(Global.profile.user!.subject);
+              //   _selectList = Global.profile.user!.subject.split(",");
+              //   setState(() {
+              //
+              //   });
+              // }
+            }
+          }, "allCode"),
+          MomentList(_customViewKey3, (){
+            if(Global.profile.user != null) {
+              print("[MomentList init] tab2 init func -----");
+              // if (!indexkey.currentState!.isEndDrawerOpen) {
+              //   print(Global.profile.user!.subject);
+              //   _selectList = Global.profile.user!.subject.split(",");
+              //   setState(() {
+              //
+              //   });
+              // }
+            }
+          }, "allCode"),
+          //CityActivity(parentJumpShop: widget.parentJumpMyProfile),
         ]
     );
   }
@@ -357,9 +391,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 indicatorWeight: 0.000001,
                 tabs: <Widget>[
                   //_item("关注", 0), Alignment.bottomRight, 0, "关注", 0
-                  TabBarItem(key: _itemKey1, title: "关注", bottomAlignment: Alignment.bottomRight, itemtype: 0, itemindex: 0,),
-                  TabBarItem(key: _itemKey2, title: "动态", bottomAlignment: Alignment.center, itemtype: 0, itemindex: 1,),
-                  TabBarItem(key: _itemCityKey2, title: _title, bottomAlignment: Alignment.bottomLeft, itemtype: 1, itemindex: 2)
+                  TabBarItem(key: _itemKey1, title: "关注", bottomAlignment: Alignment.bottomRight, itemtype: 0, itemindex: 0),
+                  TabBarItem(key: _itemKey2, title: "动态", bottomAlignment: Alignment.center, itemtype: 0, itemindex: 1),
+                  TabBarItem(key: _itemCityKey2, title: _title, bottomAlignment: Alignment.bottomLeft, itemtype: 1, itemindex: 2, momentKey: _customViewKey3)
                 ]),
           ),
           Expanded(flex: 1, child: InkWell(
@@ -384,8 +418,9 @@ class TabBarItem extends StatefulWidget {
   String title;
   int itemindex;
   TabController? tabController;
+  GlobalKey<MomentListState>? momentKey;
 
-  TabBarItem({Key? key, this.bottomAlignment, this.itemtype = 0,  this.title = "", this.itemindex = 0, this.tabController}) : super(key: key){
+  TabBarItem({Key? key, this.bottomAlignment, this.itemtype = 0,  this.title = "", this.itemindex = 0, this.tabController, this.momentKey}) : super(key: key){
     //print(this.title);
   }
 
@@ -398,16 +433,17 @@ class _TabBarItemState extends State<TabBarItem> {
   int _itemtype;
   int _currentIndex = 1;
   int _itemindex;
-  late ActivityDataBloc _activityDataBloc;
-  late CityActivityDataBloc _cityActivityDataBloc;
+  // late ActivityDataBloc _activityDataBloc;
+  // late CityActivityDataBloc _cityActivityDataBloc;
+  // GlobalKey<MomentListState> _momentState;
   _TabBarItemState(this._bottomAlignment, this._itemtype,  this._itemindex);
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _activityDataBloc = BlocProvider.of<ActivityDataBloc>(context);
-    _cityActivityDataBloc = BlocProvider.of<CityActivityDataBloc>(context);
+    // _activityDataBloc = BlocProvider.of<ActivityDataBloc>(context);
+    // _cityActivityDataBloc = BlocProvider.of<CityActivityDataBloc>(context);
   }
 
   @override
@@ -476,10 +512,16 @@ class _TabBarItemState extends State<TabBarItem> {
               if(value != null) {
                 if(Global.profile.locationCode != value["code"].toString()) {
                   Global.profile.locationCode = value["code"].toString();
+                  print("[profile location] home set location code: ${Global.profile.locationCode}");
                   Global.profile.locationName = value["name"].toString();
-                  _activityDataBloc.add(Refresh());
-                  _cityActivityDataBloc.add(Refreshed(Global.profile.locationCode));
+                  // _activityDataBloc.add(Refresh());
+                  // _cityActivityDataBloc.add(Refreshed(Global.profile.locationCode));
                   Global.saveProfile();
+                  if (widget.momentKey != null)
+                  (widget.momentKey as GlobalKey<MomentListState>).currentState?.updateCityCode();
+                  // MomentListState.currentInstance().updateCityCode();
+                  setState(() {
+                  });
                 }
 
                 widget.title = Global.profile.locationName;

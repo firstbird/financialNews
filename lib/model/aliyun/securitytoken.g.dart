@@ -6,16 +6,15 @@ part of 'securitytoken.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SecurityToken _$SecurityTokenFromJson(Map<String, dynamic> json) {
-  return SecurityToken(
-    json['ossAccessKeyId'] as String,
-    json['policy'] as String,
-    json['signature'] as String,
-    json['dir'] as String,
-    json['host'] as String,
-    json['expire'] as String,
-  );
-}
+SecurityToken _$SecurityTokenFromJson(Map<String, dynamic> json) =>
+    SecurityToken(
+      json['ossAccessKeyId'] as String,
+      json['policy'] as String,
+      json['signature'] as String,
+      json['dir'] as String,
+      json['host'] as String,
+      json['expire'] as String,
+    );
 
 Map<String, dynamic> _$SecurityTokenToJson(SecurityToken instance) =>
     <String, dynamic>{

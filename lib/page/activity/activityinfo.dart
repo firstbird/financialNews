@@ -299,7 +299,7 @@ class _ActivityState extends State<ActivityInfo> {
     }
     else{
       imhelper.saveBrowseHistory(_activity!.actid, _activity!.content, _activity!.coverimg ?? "", _activity!.coverimgwh, _activity!.user!.profilepicture ?? "",
-          _activity!.user!.username, _activity!.peoplenum ?? 0, _activity!.goodPiceModel!.mincost, _activity!.goodPiceModel!.maxcost);
+          _activity!.user!.username, _activity!.peoplenum ?? 0, _activity!.goodprice!.mincost, _activity!.goodprice!.maxcost);
       Map likecollectionstate = await _activityService.getLikeCollectionState(widget.actid, Global.profile.user!.uid);
       _islike = likecollectionstate["islike"];
       _iscollection = likecollectionstate["iscollection"];
@@ -1415,7 +1415,7 @@ class _ActivityState extends State<ActivityInfo> {
         Container(
           padding: EdgeInsets.all(2),
           child: Text(
-              _activity!.goodPiceModel!.brand, style: TextStyle(fontSize: 12, color: Colors.white),
+              _activity!.goodprice!.brand, style: TextStyle(fontSize: 12, color: Colors.white),
           ),
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -1427,9 +1427,9 @@ class _ActivityState extends State<ActivityInfo> {
         ),
         SizedBox(width: 6,),
         Text("￥", style: TextStyle(color: Colors.red, fontSize: 10),),
-        Text(_activity!.goodPiceModel!.mincost.toString(), style: TextStyle(color: Colors.red, fontSize: 14,fontWeight: FontWeight.bold),),
-        _activity!.goodPiceModel!.maxcost > 0 ? Text('-', style: TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold),):SizedBox.shrink(),
-        _activity!.goodPiceModel!.maxcost > 0 ? Text(_activity!.goodPiceModel!.maxcost.toString(), style: TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold),):SizedBox.shrink(),
+        Text(_activity!.goodprice!.mincost.toString(), style: TextStyle(color: Colors.red, fontSize: 14,fontWeight: FontWeight.bold),),
+        _activity!.goodprice!.maxcost > 0 ? Text('-', style: TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold),):SizedBox.shrink(),
+        _activity!.goodprice!.maxcost > 0 ? Text(_activity!.goodprice!.maxcost.toString(), style: TextStyle(fontSize: 14, color: Colors.red, fontWeight: FontWeight.bold),):SizedBox.shrink(),
       ],
     );
 
@@ -1441,13 +1441,13 @@ class _ActivityState extends State<ActivityInfo> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ClipRRectOhterHeadImageContainer(imageUrl: _activity!.goodPiceModel!.pic,  width: 50, height: 50, cir: 9,),
+            ClipRRectOhterHeadImageContainer(imageUrl: _activity!.goodprice!.pic,  width: 50, height: 50, cir: 9,),
             SizedBox(width: 10,),
             Expanded(child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(_activity!.goodPiceModel!.title, style: TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis),),
+                Text(_activity!.goodprice!.title, style: TextStyle(fontSize: 14, overflow: TextOverflow.ellipsis),),
                 SizedBox(height: 5,),
                 widgetMoney
               ],
@@ -1620,7 +1620,7 @@ class _ActivityState extends State<ActivityInfo> {
   Future<void> _gotoGoodPrice() async {
     Navigator.pushNamed(
         context, '/GoodPriceInfo', arguments: {
-      "goodprice": _activity!.goodPiceModel!
+      "goodprice": _activity!.goodprice!
     });
   }
   //是否确认结束

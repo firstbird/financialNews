@@ -139,7 +139,7 @@ class _OtherFollowUserState extends State<OtherFollowUser> {
         widgets.add(SizedBox.shrink());
       }
       else {
-        String tem = element.isFollow ? "已关注" : " ＋ 关注";
+        String tem = element.isfollow ? "已关注" : " ＋ 关注";
         widgets.add(
             Padding(
               padding: EdgeInsets.only(left: 5, right: 5, top: 0),

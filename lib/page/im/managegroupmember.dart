@@ -15,7 +15,7 @@ class ManageActivityMember extends StatefulWidget {
   ManageActivityMember({this.arguments}){
     members = (arguments as Map)["members"];
     for(int i = 0; i < members.length; i++){
-      members[i].isFollow = false;
+      members[i].isfollow = false;
     }
     actid = (arguments as Map)["actid"];
   }
@@ -72,10 +72,10 @@ class _ManageActivityMemberState extends State<ManageActivityMember> {
                     Checkbox(
                       checkColor: Colors.white,
                       activeColor: Colors.blue,
-                      value: item.isFollow,
+                      value: item.isfollow,
                       onChanged: ( value) {
                         setState(() {
-                          item.isFollow = value!;
+                          item.isfollow = value!;
                           if(value){
                             delMember.add(item);
                           }
@@ -98,8 +98,8 @@ class _ManageActivityMemberState extends State<ManageActivityMember> {
             ),
             onTap: (){
               setState(() {
-                item.isFollow = !item.isFollow;
-                if(item.isFollow){
+                item.isfollow = !item.isfollow;
+                if(item.isfollow){
                   delMember.add(item);
                 }
                 else{

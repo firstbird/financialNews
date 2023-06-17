@@ -652,7 +652,7 @@ class UserService {
       if(data["data"] != null){
         for(int i=0; i<data["data"].length; i++){
           User tem = User.fromJson(data["data"][i]);
-          tem.isFollow = true;
+          tem.isfollow = true;
           users.add(tem);
         }
       }

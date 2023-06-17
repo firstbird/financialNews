@@ -16,7 +16,7 @@ class User {
   String? birthday;
   int? followers;//关注我的人
   int? following;//我关注的人
-  bool isFollow = false;
+  bool isfollow = false;
 
   String? updatetime;//更新时间
   int? likenum;

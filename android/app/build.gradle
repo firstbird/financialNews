@@ -52,13 +52,38 @@ android {
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
+        // 配置高德地图
+        manifestPlaceholders = [
+                applicationName: "android.app.Application",
+                AMAP_KEY : "569950465f236aa4691670135965f9a5",
+        ]
+    }
+
+    signingConfigs {
+        debug {
+            keyAlias 'virtualspace'
+            keyPassword '610816890'
+            storeFile file('./virtualspace.keystore')
+            storePassword '610816890'
+        }
+        release {
+            keyAlias 'virtualspace'
+            keyPassword '610816890'
+            storeFile file('./virtualspace.keystore')
+            storePassword '610816890'
+        }
     }
 
     buildTypes {
-        release {
+        debug {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+        }
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -68,6 +93,7 @@ flutter {
 }
 
 dependencies {
+    implementation 'com.amap.api:location:latest.integration'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.amap.api:location:5.2.0'

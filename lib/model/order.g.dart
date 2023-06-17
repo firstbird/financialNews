@@ -14,8 +14,8 @@ Order _$OrderFromJson(Map<String, dynamic> json) => Order(
       json['createtime'] as String?,
       json['updatetime'] as String?,
       json['paymenttype'] as int?,
-      json['goodpriceid'] != null ? json['goodpriceid'] as String : "",
-      json['goodpricesku'] != null ? json['goodpricesku'] as String : "",
+      json['goodpriceid'] as String,
+      json['goodpricesku'] as String,
       json['productname'] as String?,
       json['productpic'] as String?,
       json['creategpuid'] as int?,
@@ -28,13 +28,13 @@ Order _$OrderFromJson(Map<String, dynamic> json) => Order(
           : Activity.fromJson(json['activity'] as Map<String, dynamic>),
       json['ordertype'] as int?,
       json['orderstatus'] as int?,
-      json['productnum'] != null ? json['productnum'] as int : 0,
+      json['productnum'] as int,
       json['expirestime'] as int?,
-      json['goodpricetitle'] != null ? json['goodpricetitle'] as String : "",
-      json['goodpricepic'] != null ? json['goodpricepic'] as String : "",
-      json['touid'] != null ? json['touid'] as int : 0,
-      json['goodpricebrand'] != null ? json['goodpricebrand'] as String : "",
-      json['goodpricespeacename'] != null ? json['goodpricespeacename'] as String : ""
+      json['goodpricetitle'] as String,
+      json['goodpricepic'] as String,
+      json['touid'] as int,
+      json['goodpricebrand'] as String,
+      json['goodpricespeacename'] as String,
     );
 
 Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
@@ -47,6 +47,7 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'paymenttype': instance.paymenttype,
       'goodpriceid': instance.goodpriceid,
       'goodpricesku': instance.goodpricesku,
+      'goodpricebrand': instance.goodpricebrand,
       'productname': instance.productname,
       'productpic': instance.productpic,
       'creategpuid': instance.creategpuid,
@@ -57,6 +58,8 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'orderstatus': instance.orderstatus,
       'productnum': instance.productnum,
       'expirestime': instance.expirestime,
-      'goodpricebrand': instance.goodpricebrand,
-      'goodpricespeacename': instance.goodpricespeacename
+      'goodpricetitle': instance.goodpricetitle,
+      'goodpricepic': instance.goodpricepic,
+      'touid': instance.touid,
+      'goodpricespeacename': instance.goodpricespeacename,
     };

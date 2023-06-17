@@ -1,5 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
 part 'skuspecs.g.dart';
 
+@JsonSerializable()
 class Skuspecs {
   String specsid = "";
   String goodpriceid = "";

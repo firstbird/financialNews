@@ -40,7 +40,7 @@ dependencies:
   flutter_riverpod: ^2.0.2
   hooks_riverpod: ^2.0.2
   equatable: ^2.0.3
-  json_annotation: ^4.3.0
+  json_annotation: 4.8.0
   json_serializable: ^6.6.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
@@ -104,6 +104,8 @@ dependencies:
   amap_flutter_location: ^3.0.0 #高德地图
   amap_flutter_map: ^3.0.0 #高德地图
   amap_flutter_base: ^3.0.0 #高德地图
+  # 地理定位
+  amap_location_fluttify: ^0.22.0
   permission_handler: ^8.3.0 #权限申请
   flutter_downloader: ^1.7.2 #下载更新
   web_socket_channel: ^2.1.0 #websocket链接

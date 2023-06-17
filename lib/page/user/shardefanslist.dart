@@ -90,7 +90,7 @@ class _ShardeFansListState extends State<ShardeFansList> {
       for(int i =0; i < members.length; i++){
         bool ret = await isFollow(members[i].uid, Global.profile.user!.uid);
         if(ret){
-          members[i].isFollow = true;
+          members[i].isfollow = true;
         }
 
         userlist.add(members[i]);

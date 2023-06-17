@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:recipe/bloc/moment/event/moment_city_event.dart';
+import 'package:recipe/bloc/moment/moment_city_bloc.dart';
 
 import '../../../global.dart';
 import '../../../model/bugsuggestion/moment.dart';
@@ -11,31 +13,59 @@ import '../../../page/user/square/momentwidget.dart';
 import '../../../bloc/user/authentication_bloc.dart';
 
 class MomentList extends StatefulWidget {
-  GlobalKey<ScaffoldState> indexkey;
+  // GlobalKey<ScaffoldState> indexkey;
+  // GlobalKey<MomentListState> indexkey;
   Function initSubject;
-  MomentList(this.indexkey, this.initSubject);
+  String citycode;
+  MomentList(key, this.initSubject, this.citycode) : super(key: key);
+  // MomentList(this.indexkey, this.initSubject);
 
   @override
-  _MomentListState createState() => _MomentListState();
+  MomentListState createState() => MomentListState();
 }
 
-class _MomentListState extends State<MomentList> {
+class MomentListState extends State<MomentList> {
+  // late MomentCityDataBloc _momentCityDataBloc;
   List<Moment> moments = [];
   RefreshController _refreshController = RefreshController(initialRefresh: true);
   ImHelper _imHelper = new ImHelper();
   bool _ismore = true;
   final ImService _imService = new ImService();
   List<int> _notinteresteduids = [];
+  // static GlobalKey momentStateKey = GlobalKey();
 
+  // static currentInstance() {
+  //   var state = MomentListState.momentStateKey.currentContext!.findAncestorStateOfType();
+  //   return state;
+  // }
+
+  void updateCityCode() {
+    print("[MomentListState] udpate city code: ${Global.profile.locationCode}");
+    setState(() {
+      widget.citycode = Global.profile.locationCode;
+      _getMomentList();
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // _momentCityDataBloc = BlocProvider.of<MomentCityDataBloc>(context);
+    // _momentCityDataBloc.add(PostFetched(citycode));
+  }
 
   void _getMomentList() async {
+    print("[profile location] momentlist code: ${Global.profile.locationCode}");
+    // String _citycode = widget.citycode == "allCode" ? widget.citycode : Global.profile.locationCode;
+    String _citycode = widget.citycode;
     if(Global.profile.user != null) {
-      moments = await _imService.getMomentList(0, Global.profile.user!.subject, _errorResponse);
+      moments = await _imService.getMomentList(0, Global.profile.user!.subject, _citycode, _errorResponse);
       _notinteresteduids = await _imHelper.getNotInteresteduids(Global.profile.user!.uid);
       await _islike();
     }
     else{
-      moments = await _imService.getMomentList(0, "", _errorResponse);
+      moments = await _imService.getMomentList(0, "", _citycode, _errorResponse);
     }
 
     _refreshController.refreshCompleted();
@@ -48,15 +78,18 @@ class _MomentListState extends State<MomentList> {
   void _onLoading() async{
     if(!_ismore) return;
 
+    // String _citycode = widget.citycode == "allCode" ? widget.citycode : Global.profile.locationCode;
+    String _citycode = widget.citycode;
+    print("[profile location] momentlist _onLoading code: ${Global.profile.locationCode}");
     List<Moment> moredata = [];
 
     if(Global.profile.user != null) {
       moredata = await _imService.getMomentList(
-          moments.length, Global.profile.user!.subject, _errorResponse);
+          moments.length, Global.profile.user!.subject, _citycode, _errorResponse);
     }
     else{
       moredata = await _imService.getMomentList(
-          moments.length, "", _errorResponse);
+          moments.length, "", _citycode, _errorResponse);
     }
 
     if(moredata.length > 0)
@@ -87,15 +120,6 @@ class _MomentListState extends State<MomentList> {
       });
     }
   }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +174,7 @@ class _MomentListState extends State<MomentList> {
                     ],),
                   onTap: (){
                     widget.initSubject();
-                    widget.indexkey.currentState!.openEndDrawer();
+                    // widget.indexkey.currentState!.openEndDrawer();
                   },
                 ),
               )
@@ -246,7 +270,9 @@ class _MomentListState extends State<MomentList> {
             child: _refreshController.headerStatus == RefreshStatus.completed && moments.length == 0 ? Center(
               child: Text('这里空空的',
                 style: TextStyle(color: Colors.black54, fontSize: 14), maxLines: 2,),
-            ) : ListView(
+            ) :
+
+            ListView(
               addAutomaticKeepAlives: true,
               children: _buildMomentContent(),
             ),

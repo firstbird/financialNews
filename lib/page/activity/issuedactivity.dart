@@ -1,6 +1,10 @@
 import 'dart:async';
-import 'package:amap_flutter_location/amap_flutter_location.dart';
-import 'package:amap_flutter_location/amap_location_option.dart';
+// import 'package:amap_flutter_location/amap_flutter_location.dart';
+// import 'package:amap_flutter_location/amap_location_option.dart';
+// import 'package:amap_flutter_map/amap_flutter_map.dart';
+
+import 'package:amap_location_fluttify/amap_location_fluttify.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +93,8 @@ class _IssuedActivityState extends State<IssuedActivity> {
   List<String> _oldImagesUrl = [];
   int _paytype = 0;
   StreamSubscription<Map<String, Object>>? _locationListener;
-  AMapFlutterLocation _locationPlugin = new AMapFlutterLocation();
+  Location? _location;
+  // AMapFlutterLocation _locationPlugin = new AMapFlutterLocation();
   late Map<String, Object> _locationResult;
 
   @override
@@ -103,9 +108,9 @@ class _IssuedActivityState extends State<IssuedActivity> {
     }
 
     ///销毁定位
-    if (null != _locationPlugin) {
-      _locationPlugin.destroy();
-    }
+    // if (null != _locationPlugin) {
+    //   _locationPlugin.destroy();
+    // }
     super.dispose();
   }
 
@@ -128,13 +133,24 @@ class _IssuedActivityState extends State<IssuedActivity> {
     }
   }
 
-  requestPermission() async {
-    // 申请权限
-    bool hasLocationPermission = await requestLocationPermission();
-    if (hasLocationPermission) {
-      print("定位权限申请通过");
+  // requestPermission() async {
+  //   // 申请权限
+  //   bool hasLocationPermission = await requestLocationPermission();
+  //   if (hasLocationPermission) {
+  //     print("定位权限申请通过");
+  //   } else {
+  //     print("定位权限申请不通过");
+  //   }
+  // }
+
+  Future<bool> requestPermission() async {
+    final permissions = await Permission.locationWhenInUse.request();
+
+    if (permissions.isGranted) {
+      return true;
     } else {
-      print("定位权限申请不通过");
+      debugPrint('需要定位权限!');
+      return false;
     }
   }
 
@@ -142,6 +158,9 @@ class _IssuedActivityState extends State<IssuedActivity> {
   void initState(){
     _user = Global.profile.user!;
     super.initState();
+    // AMapFlutterLocation.updatePrivacyShow(true, true);
+    // AMapFlutterLocation.updatePrivacyAgree(true);
+    // AMapFlutterLocation.setApiKey("569950465f236aa4691670135965f9a5", "569950465f236aa4691670135965f9a5");
 
     if(widget.provinceCode != null) {
       _provinceCode = widget.provinceCode;
@@ -216,50 +235,69 @@ class _IssuedActivityState extends State<IssuedActivity> {
         onTap: () async {
           _contentfocusNode.unfocus();
           if(_locationListener != null){
+            print("[issue activity] on tap _startlocation begin");
             _startLocation();
+            print("[issue activity] on tap _startlocation done");
           }
 
           if(_locationListener == null){
-            bool locationStatus = await PermissionUtil.requestLocationPermisson();
-            if (locationStatus) {
-              _locationListener = _locationPlugin.onLocationChanged().listen((Map<String, Object> result) {
-                setState(() {
-                  _locationResult = result;
-                  if (_locationResult != null) {
-                    if(result["longitude"] != "" && result["adCode"] != "") {
-                      Global.profile.lat = double.parse(result["latitude"].toString());
-                      Global.profile.lng = double.parse(result["longitude"].toString());
+            print("[issue activity] on tap requestLocationPermisson begin");
+            // await AmapLocation.instance.updatePrivacyShow(true);
+            // await AmapLocation.instance.updatePrivacyAgree(true);
+            await AmapLocation.instance.init(iosKey: '569950465f236aa4691670135965f9a5');
 
-                      Global.profile.locationCode = CommonUtil.getCityNameByGaoDe(result["adCode"].toString());
-                      Global.profile.locationName = result["city"].toString();
-
-                      if (Global.profile.locationGoodPriceCode == null || Global.profile.locationGoodPriceCode == "") {
-                        Global.profile.locationGoodPriceCode = CommonUtil.getCityNameByGaoDe(result["adCode"].toString());
-                        Global.profile.locationGoodPriceName = result["city"].toString();
-                      }
-
-                      Global.saveProfile();
-
-                      Navigator.pushNamed(context, '/MapLocationPicker', arguments: {"lat" : Global.profile.lat,
-                        "lng": Global.profile.lng, "citycode": Global.profile.locationCode, "isMapImage": false}).then((dynamic value){
-                        if(value != null) {
-                          setState(() {
-                            _addresstitle = value["title"];
-                            _address = value["address"];
-                            _city = CommonUtil.getCityNameByGaoDe(value["adCode"]);
-                            _provinceCode = value["provinceCode"];
-                            _lat = value["latitude"];
-                            _lng = value["longitude"];
-                          });
-                        }
-                      });
-                    }
-                  }
-                });
+            if (await requestPermission()) {
+              final location =
+              await AmapLocation.instance.fetchLocation();
+              print("[issue activity] fetch location: ${location}");
+              setState(() => {
+                _location = location
               });
-
-              _startLocation();
             }
+
+            // bool locationStatus = await PermissionUtil.requestLocationPermisson();
+            // print("[issue activity] on tap requestLocationPermisson done locationStatus: ${locationStatus}");
+            // if (locationStatus) {
+            //   _locationListener = _locationPlugin.onLocationChanged().listen((Map<String, Object> result) {
+            //     setState(() {
+            //       _locationResult = result;
+            //       if (_locationResult != null) {
+            //         if(result["longitude"] != "" && result["adCode"] != "") {
+            //           print("[request location] longitude: ${result["longitude"]}, latitude: ${result["latitude"]},  adcode: ${result["adCode"]}, ");
+            //           Global.profile.lat = double.parse(result["latitude"].toString());
+            //           Global.profile.lng = double.parse(result["longitude"].toString());
+            //
+            //           Global.profile.locationCode = CommonUtil.getCityNameByGaoDe(result["adCode"].toString());
+            //           print("[profile location] activity buildLocation: ${CommonUtil.getCityNameByGaoDe(result["adCode"].toString())}");
+            //           Global.profile.locationName = result["city"].toString();
+            //
+            //           if (Global.profile.locationGoodPriceCode == null || Global.profile.locationGoodPriceCode == "") {
+            //             Global.profile.locationGoodPriceCode = CommonUtil.getCityNameByGaoDe(result["adCode"].toString());
+            //             Global.profile.locationGoodPriceName = result["city"].toString();
+            //           }
+            //
+            //           Global.saveProfile();
+            //
+            //           Navigator.pushNamed(context, '/MapLocationPicker', arguments: {"lat" : Global.profile.lat,
+            //             "lng": Global.profile.lng, "citycode": Global.profile.locationCode, "isMapImage": false}).then((dynamic value){
+            //             if(value != null) {
+            //               setState(() {
+            //                 _addresstitle = value["title"];
+            //                 _address = value["address"];
+            //                 _city = CommonUtil.getCityNameByGaoDe(value["adCode"]);
+            //                 _provinceCode = value["provinceCode"];
+            //                 _lat = value["latitude"];
+            //                 _lng = value["longitude"];
+            //               });
+            //             }
+            //           });
+            //         }
+            //       }
+            //     });
+            //   });
+            //
+            //   _startLocation();
+            // }
           }
         },
         title: Container(
@@ -282,60 +320,63 @@ class _IssuedActivityState extends State<IssuedActivity> {
   }
 
   void _setLocationOption() {
-    if (null != _locationPlugin) {
-      AMapLocationOption locationOption = new AMapLocationOption();
 
-      ///是否单次定位
-      locationOption.onceLocation = true;
-
-      ///是否需要返回逆地理信息
-      locationOption.needAddress = true;
-
-      ///逆地理信息的语言类型
-      locationOption.geoLanguage = GeoLanguage.DEFAULT;
-
-      locationOption.desiredLocationAccuracyAuthorizationMode =
-          AMapLocationAccuracyAuthorizationMode.ReduceAccuracy;
-
-      locationOption.fullAccuracyPurposeKey = "AMapLocationScene";
-
-      ///设置Android端连续定位的定位间隔
-      locationOption.locationInterval = 2000;
-
-      ///设置Android端的定位模式<br>
-      ///可选值：<br>
-      ///<li>[AMapLocationMode.Battery_Saving]</li>
-      ///<li>[AMapLocationMode.Device_Sensors]</li>
-      ///<li>[AMapLocationMode.Hight_Accuracy]</li>
-      locationOption.locationMode = AMapLocationMode.Hight_Accuracy;
-
-      ///设置iOS端的定位最小更新距离<br>
-      locationOption.distanceFilter = -1;
-
-      ///设置iOS端期望的定位精度
-      /// 可选值：<br>
-      /// <li>[DesiredAccuracy.Best] 最高精度</li>
-      /// <li>[DesiredAccuracy.BestForNavigation] 适用于导航场景的高精度 </li>
-      /// <li>[DesiredAccuracy.NearestTenMeters] 10米 </li>
-      /// <li>[DesiredAccuracy.Kilometer] 1000米</li>
-      /// <li>[DesiredAccuracy.ThreeKilometers] 3000米</li>
-      locationOption.desiredAccuracy = DesiredAccuracy.HundredMeters;
-
-      ///设置iOS端是否允许系统暂停定位
-      locationOption.pausesLocationUpdatesAutomatically = false;
-
-      ///将定位参数设置给定位插件
-      _locationPlugin.setLocationOption(locationOption);
-    }
+    // if (null != _locationPlugin) {
+      // AMapLocationOption locationOption = new AMapLocationOption();
+      //
+      // ///是否单次定位
+      // locationOption.onceLocation = true;
+      //
+      // ///是否需要返回逆地理信息
+      // locationOption.needAddress = true;
+      //
+      // ///逆地理信息的语言类型
+      // locationOption.geoLanguage = GeoLanguage.DEFAULT;
+      //
+      // locationOption.desiredLocationAccuracyAuthorizationMode =
+      //     AMapLocationAccuracyAuthorizationMode.ReduceAccuracy;
+      //
+      // locationOption.fullAccuracyPurposeKey = "AMapLocationScene";
+      //
+      // ///设置Android端连续定位的定位间隔
+      // locationOption.locationInterval = 2000;
+      //
+      // ///设置Android端的定位模式<br>
+      // ///可选值：<br>
+      // ///<li>[AMapLocationMode.Battery_Saving]</li>
+      // ///<li>[AMapLocationMode.Device_Sensors]</li>
+      // ///<li>[AMapLocationMode.Hight_Accuracy]</li>
+      // locationOption.locationMode = AMapLocationMode.Hight_Accuracy;
+      //
+      // ///设置iOS端的定位最小更新距离<br>
+      // locationOption.distanceFilter = -1;
+      //
+      // ///设置iOS端期望的定位精度
+      // /// 可选值：<br>
+      // /// <li>[DesiredAccuracy.Best] 最高精度</li>
+      // /// <li>[DesiredAccuracy.BestForNavigation] 适用于导航场景的高精度 </li>
+      // /// <li>[DesiredAccuracy.NearestTenMeters] 10米 </li>
+      // /// <li>[DesiredAccuracy.Kilometer] 1000米</li>
+      // /// <li>[DesiredAccuracy.ThreeKilometers] 3000米</li>
+      // locationOption.desiredAccuracy = DesiredAccuracy.HundredMeters;
+      //
+      // ///设置iOS端是否允许系统暂停定位
+      // locationOption.pausesLocationUpdatesAutomatically = false;
+      //
+      // ///将定位参数设置给定位插件
+      // _locationPlugin.setLocationOption(locationOption);
+    // }
   }
 
   ///开始定位
   void _startLocation() {
-    if (null != _locationPlugin) {
-      ///开始定位之前设置定位参数
-      _setLocationOption();
-      _locationPlugin.startLocation();
-    }
+    // if (null != _locationPlugin) {
+    //   print("[issue activity] start location");
+    //   ///开始定位之前设置定位参数
+    //   _setLocationOption();
+    //   _locationPlugin.startLocation();
+    //   print("[issue activity] start location done");
+    // }
   }
 
   ListTile buildAge(){

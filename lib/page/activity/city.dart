@@ -60,6 +60,7 @@ class _ListViewCity extends State<ListViewCity> {
     return  Container(
       child: ListTile(
           onTap: () async {
+            print("[city on tap] code: ${_citykey[index]}");
             Map<String, dynamic> map = {"code":  _citykey[index], "provinceCode": widget._provinceCode, "name": _citydata[_citykey[index]]["name"]};
             Navigator.of(context).pop<Map>(map);
           },

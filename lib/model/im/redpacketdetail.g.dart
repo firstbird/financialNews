@@ -12,7 +12,7 @@ RedPacketDetail _$RedPacketDetailFromJson(Map<String, dynamic> json) =>
       json['redpacketid'] as String,
       (json['fund'] as num).toDouble(),
       json['uid'] as int,
-      json['timeline_id'] != null ? json['timeline_id'] as String : "",
+      json['timeline_id'] as String,
       json['createtime'] as String,
       json['username'] as String,
       json['profilepicture'] as String,

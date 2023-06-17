@@ -21,8 +21,8 @@ RedPacketModel _$RedPacketModelFromJson(Map<String, dynamic> json) =>
       json['profilepicture'] as String,
       json['original_order_id'] as String,
       json['touid'] as int,
-      json['tocreatetime'] != null ? json['tocreatetime'] as String : "",
-      json['tofund'] != null ? (json['tofund']as num).toDouble() : 0,
+      json['tocreatetime'] as String,
+      (json['tofund'] as num).toDouble(),
       json['isexpire'] as bool,
       json['currentnum'] as int,
     );

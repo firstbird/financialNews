@@ -108,7 +108,7 @@ class _OtherProfileState extends State<OtherProfile> with TickerProviderStateMix
     if(user != null && Global.profile.user != null){
       bool ret = await isFollow(user.uid, Global.profile.user!.uid);
       if(ret){
-        user.isFollow = true;
+        user.isfollow = true;
       }
     }
     return user;
@@ -340,18 +340,19 @@ class _OtherProfileState extends State<OtherProfile> with TickerProviderStateMix
     Widget followandmsg = Row(
       children: [
         Expanded(
-          child: TextButton(
+          child: ElevatedButton(
             // shape: RoundedRectangleBorder(
             //     borderRadius:  BorderRadius.all(Radius.circular(5))
             // ),
             // color: Global.profile.backColor,
-            style: TextButton.styleFrom(
+            style: ElevatedButton.styleFrom(
               primary: Global.profile.backColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5.0),
               ),
             ),
-            child: Text("+ 关注", style: TextStyle(fontWeight: FontWeight.w900,color: Global.profile.fontColor,fontSize: 14),),
+            // child: Text("+ 关注", style: TextStyle(fontWeight: FontWeight.w900,color: Global.profile.fontColor,fontSize: 14),),
+            child: Text('+ 关注', style: TextStyle(color: Global.profile.fontColor),),
             onPressed: (){
               if(Global.profile.user != null){
                 followUser();
@@ -544,7 +545,7 @@ class _OtherProfileState extends State<OtherProfile> with TickerProviderStateMix
                         margin: EdgeInsets.only(right: 10,left: 10, bottom: 10, top: 0),
                         child: AnimatedContainer(
                             duration: Duration(milliseconds: 3300),
-                            child: user!.isFollow? cancelfollowandmsg : followandmsg
+                            child: user!.isfollow? cancelfollowandmsg : followandmsg
                         ),
                     ),
                   ],
@@ -887,7 +888,7 @@ class _OtherProfileState extends State<OtherProfile> with TickerProviderStateMix
       await imHelper.saveFollowState(user!.uid, Global.profile.user!.uid);
       Global.profile.user!.following = Global.profile.user!.following! + 1;
       Global.saveProfile();
-      user!.isFollow = true;
+      user!.isfollow = true;
       user!.followers = user!.followers! + 1;
       setState(() {
 
@@ -898,12 +899,14 @@ class _OtherProfileState extends State<OtherProfile> with TickerProviderStateMix
 
   cancelFollow() async {
     bool ret = await _userService.cancelFollow(Global.profile.user!.token!, Global.profile.user!.uid, user!.uid,  errorCallBack);
+    print("[other profile clean follow] ret: $ret");
     if(ret) {
       await imHelper.delFollowState(user!.uid, Global.profile.user!.uid);
       Global.profile.user!.following = Global.profile.user!.following! - 1;
       Global.saveProfile();
-      user!.isFollow = false;
+      user!.isfollow = false;
       user!.followers = user!.followers! - 1;
+      print("[other profile clean follow] followers: ${user!.followers}");
       setState(() {
 
       });

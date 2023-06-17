@@ -16,7 +16,7 @@ Suggest _$SuggestFromJson(Map<String, dynamic> json) => Suggest(
       json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
-    );
+    )..islike = json['islike'] as bool;
 
 Map<String, dynamic> _$SuggestToJson(Suggest instance) => <String, dynamic>{
       'suggestid': instance.suggestid,

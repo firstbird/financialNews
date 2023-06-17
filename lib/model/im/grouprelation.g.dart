@@ -24,7 +24,7 @@ GroupRelation _$GroupRelationFromJson(Map<String, dynamic> json) =>
       json['memberupdatetime'] as String?,
       json['isnotservice'] as int?,
       json['source_id'] as String?,
-      json['goodpriceid'] != null ? json['goodpriceid'] as String : "",
+      json['goodpriceid'] as String,
     )
       ..uid = json['uid'] as int?
       ..jointime = json['jointime'] as String?

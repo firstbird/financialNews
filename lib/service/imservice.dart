@@ -767,7 +767,7 @@ class ImService {
   }
 
   //获取moment列表
-  Future<List<Moment>> getMomentList(int currIndex, String subject, Function errorCallBack) async {
+  Future<List<Moment>> getMomentList(int currIndex, String subject, String cityCode, Function errorCallBack) async {
     List<Moment> moments = [];
     // var formData = {
     //   "currIndex": currIndex,
@@ -775,10 +775,27 @@ class ImService {
     // });
     var formData = {
         "currIndex": currIndex,
-        "subject" : subject
+        "subject" : subject,
+        "citycode": cityCode
     };
 
     await NetUtil.getInstance().postJson(formData, "/api/IM/getMomentList", (Map<String, dynamic> data) {
+      for (int i = 0; i < data["data"].length; i++) {
+        Moment moment = Moment.fromJson(data["data"][i]);
+        moments.add(moment);
+      }
+    }, errorCallBack);
+    return moments;
+  }
+
+  Future<List<Moment>> getMomentListByCity(int currIndex, String cityCode, Function errorCallBack) async {
+    List<Moment> moments = [];
+    var formData = {
+      "currIndex": currIndex,
+      "citycode" : cityCode
+    };
+
+    await NetUtil.getInstance().postJson(formData, "/api/IM/getMomentListByCity", (Map<String, dynamic> data) {
       for (int i = 0; i < data["data"].length; i++) {
         Moment moment = Moment.fromJson(data["data"][i]);
         moments.add(moment);

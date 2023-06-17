@@ -16,7 +16,7 @@ Bug _$BugFromJson(Map<String, dynamic> json) => Bug(
       json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
-    );
+    )..islike = json['islike'] as bool;
 
 Map<String, dynamic> _$BugToJson(Bug instance) => <String, dynamic>{
       'bugid': instance.bugid,

@@ -141,19 +141,26 @@ class UserRepository {
   }
   ///更新本地文件
   void persistToken(User user) {
+    print("[persistToken] user: ${user}");
     if(user != null) {
       ///更新用户到全局变量
       Global.profile.user = user;
 
-      if(user.profilepicture != null && user.profilepicture!.isNotEmpty)
-        Global.profile.defProfilePicture = new NetworkImage(user.profilepicture!);
+      print("[persistToken] profilepicture: ${user.profilepicture}");
+      if(user.profilepicture != null && user.profilepicture!.isNotEmpty) {
+        print("[persistToken] profilepicture: not null");
+        Global.profile.defProfilePicture =
+        new NetworkImage(user.profilepicture!);
+      }
       if(user.profilepicture == null)
         user.profilepicture = Global.profile.profilePicture;
 
       // ImageCache imageCache = new ImageCache();
       // imageCache.evict(user.profilepicture);
       ///保存用户到本地文件
+      print("[persistToken] save profile begin");
       Global.saveProfile();
+      print("[persistToken] save profile end");
     }
   }
 

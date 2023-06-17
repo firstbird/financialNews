@@ -7,11 +7,11 @@ part of 'activity.dart';
 // **************************************************************************
 
 Activity _$ActivityFromJson(Map<String, dynamic> json) => Activity(
-      json['actid'] != null ? json['actid'] as String : "",
+      json['actid'] as String,
       json['peoplenum'] as int?,
       json['createtime'] as String?,
       json['updatetime'] as String?,
-      json['content'] != null ? json['content'] as String : "",
+      json['content'] as String,
       json['score'] as String?,
       json['actimagespath'] as String?,
       json['status'] as int?,
@@ -21,15 +21,15 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) => Activity(
       json['actcity'] as String?,
       json['actprovince'] as String?,
       json['coverimg'] as String?,
-      json['coverimgwh'] == null ? "" : json['coverimgwh'] as String,
+      json['coverimgwh'] as String,
       json['likenum'] as int,
       json['collectionnum'] as int,
       json['startyear'] as int?,
       json['endyear'] as int?,
       json['commentnum'] as int?,
       json['currentpeoplenum'] as int?,
-      json['mincost'] ==  null ? 0 : (json['mincost'] as num).toDouble(),
-      json['maxcost'] ==  null ? 0 : (json['maxcost'] as num).toDouble(),
+      (json['mincost'] as num).toDouble(),
+      (json['maxcost'] as num).toDouble(),
       json['address'] as String?,
       (json['lat'] as num?)?.toDouble(),
       (json['lng'] as num?)?.toDouble(),
@@ -40,7 +40,6 @@ Activity _$ActivityFromJson(Map<String, dynamic> json) => Activity(
       json['joinnum'] as int?,
       json['viewnum'] as int?,
       json['locked'] as int?,
-
       json['goodprice'] == null
           ? null
           : GoodPiceModel.fromJson(json['goodprice'] as Map<String, dynamic>),
@@ -74,8 +73,8 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'endyear': instance.endyear,
       'commentnum': instance.commentnum,
       'currentpeoplenum': instance.currentpeoplenum,
-      'mincost': instance.mincost,
       'maxcost': instance.maxcost,
+      'mincost': instance.mincost,
       'address': instance.address,
       'addresstitle': instance.addresstitle,
       'lat': instance.lat,
@@ -87,5 +86,5 @@ Map<String, dynamic> _$ActivityToJson(Activity instance) => <String, dynamic>{
       'viewnum': instance.viewnum,
       'orderid': instance.orderid,
       'locked': instance.locked,
-      'goodPiceModel': instance.goodPiceModel
+      'goodprice': instance.goodprice,
     };

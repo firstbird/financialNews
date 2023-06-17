@@ -47,19 +47,23 @@ class _ListViewProvince extends State<ListViewProvince> {
         onTap: (){
           if(index == 0){
             //全国
+            print("[province on tap] index = 0 code: allCode");
             Map<String, dynamic> map = {"code":  "allCode", "provinceCode": "allCode", "name": "全国"};
             Navigator.of(context).pop<Map>(map);
             return;
           }
           if(provincesData[keys[index]]!.split(',').length > 1){
+            print("[province on tap] index = ${index} code: ${keys[index]}");
             Map<String, dynamic> map = {"code":  keys[index], "provinceCode": keys[index], "name": provincesData[keys[index]]!.split(',')[0]};
             Navigator.of(context).pop<Map>(map);
           }
           else {
+            print("[province on tap to city] index = ${index} code: ${keys[index]}");
             Navigator.pushNamed(context, '/ListViewCity',
                 arguments: {"code": keys[index]})
                 .then((onValue) {
               if (onValue != null)
+                print("[province on tap to city] index = ${index} onvalue: ${onValue}");
                 Navigator.of(context).pop<Map>(onValue as Map);
             });
           }

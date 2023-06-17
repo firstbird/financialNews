@@ -13,7 +13,7 @@ class CityActivityDataBloc extends Bloc<PostEvent, CityActivityState> {
     on<PostFetched>((event, emit) async {
       final currentState = state;
       try {
-        if (event is PostFetched && !_hasReachedMax(currentState)) {
+        if (!_hasReachedMax(currentState)) {
           if (currentState is PostInitial || currentState is PostFailure) {
             emit(PostLoading());
             final activitys = await _activityService
@@ -38,6 +38,14 @@ class CityActivityDataBloc extends Bloc<PostEvent, CityActivityState> {
       } catch(_){
         emit(PostFailure());
       }
+    });
+
+    on<Refreshed>((event, emit) async {
+      print("[city activity bloc]Refreshed location code: ${event.locationCode}");
+      emit(PostLoading());
+          final activitys = await _activityService
+              .getActivityListByCity(0, event.locationCode);
+      emit(PostSuccess(activitys: activitys, hasReachedMax: activitys.length < 6 ? true : false, isRefreshed: true));
     });
   }
 

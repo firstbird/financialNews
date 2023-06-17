@@ -96,7 +96,7 @@ class _GroupPurchaseState extends State<GroupPurchase> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Icon(Icons.search, color: Colors.black38, size: 19,),
-                            Text('搜索商家活动', style: TextStyle(color: Colors.black38, fontSize: 14),)
+                            Text('搜索商家服务', style: TextStyle(color: Colors.black38, fontSize: 14),)
                           ],
                         )
                     ),

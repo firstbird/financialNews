@@ -42,7 +42,7 @@ class Activity {
   int? viewnum;
   String? orderid;
   int? locked;//是否已经开始活动
-  GoodPiceModel? goodPiceModel;
+  GoodPiceModel? goodprice;
 
 
   Activity(this.actid,  this.peoplenum, this.createtime,
@@ -50,7 +50,7 @@ class Activity {
       this.actcity, this.actprovince, this.coverimg, this.coverimgwh,
       this.likenum, this.collectionnum, this.startyear, this.endyear, this.commentnum, this.currentpeoplenum,
       this.mincost, this.maxcost, this.address, this.lat, this.lng, this.addresstitle,  this.paytype,
-      this.orderid, this.goodpriceid, this.joinnum, this.viewnum, this.locked, this.goodPiceModel);
+      this.orderid, this.goodpriceid, this.joinnum, this.viewnum, this.locked, this.goodprice);
 
 
   Map<String, dynamic> toJson() => _$ActivityToJson(this);

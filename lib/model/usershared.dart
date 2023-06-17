@@ -1,8 +1,10 @@
 
+import 'package:json_annotation/json_annotation.dart';
 part 'usershared.g.dart';
 
 
 
+@JsonSerializable()
 class UserShared {
   int? sharedid;
   int? uid;

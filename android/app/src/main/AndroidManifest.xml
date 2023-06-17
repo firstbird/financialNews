@@ -4,10 +4,40 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.INTERNET" />
-   <application
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--允许获取设备和运营商信息，用于问题排查和网络定位（无gps情况下的定位），若需网络定位功能则必选-->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <!--允许获取网络状态，用于网络定位（无gps情况下的定位），若需网络定位功能则必选-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!--允许获取wifi状态改变，用于网络定位（无gps情况下的定位），若需网络定位功能则必选-->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+
+    <!--后台获取位置信息，若需后台定位则必选-->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!--用于申请调用A-GPS模块,卫星定位加速-->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+
+    <!--允许写设备缓存，用于问题排查-->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <!--允许写入扩展存储，用于写入缓存定位数据-->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!--允许读设备等信息，用于问题排查-->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="com.vivo.notification.permission.BADGE_ICON" /><!-- VIVO icon -->
+
+    <application
         android:label="recipe"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <service android:name="com.amap.api.location.APSService"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -24,6 +54,23 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <meta-data
+                android:name="com.amap.api.v2.apikey"
+                android:value="569950465f236aa4691670135965f9a5"/>
+<!--            <meta-data android:name="sdk_version_vivo"-->
+<!--                android:value="484"/>-->
+<!--            <meta-data-->
+<!--                android:name="com.vivo.push.api_key"-->
+<!--                android:value="api_key"/>-->
+<!--            <meta-data-->
+<!--                android:name="com.vivo.push.app_id"-->
+<!--                android:value="app_id"/>-->
+<!--            <receiver android:name="com.jiandanyidian.push_message_register.VivoReceiver"-->
+<!--                android:exported="false">-->
+<!--                <intent-filter>-->
+<!--                    <action android:name="com.vivo.pushclient.action.RECEIVE"/>-->
+<!--                </intent-filter>-->
+<!--            </receiver>-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

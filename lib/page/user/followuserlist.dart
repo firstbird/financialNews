@@ -135,7 +135,7 @@ class _MyFollowUserState extends State<MyFollowUser> {
         widgets.add(SizedBox.shrink());
       }
       else {
-        String tem = element.isFollow ? "已关注" : " ＋ 关注";
+        String tem = element.isfollow ? "已关注" : " ＋ 关注";
         widgets.add(
             Padding(
               padding: EdgeInsets.only(left: 5, right: 5, top: 0),
@@ -187,21 +187,23 @@ class _MyFollowUserState extends State<MyFollowUser> {
                       // ),
                       // color: element.isFollow ? Colors.grey.shade200 : Colors.redAccent,
                       style: OutlinedButton.styleFrom(
-                        primary: element.isFollow ? Colors.grey.shade200 : Colors.redAccent,
-                        side: BorderSide(color: element.isFollow ?  Colors.grey.shade200 :Colors.redAccent!),
+                        primary: element.isfollow ? Colors.grey.shade200 : Colors.redAccent,
+                        side: BorderSide(color: element.isfollow ?  Colors.grey.shade200 :Colors.redAccent!),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
-                      child: Text(tem, style: TextStyle(color: element.isFollow ? Colors.black54 : Colors.redAccent, fontSize: 14)),
+                      child: Text(tem, style: TextStyle(color: element.isfollow ? Colors.black54 : Colors.redAccent, fontSize: 14)),
                       onPressed: () async {
-                        if (element.isFollow) {
+                        if (element.isfollow) {
                           bool ret = await _userService.cancelFollow(Global.profile.user!.token!, Global.profile.user!.uid, element.uid, errorCallBack);
+                          print("[myfollow clean follow] ret: $ret");
                           if(ret) {
                             await imHelper.delFollowState(element.uid, Global.profile.user!.uid);
                             Global.profile.user!.following = Global.profile.user!.following! - 1;
                             Global.saveProfile();
-                            element.isFollow = false;
+                            element.isfollow = false;
+                            print("[myfollow clean follow] following: ${Global.profile.user!.following}");
                             setState(() {
 
                             });
@@ -214,7 +216,7 @@ class _MyFollowUserState extends State<MyFollowUser> {
                             await imHelper.saveFollowState(element.uid, Global.profile.user!.uid);
                             Global.profile.user!.following = Global.profile.user!.following! + 1;
                             Global.saveProfile();
-                            element.isFollow = true;
+                            element.isfollow = true;
 
                             setState(() {
 

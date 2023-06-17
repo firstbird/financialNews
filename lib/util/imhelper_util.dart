@@ -706,8 +706,8 @@ class ImHelper{
     "content": activity.content, "coverimg": activity.coverimg,
     "uid": activity.user!.uid, "actprovince": activity.actprovince, "actcity": activity.actcity,
     "coverimgwh": activity.coverimgwh, "username": activity.user!.username, "profilepicture": activity.user!.profilepicture,
-    "mincost": activity.goodPiceModel == null ? activity.mincost : activity.goodPiceModel!.mincost,
-      "lat": activity.lat, "lng": activity.lng, "maxcost": activity.goodPiceModel == null ? activity.maxcost : activity.goodPiceModel!.maxcost,
+    "mincost": activity.goodprice == null ? activity.mincost : activity.goodprice!.mincost,
+      "lat": activity.lat, "lng": activity.lng, "maxcost": activity.goodprice == null ? activity.maxcost : activity.goodprice!.maxcost,
       "localuid": uid});
     if(Global.isInDebugMode)
       print('ActivityCollection num ${result}');
