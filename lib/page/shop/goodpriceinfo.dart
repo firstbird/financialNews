@@ -66,63 +66,86 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
   @override
   void initState() {
     super.initState();
-    appBar = AppBarWidget();
-    scrollController = ScrollController();
-    roundLeftBtn = PositionedBtnWidget(
-      size: 29,
-      btnTop: 25,
-      left: 20,
-      opacity: 1,
-      image: "images/fanghui.png",
-      actionFunction: () {
-        Navigator.pop(context);
-      },
-    );
-    rectLeftBtn = PositionedBtnWidget(
-      size: 29,
-      btnTop: 25,
-      left: 20,
-      opacity: 0,
-      image: "images/fanghui_black.png",
-      actionFunction: () {
-        Navigator.pop(context);
-      },
-    );
-    shareBtn = PositionedBtnWidget(
-      size: 29,
-      btnTop: 25,
-      right: 20,
-      opacity: 1,
-      content: ShareView(icon: IconButton(icon:Image.asset("images/fenxiang.png"), iconSize: 29, onPressed: null, ), image: widget.goodPiceModel.pic, contentid: widget.goodPiceModel.goodpriceid,
-          content: widget.goodPiceModel.title, sharedtype: "1", actid:  widget.goodPiceModel.goodpriceid, createuid: widget.goodPiceModel.uid,),
-      actionFunction: () {
+    try {
+      appBar = AppBarWidget();
+      scrollController = ScrollController();
+      roundLeftBtn = PositionedBtnWidget(
+        size: 29,
+        btnTop: 25,
+        left: 20,
+        opacity: 1,
+        image: "images/fanghui.png",
+        actionFunction: () {
+          Navigator.pop(context);
+        },
+      );
+      rectLeftBtn = PositionedBtnWidget(
+        size: 29,
+        btnTop: 25,
+        left: 20,
+        opacity: 0,
+        image: "images/fanghui_black.png",
+        actionFunction: () {
+          Navigator.pop(context);
+        },
+      );
+      shareBtn = PositionedBtnWidget(
+        size: 29,
+        btnTop: 25,
+        right: 20,
+        opacity: 1,
+        content: ShareView(icon: IconButton(
+          icon: Image.asset("images/fenxiang.png"),
+          iconSize: 29,
+          onPressed: null,),
+          image: widget.goodPiceModel.pic,
+          contentid: widget.goodPiceModel.goodpriceid,
+          content: widget.goodPiceModel.title,
+          sharedtype: "1",
+          actid: widget.goodPiceModel.goodpriceid,
+          createuid: widget.goodPiceModel.uid,),
+        actionFunction: () {
 
-      },
-    );
-    rectshareBtn = PositionedBtnWidget(
-      size: 1,
-      btnTop: 25,
-      right: 20,
-      opacity: 0,
-      content: ShareView(icon: IconButton(icon:Image.asset("images/fenxiang_black.png"), iconSize: 1, onPressed: null,), image: widget.goodPiceModel.pic, contentid: widget.goodPiceModel.goodpriceid,
-          content: widget.goodPiceModel.title, sharedtype: "1", actid:  widget.goodPiceModel.goodpriceid, createuid: widget.goodPiceModel.uid,),
-      actionFunction: () {
+        },
+      );
+      rectshareBtn = PositionedBtnWidget(
+        size: 1,
+        btnTop: 25,
+        right: 20,
+        opacity: 0,
+        content: ShareView(icon: IconButton(
+          icon: Image.asset("images/fenxiang_black.png"),
+          iconSize: 1,
+          onPressed: null,),
+          image: widget.goodPiceModel.pic,
+          contentid: widget.goodPiceModel.goodpriceid,
+          content: widget.goodPiceModel.title,
+          sharedtype: "1",
+          actid: widget.goodPiceModel.goodpriceid,
+          createuid: widget.goodPiceModel.uid,),
+        actionFunction: () {
 
-      },
-    );
-    rectTitleBtn = PositionedBtnWidget(
-      btnTop: 36,
-      left: 0,
-      opacity: 0,
-      content: Container(
-        width: 69,
-        child: Text(widget.goodPiceModel.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 1, overflow: TextOverflow.ellipsis,),
-      ),
-      actionFunction: () {
-        Navigator.pop(context);
-      },
-    );
-    getCollectionAndComment();
+        },
+      );
+      rectTitleBtn = PositionedBtnWidget(
+        btnTop: 36,
+        left: 0,
+        opacity: 0,
+        content: Container(
+          width: 69,
+          child: Text(widget.goodPiceModel.title,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,),
+        ),
+        actionFunction: () {
+          Navigator.pop(context);
+        },
+      );
+      getCollectionAndComment();
+    } catch(e) {
+      print("[goodpriceinfo] build with exception: e: ${e.toString()}");
+    }
 
   }
 
@@ -143,6 +166,7 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
           widget.goodPiceModel.goodpriceid, Global.profile.user!.uid);
       _iscollection = collectionstate["iscollection"];
     }
+    print("[getCollectionAndComment] goodpriceid: ${widget.goodPiceModel.goodpriceid}");
     //获取相关活动
     _activitys = await _gpService.getActivityList(widget.goodPiceModel.goodpriceid);
 
@@ -484,8 +508,8 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                       SizedBox(height: 10,),
                       buildProductEvaluate(),
                       SizedBox(height: 10,),
-                      buildProductQuestion(),
-                      SizedBox(height: 10,),
+                      // buildProductQuestion(),
+                      // SizedBox(height: 10,),
                     ],
                   )
               ),
@@ -1175,19 +1199,19 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                     },
                   ),
                   SizedBox(width: 20,),
-                  IconText(
-                    e.replynum.toString() == "0" ? '回复' : e.replynum.toString(),
-                    padding: EdgeInsets.only(right: 2),
-                    style: TextStyle(color: Colors.black54, fontSize: 13),
-                    icon: Icon(IconFont.icon_navbar_xiaoxi, color: Colors.black45, size: 18,),
-                    onTap: (){
-                      Navigator.pushNamed(context, '/EvaluateInfo', arguments: {"evaluateActivity": e}).then((val){
-                        setState(() {
-
-                        });
-                      });
-                    },
-                  ),
+                  // IconText(
+                  //   e.replynum.toString() == "0" ? '回复' : e.replynum.toString(),
+                  //   padding: EdgeInsets.only(right: 2),
+                  //   style: TextStyle(color: Colors.black54, fontSize: 13),
+                  //   icon: Icon(IconFont.icon_navbar_xiaoxi, color: Colors.black45, size: 18,),
+                  //   onTap: (){
+                  //     Navigator.pushNamed(context, '/EvaluateInfo', arguments: {"evaluateActivity": e}).then((val){
+                  //       setState(() {
+                  //
+                  //       });
+                  //     });
+                  //   },
+                  // ),
                 ],
               ),
               SizedBox(height: 10,),

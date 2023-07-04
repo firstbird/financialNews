@@ -213,6 +213,8 @@ class _RelationListState extends State<RelationList> {
   List<Widget> getRelationList(List<GroupRelation> groupRelations, ) {
     List<Widget> relationList = [];
     groupRelations.forEach((item) {
+      print("[getRelationList] item relationtype: ${item.relationtype} clubicon: ${item.clubicon}, timeline_id: ${item.timeline_id} group_name1: ${item.group_name1}-----------------------------------");
+      // if (item.group_name1 == null) return;
       if (item.newmsg != null) {
         item.newmsg = item.newmsg!.replaceAll("|sysactivitynotice:", '');
       }

@@ -67,6 +67,7 @@ class MyMessage extends StatefulWidget {
   late GroupRelation groupRelation;
   String sharedcontent = "";
   String localsharedcontent = "";
+  ActivityService _activityService = new ActivityService();
 
   MyMessage({this.arguments}){
     groupRelation = (arguments as Map)["GroupRelation"];
@@ -137,6 +138,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
   int _relationStatus = 1;//1正常 2拉黑
   bool _btnActivityLocked = true;//活动开始、取消开始重复点击判断
   GoodPiceModel? _goodprice;
+  bool _isMessageSent = false;
   Widget _activityinfo = Column(
     children: [
       Container(
@@ -453,14 +455,18 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
 
   _getImMsgInit() async {
     timeLineSyncs = await _imHelper.getTimeLineSync(Global.profile.user!.uid, 0, 30, _groupRelation.timeline_id );
-    print("[_getImMsgInit] timeLineSyncs size: ${timeLineSyncs.length}, uid: ${Global.profile.user!.uid}, line id: ${_groupRelation.timeline_id}");
+    print("[_getImMsgInit] timeLineSyncs size: ${timeLineSyncs.length}, uid: ${Global.profile.user!.uid}, line id: ${_groupRelation.timeline_id}, relationtype: ${_groupRelation.relationtype}");
     if (timeLineSyncs.length == 2) {
       print("[_getImMsgInit] timeLineSyncs content0: ${timeLineSyncs[0].content}, content1: ${timeLineSyncs[1].content}");
     }
     if(timeLineSyncs.length == 0 || timeLineSyncs.length == 1){
       if((_groupRelation.relationtype == 0 || _groupRelation.relationtype == 3)) {
         //付费拼玩活动插入一条安全活动规范
-        _imHelper.saveInitMessage(_groupRelation.timeline_id);
+        int res = await _imHelper.saveInitMessage(_groupRelation.timeline_id);
+        print("[_getImMsgInit] saveInitMessage res: ${res}");
+        if (res != 0) {
+          timeLineSyncs = await _imHelper.getTimeLineSync(Global.profile.user!.uid, 0, 30, _groupRelation.timeline_id );
+        }
       }
     }
     setState(() {
@@ -512,7 +518,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
       if(await _imHelper.saveSelfMessage(temLine[0]) > 0){
         timeLineSyncs = temLine + timeLineSyncs;
       }
-
+      _isMessageSent = true;
       setState(() {
 
       });
@@ -731,6 +737,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
     }
     _scrollController.dispose();
     _focusNode.dispose();
+    print("[message->despose]");
     super.dispose();
   }
 
@@ -886,6 +893,15 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
             icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 20 ),
             onPressed: (){
               Navigator.pop(context,"return");
+              if (!_isMessageSent && timeLineSyncs.length == 1 && timeLineSyncs[0].sender == 0) {
+                print("[message->Appbar] exit activity, timeline_id: ${_groupRelation.timeline_id}");
+                _imHelper.delGroupRelation(
+                    _groupRelation.timeline_id, Global.profile.user!.uid);
+                _activityService.exitActivity(
+                    _groupRelation.timeline_id, Global.profile.user!.uid,
+                    Global.profile.user!.token!, errorCallBack);
+              }
+              print("[message->Appbar] pop");
             },
           ),
           actions: <Widget>[
@@ -1044,30 +1060,39 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
     for(int i=0; i < timeLineSyncs.length ; i++){
       //系统通知,两次消息间隔超过10分钟就在消息上方显示发送时间
 
-      print("[buildMsgContent] content: ${timeLineSyncs[i].content}");
+      print("[buildMsgContent] content: ${timeLineSyncs[i].content}, sender: ${timeLineSyncs[i].sender}");
       if(timeLineSyncs[i].sender == 0){
         rows.add(buildSysMsg(timeLineSyncs[i]));
         if(timeLineSyncs[i].content!.indexOf("@安全活动规范@") < 0) {
+          print("[buildMsgContent] add secure content");
           rows.add(buildMsgTime(timeLineSyncs[i]));
         }
       }
       else if( timeLineSyncs[i].sender == Global.profile.user!.uid ) {
+        print("[buildMsgContent] sender == global user");
         if(((i+1 < timeLineSyncs.length && DateTime.parse(timeLineSyncs[i].send_time!).difference(
             DateTime.parse(timeLineSyncs[i+1].send_time!)).inMinutes.abs() > 5)  || i == timeLineSyncs.length - 1)) {
+          print("[buildMsgContent] sender == global user add secure content and my content");
           rows.add(buildMyContent(timeLineSyncs[i]));
           rows.add(buildMsgTime(timeLineSyncs[i]));
         }
-        else
+        else {
+          print("[buildMsgContent] sender == global add my content");
           rows.add(buildMyContent(timeLineSyncs[i]));
+        }
       }
       else{
+        print("[buildMsgContent] sender != global user");
         if(((i+1 < timeLineSyncs.length &&DateTime.parse(timeLineSyncs[i].send_time!).difference(
         DateTime.parse(timeLineSyncs[i+1].send_time!)).inMinutes.abs() > 5)  || i == timeLineSyncs.length - 1 )){
+          print("[buildMsgContent] sender != global user add user and sucure content");
           rows.add(buildHerContent(timeLineSyncs[i]));
           rows.add(buildMsgTime(timeLineSyncs[i]));
         }
-        else
+        else {
+          print("[buildMsgContent] sender != global user add user content");
           rows.add(buildHerContent(timeLineSyncs[i]));
+        }
       }
     }
     print("[buildMsgContent] rows: ${rows.length}");

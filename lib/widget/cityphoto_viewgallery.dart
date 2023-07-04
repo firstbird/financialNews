@@ -131,7 +131,7 @@ class NinePicture extends StatelessWidget {
     }
 
     for (var index in list.asMap().keys) {
-      print("[moment image] index: ${index}, path: ${list[index]['img']}");
+      print("[moment image] index: ${index}, path: ${list[index]['img']!.replaceFirst("https", "")}");
     }
     return GridView.count(
       physics: const NeverScrollableScrollPhysics(),
@@ -155,6 +155,7 @@ class NinePicture extends StatelessWidget {
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     imageUrl: '${list[index]['img']}' //&x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80
                 ),
+                // child:  Image.network('${list[index]['img']}'),
                 borderRadius: BorderRadius.circular(8),
               ),
             ),

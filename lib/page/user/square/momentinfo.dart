@@ -127,6 +127,7 @@ class _MomentInfoState extends State<MomentInfo> {
   }
 
   Container buildHeadInfo() {
+    // print("[momentinfo->buildHeadInfo] imageUrl: ${_moment!.user!.profilepicture}");
     return Container(
       height: 70,
       child: Row(

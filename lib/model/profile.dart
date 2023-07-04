@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'user.dart';
@@ -5,6 +7,20 @@ import '../global.dart';
 import 'package:path/path.dart' as path;
 
 part 'profile.g.dart';
+
+// class UserConverter extends JsonConverter<User, String> {
+//   const UserConverter();
+//
+//   @override
+//   User fromJson(String jsonStr) {
+//     return User.fromJson(json.decode(jsonStr));
+//   }
+//
+//   @override
+//   String toJson(User object) {
+//     return object.toJson().toString();
+//   }
+// }
 
 class ColorConverter extends JsonConverter<Color, String> {
   const ColorConverter();
@@ -15,8 +31,8 @@ class ColorConverter extends JsonConverter<Color, String> {
   }
 
   @override
-  String toJson(Color object) {
-    return object.value.toRadixString(16);
+  String toJson(Color color) {
+    return "0x" + color.value.toRadixString(16);
   }
 }
 
@@ -44,6 +60,7 @@ class ImageConverter extends JsonConverter<ImageProvider, String> {
 }
 @JsonSerializable()
 class Profile {
+  // @JsonKey(fromJson: _userFromJson, toJson: _userToJson)
   User? user;
   @JsonKey(fromJson: _colorFromJson, toJson: _colorToJson)
   Color backColor;
@@ -105,6 +122,14 @@ class Profile {
 //      }
 //    });
 //  }
+
+  // static User _userFromJson(String json) {
+  //   return const UserConverter().fromJson(json);
+  // }
+  //
+  // static String _userToJson(User user) {
+  //   return const UserConverter().toJson(user);
+  // }
 
   static Color _colorFromJson(String json) {
     return const ColorConverter().fromJson(json);

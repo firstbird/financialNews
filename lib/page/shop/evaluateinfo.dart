@@ -295,41 +295,41 @@ class _EvaluateInfoState extends State<EvaluateInfo> {
                         )
                     ),
                   ),
-                  TextButton(
-                    // shape: RoundedRectangleBorder(
-                    //     side: BorderSide.none,
-                    //     borderRadius: BorderRadius.all(
-                    //         Radius.circular(5))),
-                    child: Text('发送',
-                      style: TextStyle(color: Colors.white),),
-                    // color: Colors.redAccent,
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.redAccent,
-                      elevation: 5,
-                      padding: const EdgeInsets.all(12.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                    ),
-                    onPressed: () async {
-                      if (_message.isNotEmpty) {
-                        bool ret = await _activityService.evaluateReply(widget.evaluateActivity.evaluateid!,
-                            Global.profile.user!.uid,Global.profile.user!.token!, touid, _message, errorCallBack);
-                        if(ret){
-                           setState(() {
-                             temreplyid -= 1;
-                             evaluateReplys.insert(0, EvaluateActivityReply(temreplyid, widget.evaluateActivity.evaluateid,
-                               Global.profile.user, user, _message, DateTime.now().toString(), false,"",false,"","",""));
-                             widget.evaluateActivity.replynum = widget.evaluateActivity.replynum! + 1;
-                           });
-                        }
-                        Navigator.pop(context);
-                      }
-                      else {
-                        ShowMessage.showToast('输入回复内容!');
-                      }
-                    },
-                  )
+                  // TextButton(
+                  //   // shape: RoundedRectangleBorder(
+                  //   //     side: BorderSide.none,
+                  //   //     borderRadius: BorderRadius.all(
+                  //   //         Radius.circular(5))),
+                  //   child: Text('发送',
+                  //     style: TextStyle(color: Colors.white),),
+                  //   // color: Colors.redAccent,
+                  //   style: ElevatedButton.styleFrom(
+                  //     primary: Colors.redAccent,
+                  //     elevation: 5,
+                  //     padding: const EdgeInsets.all(12.0),
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(5.0),
+                  //     ),
+                  //   ),
+                  //   onPressed: () async {
+                  //     if (_message.isNotEmpty) {
+                  //       bool ret = await _activityService.evaluateReply(widget.evaluateActivity.evaluateid!,
+                  //           Global.profile.user!.uid,Global.profile.user!.token!, touid, _message, errorCallBack);
+                  //       if(ret){
+                  //          setState(() {
+                  //            temreplyid -= 1;
+                  //            evaluateReplys.insert(0, EvaluateActivityReply(temreplyid, widget.evaluateActivity.evaluateid,
+                  //              Global.profile.user, user, _message, DateTime.now().toString(), false,"",false,"","",""));
+                  //            widget.evaluateActivity.replynum = widget.evaluateActivity.replynum! + 1;
+                  //          });
+                  //       }
+                  //       Navigator.pop(context);
+                  //     }
+                  //     else {
+                  //       ShowMessage.showToast('输入回复内容!');
+                  //     }
+                  //   },
+                  // )
                 ],
               )
           ),

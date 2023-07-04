@@ -66,10 +66,12 @@ class ImBloc extends Bloc<ImEvent, ImState> {
         timeLineSyncs = await imHelper.getTimeLineSync(Global.profile.user!.uid, 0, 30, Global.timeline_id);
         Global.timeline_id = "";
 
+        print("[onUserRelationAndMessage] send groupRelations: ${newMessageState.groupRelations.length} ---------------------");
         emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: timeLineSyncs));
 
       }
       else {
+        print("[onUserRelationAndMessage] send groupRelations: ${newMessageState.groupRelations.length} ---------------------");
         emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: []));
       }
     });
@@ -96,18 +98,19 @@ class ImBloc extends Bloc<ImEvent, ImState> {
 
         GroupRelation groupRelation = GroupRelation.fromJson(data["groupRelation"] as Map<String, dynamic>);
         grouprelationlist.add(groupRelation);
-        print("[onNewMessage] ---------------------");
+        print("[onNewMessage] begin relation size: ${grouprelationlist.length}---------------------");
         if(await imHelper.saveGroupRelation(grouprelationlist) > 0) {
           TimeLineSync timeLineSync = TimeLineSync.fromMapByServer(data);
           bool res = await imService.saveTimeLineSync(
               timeLineSync, event.user.token, event.user.uid,
               errorCallBack);
-          print("[onNewMessage] timeLineSync ${timeLineSync.content} user.uid: ${event.user.uid} res: ${res}---------------------");
+          print("[onNewMessage] saveGroupRelation timeLineSync ${timeLineSync.timeline_id} content: ${timeLineSync.timeline_id} user.uid: ${event.user.uid} res: ${res}---------------------");
         }
         timeLineSyncs = await imHelper.getTimeLineSync(Global.profile.user!.uid, 0, timeLineSyncs.length + 30, groupRelation.timeline_id );
       }
       //用户本地替换服务器数据
       NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
+      print("[onNewMessage] send groupRelations: ${newMessageState.groupRelations.length} ---------------------");
       emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations,  msgMessage: timeLineSyncs));
     });
     on<NewCommunityMessage>((event, emit) async {
@@ -412,6 +415,7 @@ class ImBloc extends Bloc<ImEvent, ImState> {
   Future<NewMessageState> getAllMessage(int uid) async {
     int unImReadCount = 0;
     List<GroupRelation> grouprelationlist = await imHelper.getGroupRelation(uid.toString());
+    print("[getAllMessage] grouprelationlist length: ${grouprelationlist.length}-----------------------------------");
     //IM为读
     if(grouprelationlist != null && grouprelationlist.length > 0){
       for(GroupRelation groupRelation in grouprelationlist){

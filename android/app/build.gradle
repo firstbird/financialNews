@@ -93,8 +93,13 @@ flutter {
 }
 
 dependencies {
-    implementation 'com.amap.api:location:latest.integration'
+    //添加demo中引入高德地图SDK
+    implementation fileTree(include: ['*.zip'], dir: 'libs')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.amap.api:location:5.2.0'
+    implementation 'com.amap.api:3dmap:8.1.0' //3D地图
+    implementation 'com.amap.api:search:7.7.0' //搜索功能
+    implementation 'com.amap.api:location:6.3.0'
+    //定位功能
+    implementation 'com.amap.api:location:latest.integration'
 }

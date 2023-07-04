@@ -111,11 +111,12 @@ class ActivityService{
     if(Global.profile.user != null){
       uid = Global.profile.user!.uid;
     }
-    await NetUtil.getInstance().get("/api/Activity/getActivityMember",(Map<String, dynamic> data){
+    // todo mzl check interface /api/Activity/getActivityMember
+    await NetUtil.getInstance().get("/api/Activity/getActivity",(Map<String, dynamic> data){
       if (data["data"] != null) {
         activity = Activity.fromJson(data["data"]);
       }
-    },params: {"actid": actid }, errorCallBack: errorCallBack);
+    },params: {"actid": actid, "uid": uid.toString() }, errorCallBack: errorCallBack);
     return activity;
   }
 
@@ -902,8 +903,17 @@ class ActivityService{
     return groupRelation;
   }
   //退出活动
-  Future<int> exitActivity(String actid, int uid, String token, Function errorCallBack) async{
-    return 1;
+  Future<bool> exitActivity(String actid, int uid, String token, Function errorCallBack) async{
+    bool ret = false;
+    var formData = {
+      "token": token,
+      "actid": actid,
+      "uid": uid,
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/exitActivity", (Map<String, dynamic> data) {
+      ret = true;
+    }, errorCallBack);
+    return ret;
   }
   //是否已经参加活动
   Future<GroupRelation?> getGroupConversation(String actid, int uid, String token, Function errorCallBack) async{

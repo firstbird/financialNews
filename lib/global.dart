@@ -19,8 +19,8 @@ const _themes = <MaterialColor>[
 
 class Global {
 
-  static String serviceurl = "http://192.168.1.104:8080";//"https://api.chulaiwanba.com/";// 10.0.2.2
-  static String serviceIM =  "ws://192.168.1.104:8080/my-websocket";//ws://ws.chulaiwanba.com:8082/ws
+  static String serviceurl = "http://192.168.1.105:8080";//"https://api.chulaiwanba.com/";// 10.0.2.2
+  static String serviceIM =  "ws://192.168.1.105:8080/my-websocket";//ws://ws.chulaiwanba.com:8082/ws
   // static String serviceurl = "http://192.168.10.108:8080/";
   // static String serviceIM =  "ws://192.168.10.108:8082/ws";
 
@@ -61,21 +61,29 @@ class Global {
     mainContext = context;
     _prefs = await SharedPreferences.getInstance();
     var _profile = _prefs!.getString("profile");
+    print("[getProfile] profile: ${_profile}");
     if (_profile != null) {
       try {
-        profile = Profile.fromJson(jsonDecode(_profile));
+        print("[getProfile] not null");
+        var jsonMap = jsonDecode(_profile);
+        print("[getProfile] jsonDecode: ${jsonMap}");
+        profile = Profile.fromJson(jsonMap);
+        print("[getProfile] user: ${profile.user}");
         if(profile.user != null) {
+          print("[getProfile] user not null, uid: ${profile.user!.uid}");
            NetworkManager.init(profile.user, mainContext!);
         }
       } catch (e) {
-        //print(e);
+        print("[getProfile] exception: ${e.toString()}");
       }
     }
   }
 
   // 持久化Profile信息
-  static saveProfile(){
-    _prefs!.setString("profile", jsonEncode(profile.toJson()));
+  static saveProfile() async{
+    String profileJsonString = jsonEncode(profile.toJson());
+    bool res = await _prefs!.setString("profile", profileJsonString);
+    print("[saveProfile] res: ${res}, uid: ${profile.user!.uid}, profileJsonString: ${profileJsonString}");
   }
 
   static bool get isInDebugMode {

@@ -25,6 +25,7 @@ import '../../global.dart';
 
 class ActivityInfo extends StatefulWidget {
   String actid = "";
+  String uid = "";
   int commentid = 0;
   Object? arguments;
 
@@ -32,6 +33,7 @@ class ActivityInfo extends StatefulWidget {
     if(arguments != null){
       Map map = arguments as Map;
       actid = map["actid"];
+      // uid = map["uid"];
     }
   }
 
@@ -684,8 +686,20 @@ class _ActivityState extends State<ActivityInfo> {
             // shape: RoundedRectangleBorder(
             //     side: BorderSide.none,
             //     borderRadius: BorderRadius.all(Radius.circular(5))),
-            style: flatButtonStyle,
-            child: Text(_bottombutton, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),),
+            // style: flatButtonStyle,
+            child: Text(_bottombutton, style: TextStyle(color: Colors.white, fontSize: 12),),
+            // color: Global.profile.backColor,
+            // shape: RoundedRectangleBorder(
+            //     borderRadius: BorderRadius.all(Radius.circular(5))
+            // ),
+            style: ElevatedButton.styleFrom(
+              primary: Global.profile.backColor,
+              elevation: 5,
+              padding: const EdgeInsets.all(12.0),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+            ),
             // color: btncolor,
             onPressed: () {
               if(!_islogin()){
@@ -963,7 +977,7 @@ class _ActivityState extends State<ActivityInfo> {
         children: <Widget>[
           Container(
             margin: EdgeInsets.only(bottom: 10),
-            child: Text('活动成员', style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),),
+            child: Text('追求者', style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),),
           ),
           Wrap(
             children: buildMemberList(),

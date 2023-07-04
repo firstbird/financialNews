@@ -15,12 +15,12 @@ class NoCacheCircleHeadImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String temimageUrl = "";
-    if(uid != null && uid != 0 && (Global.profile.user != null && Global.profile.user!.uid == uid)){
+    // if(uid != null && uid != 0 && (Global.profile.user != null && Global.profile.user!.uid == uid)){
       temimageUrl = this.imageUrl;
-    }
-    else{
-      temimageUrl = '${imageUrl}?x-oss-process=image/resize,w_300/quality,q_90';
-    }
+    // }
+    // else{
+    //   temimageUrl = '${imageUrl}?x-oss-process=image/resize,w_300/quality,q_90';
+    // }
 
 
     return InkWell(
@@ -64,12 +64,12 @@ class NoCacheClipRRectHeadImage extends StatelessWidget {
   Widget build(BuildContext context) {
     String temimageUrl = "";
 
-    if(uid != null && uid != 0 && (Global.profile.user != null && Global.profile.user!.uid == uid)){
+    // if(uid != null && uid != 0 && (Global.profile.user != null && Global.profile.user!.uid == uid)){
       temimageUrl = this.imageUrl;
-    }
-    else{
-      temimageUrl = '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/quality,q_90';
-    }
+    // }
+    // else{
+    //   temimageUrl = '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/quality,q_90';
+    // }
     return InkWell(
       child: Container(
         height: this.width,
@@ -110,12 +110,12 @@ class NoCacheClipRRectOhterHeadImage extends StatelessWidget {
   Widget build(BuildContext context) {
     String temimageUrl = "";
 
-    if(uid != null && uid != 0 && (Global.profile.user != null && Global.profile.user!.uid == uid)){
+    // if(uid != null && uid != 0 && (Global.profile.user != null && Global.profile.user!.uid == uid)){
       temimageUrl = imageUrl;
-    }
-    else{
-      temimageUrl = '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80';
-    }
+    // }
+    // else{
+    //   temimageUrl = '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80';
+    // }
     return  Container(
 
       width: this.width,
@@ -149,12 +149,12 @@ class NoCacheClipRRectOhterHeadImageContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     String temimageUrl = "";
 
-    if(uid != null && uid != 0 && (Global.profile.user != null && Global.profile.user!.uid == uid)){
+    // if(uid != null && uid != 0 && (Global.profile.user != null && Global.profile.user!.uid == uid)){
       temimageUrl = imageUrl;
-    }
-    else{
-      temimageUrl = '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80';
-    }
+    // }
+    // else{
+    //   temimageUrl = '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80';
+    // }
     return Container(
       height: height,
       width: width,
@@ -602,7 +602,7 @@ class CommunityCircleHeadImage extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(50)),
           child: imageUrl==null|| imageUrl!.isEmpty?Image(
             image: AssetImage(Global.headimg),
-          ):CachedNetworkImage(imageUrl: '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80'),
+          ):CachedNetworkImage(imageUrl: '${imageUrl}'), //?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80
         ),
       ),
       onTap: () {
@@ -633,7 +633,7 @@ class CommunityClipRRectHeadImage extends StatelessWidget {
           ):
           CachedNetworkImage(
             errorWidget: (context, url, error) =>  Image.asset('images/image-failed.png'),
-            imageUrl: '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80',
+            imageUrl: '${imageUrl}',// ?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80
             fit: BoxFit.cover,
           ),
         ),
@@ -665,7 +665,7 @@ class ActivityClipRRectHeadImage extends StatelessWidget {
               image: AssetImage(Global.headimg),
             ):
             CachedNetworkImage(
-              imageUrl: '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80',
+              imageUrl: '${imageUrl}', //?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80
               fit: BoxFit.cover,
               errorWidget: (context, url, error) => Image.asset(Global.nullimg),
             ),
@@ -699,7 +699,7 @@ class ActivityClipRRectHeadShortCacheImage extends StatelessWidget {
               image: AssetImage(Global.headimg),
             ):
             CachedNetworkImage(
-              imageUrl: '${imageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80',
+              imageUrl: '${imageUrl}',//?x-oss-process=image/resize,m_fixed,w_300/sharpen,50/quality,q_80
               fit: BoxFit.cover,
               progressIndicatorBuilder: (context, url, downloadProgress) =>
                   LinearProgressIndicator(value: downloadProgress.progress),

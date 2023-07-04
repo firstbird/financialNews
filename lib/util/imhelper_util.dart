@@ -35,6 +35,7 @@ class ImHelper{
 
     if(grouprelations.length > 0){
       for(GroupRelation groupRelation in grouprelations) {
+        print("[ImHelper->saveGroupRelation] uid: ${groupRelation.uid}, timeline_id: ${groupRelation.timeline_id}, group_name1: ${groupRelation.group_name1}");
         timeline_ids.add(groupRelation.timeline_id);
         if(await isJoinGrid(groupRelation.uid!, groupRelation.timeline_id)){
           int? unreadcount = Sqflite.firstIntValue(await dbClient.rawQuery("SELECT unreadcount FROM ${TableHelper.im_group_relation} "
@@ -54,6 +55,9 @@ class ImHelper{
           }
         }
         else{
+          if(Global.isInDebugMode){
+            print("插入群信息 ------------------------------");
+          }
           await dbClient.insert(
               TableHelper.im_group_relation, groupRelation.toMap());
           result++;
@@ -156,15 +160,17 @@ class ImHelper{
   }
 
   ///保存安全活动规范
-  Future<void> saveInitMessage(String timeline_id) async{
+  Future<int> saveInitMessage(String timeline_id) async{
     var dbClient = await _sql.db;
+    print("[IM helper->saveInitMessage] timeline_id: ${timeline_id}, global uid: ${Global.profile.user!.uid}-----------------------------------");
     var tem = Sqflite.firstIntValue(await dbClient.rawQuery(
         "SELECT COUNT(*) FROM ${TableHelper.im_timeline_sync_relation} "
             "WHERE uid=${Global.profile.user!.uid} and timeline_id='${timeline_id}' and content='@安全活动规范@'"));
 
+    print("[IM helper->saveInitMessage] tem: ${tem}");
     tem == null ? tem = 0 : tem;
     if(tem <= 0) {
-      await dbClient.insert(TableHelper.im_timeline_sync_relation,
+      return await dbClient.insert(TableHelper.im_timeline_sync_relation,
           {
             "sequence_id": 0,
             "timeline_id": timeline_id,
@@ -178,31 +184,38 @@ class ImHelper{
             "serdername": "system"
           });
     }
+    return 0;
   }
   ///获取最新未读数据timeline
   ///更新timeline表
   Future<int> saveMessage( List<TimeLineSync> timelinesync) async {
-    print("[saveMessage] size: ${timelinesync.length}, global user: ${Global
+    print("[IM helper->saveMessage] size: ${timelinesync.length}, global user: ${Global
         .profile.user!.uid}");
     var dbClient = await _sql.db;
     var result = 0;
     //初始化一条安全交易规范提示
     if(timelinesync != null && timelinesync.length > 0) {
       for (TimeLineSync timelinesync in timelinesync) {
+        // var tem = Sqflite.firstIntValue(await dbClient.rawQuery(
+        //     "SELECT COUNT(*) FROM ${TableHelper.im_timeline_sync_relation} "
+        //         "WHERE sequence_id=${timelinesync.sequence_id} and uid=${Global
+        //         .profile.user!.uid} and timeline_id='${timelinesync
+        //         .timeline_id}'"));
         var tem = Sqflite.firstIntValue(await dbClient.rawQuery(
             "SELECT COUNT(*) FROM ${TableHelper.im_timeline_sync_relation} "
-                "WHERE sequence_id=${timelinesync.sequence_id} and uid=${Global
-                .profile.user!.uid} and timeline_id='${timelinesync
-                .timeline_id}'"));
+                "WHERE uid=${Global.profile.user!.uid} and timeline_id='${timelinesync.timeline_id}' and content='${timelinesync.content}'"));
+        print("[IM helper->saveMessage] query tem: ${tem}");
         if (tem == null || tem == 0) {
-          print("[saveMessage] insert: ${timelinesync.content}");
-          if (await dbClient.insert(
-              TableHelper.im_timeline_sync_relation, timelinesync.toMap()) >
+          int ret = await dbClient.insert(
+              TableHelper.im_timeline_sync_relation, timelinesync.toMap());
+          print("[IM helper->saveMessage] timeline_id: ${timelinesync.timeline_id} insert: ${timelinesync.content}, uid: ${Global
+              .profile.user!.uid} ret: ${ret}");
+          if (ret >
               0) {
             result++;
           }
         } else {
-          print("[saveMessage] error: sequence_id: ${timelinesync.sequence_id}, global uid: ${Global
+          print("[IM helper->saveMessage] error: sequence_id: ${timelinesync.sequence_id}, global uid: ${Global
               .profile.user!.uid}, timeline_id: ${timelinesync
               .timeline_id}");
         }
@@ -215,13 +228,13 @@ class ImHelper{
   Future<int> saveMessageCustomer( List<TimeLineSync> timelinesync) async {
     var dbClient = await _sql.db;
     var result = 0;
-    print("[saveMessageCustomer] size: ${timelinesync.length}");
+    print("[IM helper->saveMessageCustomer] size: ${timelinesync.length}");
     //初始化一条安全交易规范提示
     if(timelinesync != null && timelinesync.length > 0) {
       for (TimeLineSync timelinesync in timelinesync) {
         timelinesync.sequence_id = - new DateTime.now().millisecondsSinceEpoch;;
 
-        print("[saveMessageCustomer] insert: ${timelinesync.content}");
+        print("[IM helper->saveMessageCustomer] timeline_id: ${timelinesync.timeline_id} insert: ${timelinesync.content}");
         if (await dbClient.insert(
             TableHelper.im_timeline_sync_relation, timelinesync.toMap()) >
             0) {
@@ -237,7 +250,7 @@ class ImHelper{
     var dbClient = await _sql.db;
     var result = 0;
 
-    print("[saveSelfMessage] insert content: ${timelinesync.content}");
+    print("[IM helper->saveSelfMessage] timeline_id: ${timelinesync.timeline_id} insert content: ${timelinesync.content}");
     result = await dbClient.insert(
         TableHelper.im_timeline_sync_relation, timelinesync.toMap());
 
@@ -356,10 +369,12 @@ class ImHelper{
   }
   //获取群聊关系
   Future<GroupRelation?> getGroupRelationByGroupid(int uid, String timeline_id) async{
+    print("[getGoupRelation] uid: ${uid}, timeline_id: ${timeline_id}");
     var dbClient = await _sql.db;
     List<Map> maps = await dbClient.rawQuery("SELECT * FROM ${TableHelper.im_group_relation} WHERE  timeline_id='${timeline_id}'  "
         "and uid=${Global.profile.user!.uid} ");
     if (maps == null || maps.length == 0) {
+      print("[getGoupRelation] error");
       return null;
     }
 
