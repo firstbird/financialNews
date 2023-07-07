@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 
 import '../page/about.dart';
+import '../page/activity/applyactivity.dart';
 import '../page/activity/collection.dart';
 import '../page/activity/mycreateactivity.dart';
 import '../page/activity/myjoinactivity.dart';
@@ -485,6 +486,14 @@ var onGenerateRoute = (RouteSettings settings){
         return AnimationPageRoute(builder: (_) => IssuedActivity(arguments:settings.arguments), settings: settings.copyWith());
       } else if (Platform.isIOS) {
         return CupertinoPageRoute(builder: (_) => IssuedActivity(arguments:settings.arguments), settings: settings.copyWith());
+      }
+      break;
+
+    case '/ApplyActivity'://用户编辑
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => ApplyActivity(arguments:settings.arguments), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => ApplyActivity(arguments:settings.arguments), settings: settings.copyWith());
       }
       break;
 

@@ -886,6 +886,33 @@ class ActivityService{
     return isUpdate;
   }
 
+  Future<bool> addMember(int uid, String token, String actid, String provinceCode, String city, String content, List<String> actimagespath,
+      String goodpriceid, String captchaVerification, int paytype, Function errorCallBack) async{
+    bool isAdded = false;
+    String imageUrls = "";
+    for (int i = 0; i < actimagespath.length; i++) {
+      imageUrls += actimagespath[i] + ",";
+    }
+    if (imageUrls.length > 0) {
+      imageUrls = imageUrls.substring(0, imageUrls.length - 1);
+    }
+    var formData = {
+      "uid": uid,
+      "token": token,
+      "actid": actid,
+      "provinceCode": provinceCode,
+      "city": city,
+      "content": content,
+      "imageUrls": imageUrls,
+      "type": paytype,
+      "goodpriceid": goodpriceid,
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/Activity/addMember", (Map<String, dynamic> data) {
+      isAdded = true;
+    }, errorCallBack);
+    return isAdded;
+  }
+
   //参加活动
   Future<GroupRelation?> joinActivity(String actid, int uid, String token, String username, String sex, Function errorCallBack) async{
     GroupRelation? groupRelation;

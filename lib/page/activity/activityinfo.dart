@@ -105,6 +105,7 @@ class _ActivityState extends State<ActivityInfo> {
   void initState() {
     // TODO: implement initState
       super.initState();
+      print("[activityinfo] init state");
       getActivityInfo();
   }
 
@@ -285,6 +286,7 @@ class _ActivityState extends State<ActivityInfo> {
   }
 
   Future<void> getActivityInfo() async {
+    print("[activityinfo] getActivityInfo");
     _activity = await _activityService.getActivityInfo(widget.actid,  errorCallBack);
     if(_activity == null){
       promptWidget = Center(
@@ -710,12 +712,14 @@ class _ActivityState extends State<ActivityInfo> {
                 if (_activity!.status == 0)
                   _openSimpleDialog();
                 else{
-                  joinActivity();
+                  // joinActivity();
+                  Navigator.pushNamed(context, '/ApplyActivity', arguments: {"activity": _activity}).then((_) => getActivityInfo());
                 }
               }
               else{
                 if(_activity!.status == 0 && !isjoin) {
-                  joinActivity();
+                  //joinActivity();
+                  Navigator.pushNamed(context, '/ApplyActivity', arguments: {"activity": _activity}).then((_) => getActivityInfo());
                 }
                 else{
                   joinGroupMessage();
@@ -771,57 +775,6 @@ class _ActivityState extends State<ActivityInfo> {
       });
     }
     _isCollectEnter = true;
-  }
-
-  Future<void> joinActivity() async {
-    //如果已经加入，就直接进入群聊
-    GroupRelation? groupRelation = await imhelper.getGroupRelationByGroupid(Global.profile.user!.uid, _activity!.actid);
-    if(groupRelation != null && groupRelation.isnotservice == 0){
-      print("[joinActivity] isnotservice == 0 /MyMessage：-----------------------------------");
-      Navigator.pushNamed(context, '/MyMessage', arguments: {"GroupRelation": groupRelation}).
-        then((value) => getActivityInfo());
-      return;
-    }
-
-    if(Global.isInDebugMode){
-      print("是否已经加入群聊: ---------------------------------------");
-      print(groupRelation);
-    }
-
-    if(_activity!.status != 0){
-      ShowMessage.showToast('活动已结束');
-      return;
-    }
-
-    groupRelation = await _activityService.joinActivity(
-        _activity!.actid, Global.profile.user!.uid, Global.profile.user!.token!,
-        Global.profile.user!.username,
-        Global.profile.user!.sex ?? "0", errorCallBack);
-
-    if(groupRelation != null){
-      List<GroupRelation> groupRelations = [];
-      groupRelations.add(groupRelation);
-      int ret = await imhelper.saveGroupRelation(groupRelations);
-      await imhelper.updateGroupRelationIsNotService(_activity!.actid);
-      if(ret > 0){
-        //服务器传回的grouprelation再重新获取下，有些属性可能为空
-        groupRelation = await imhelper.getGroupRelationByGroupid(Global.profile.user!.uid, _activity!.actid);
-      }
-
-      if(Global.isInDebugMode) {
-        print("保存本地是否成功：-----------------------------------");
-        print(groupRelations[0].group_name1);
-        print(ret);
-      }
-      if(ret > 0){
-        print("[joinActivity] ret > 0 /MyMessage：-----------------------------------");
-        Navigator.pushNamed(context, '/MyMessage', arguments: {"GroupRelation": groupRelation, "millisecond": DateTime.now().millisecond}).
-          then((value) => getActivityInfo());
-      }
-      else{
-        ShowMessage.showToast('加入活动群失败，请退出重试');
-      }
-    }
   }
 
   Future<void> joinGroupMessage() async {

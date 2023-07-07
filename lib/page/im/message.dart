@@ -893,7 +893,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
             icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 20 ),
             onPressed: (){
               Navigator.pop(context,"return");
-              if (!_isMessageSent && timeLineSyncs.length == 1 && timeLineSyncs[0].sender == 0) {
+              if (!_isMessageSent && timeLineSyncs.length == 1 && timeLineSyncs[0].sender == 0 && _groupRelation.relationtype == 2) {
                 print("[message->Appbar] exit activity, timeline_id: ${_groupRelation.timeline_id}");
                 _imHelper.delGroupRelation(
                     _groupRelation.timeline_id, Global.profile.user!.uid);
