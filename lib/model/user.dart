@@ -49,12 +49,19 @@ class User {
   int business = 0;//是否是商户
   String subject;//关注的主题
 
+  String career = "";
+  int height = 0;
+  String education = "";
+  String earning = "";
+  String educationImage = "";
+  String earningImage = "";
+
   User(this.uid, this.mobile, this.username, this.sex, this.country, this.province, this.city, this.signature, this.profilepicture,
       this.pwerrorcount, this.birthday, this.followers, this.following, this.updatetime, this.likenum, this.token, this.likeact, this.collectionact,
       this.likecomment, this.likeevaluate, this.collectionproduct, this.aliuserid, this.likebug, this.likesuggest, this.likebugcomment,
       this.likesuggestcomment, this.likegoodpricecomment, this.notinteresteduids, this.blacklist, this.goodpricenotinteresteduids,
       this.usertype, this.interest, this.voice, this.isNew, this.business, this.likemoment, this.likemomentcomment, this.wxuserid,
-      this.iosuserid, this.subject);
+      this.iosuserid, this.subject, this.career, this.height, this.education, this.earning, this.earningImage, this.educationImage);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);

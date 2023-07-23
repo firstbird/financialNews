@@ -59,7 +59,7 @@ class CommentReply {
     this.commentid = data['commentid'];
     this.replycontent = data['replycontent'];
     this.replyuser = User(data['uid'], "", data['username'],  null, null, null, null, "", data['profilepicture'], null,null
-        , 0, 0, null, null,"", 0, 0, 0, 0, 0, "",0,0,0,0, 0, "", "", "", 0, "", "",false, 0, 0, 0, "", "", "");
+        , 0, 0, null, null,"", 0, 0, 0, 0, 0, "",0,0,0,0, 0, "", "", "", 0, "", "",false, 0, 0, 0, "", "", "", "", 0, "", "", "", "");
     this.touser = null;
     this.replycreatetime = data['replycreatetime'];
     this.isread = data['isread'] == 1 ? true : false;

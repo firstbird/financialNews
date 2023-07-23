@@ -32,13 +32,37 @@ class UserRepository {
   Future<bool> updateImage(User user, String imgpath, Function errorCallBack){
     return _userService.updateImageByUrl(user.token!, user.uid, imgpath, errorCallBack);
   }
+  ///更新education图片
+  Future<bool> updateEducationImage(User user, String imgpath, Function errorCallBack){
+    return _userService.updateEducationImageByUrl(user.token!, user.uid, imgpath, errorCallBack);
+  }
+  ///更新earning图片
+  Future<bool> updateEarningImage(User user, String imgpath, Function errorCallBack){
+    return _userService.updateEarningImageByUrl(user.token!, user.uid, imgpath, errorCallBack);
+  }
   ///更新昵称
   Future<bool> updateUserName(User user, String username, Function errorCallBack){
     return _userService.updateUserName(user.token!, user.uid, username, errorCallBack);
   }
+  ///更新身高
+  Future<bool> updateUserHeight(User user, int height, Function errorCallBack){
+    return _userService.updateUserHeight(user.token!, user.uid, height, errorCallBack);
+  }
   ///更新所在城市
   Future<bool> updateLocation(User user, String province, String city, Function errorCallBack){
     return _userService.updateLocation(user.token!, user.uid, province, city, errorCallBack);
+  }
+  ///更新职业
+  Future<bool> updateCareer(User user, String career, Function errorCallBack){
+    return _userService.updateCareer(user.token!, user.uid, career, errorCallBack);
+  }
+  ///更新学历
+  Future<bool> updateEducation(User user, String education, Function errorCallBack){
+    return _userService.updateEducation(user.token!, user.uid, education, errorCallBack);
+  }
+  ///更新收入
+  Future<bool> updateEarning(User user, String earning, Function errorCallBack){
+    return _userService.updateEarning(user.token!, user.uid, earning, errorCallBack);
   }
   ///更新密码
   Future<bool> UpdateUserPasswordPressed(User user, String password, Function errorCallBack){
@@ -185,7 +209,6 @@ class UserRepository {
     //
 
   }
-
 
   ///是否已经登录
   bool hasToUser() {

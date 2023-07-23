@@ -202,6 +202,8 @@ flutter:
     - images/login_alipay.png
     - images/login_weixin.png
     - images/ic_launcher.png
+    - images/vip_icon.png
+    - images/vip_background.png
     - mock/
   fonts:
     - family: iconfont

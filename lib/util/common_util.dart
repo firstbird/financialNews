@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:flutter/services.dart';
 import 'package:crypto/crypto.dart';
+import 'package:recipe/common/json/career_json.dart';
+import 'package:recipe/common/json/earning_json.dart';
+import 'package:recipe/common/json/education_json.dart';
 import 'package:recipe/service/aliyun.dart';
 import '../../global.dart';
 import '../../common/json/interest_json.dart';
@@ -106,6 +109,33 @@ class  CommonUtil{
     }
 
     return province == "allCode" ? "全国" : province;
+  }
+
+  //获取职业名称
+  static String getCareerName(careercode){
+    if(careerData[careercode] != null) {
+      return careerData[careercode]!;
+    }
+
+    return "未设置";
+  }
+
+  //获取学历名称
+  static String getEducationName(educationcode){
+    if(educationData[educationcode] != null) {
+      return educationData[educationcode]!;
+    }
+
+    return "未设置";
+  }
+
+  //获取收入信息
+  static String getEarningName(earningcode){
+    if(earningData[earningcode] != null) {
+      return earningData[earningcode]!;
+    }
+
+    return "未设置";
   }
 
   //获取省份和城市

@@ -12,6 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:recipe/service/userservice.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 import '../../model/im/grouprelation.dart';
 import '../../model/user.dart';
@@ -91,6 +92,7 @@ class _ApplyActivityState extends State<ApplyActivity> {
   double _lng = 0;//活动位置
   int oldImageCount = 0;//旧的图片数量
   ActivityService _activityService = new ActivityService();
+  UserService _userService = new UserService();
   SecurityToken? _securityToken;
   List<String> _imagesUrl = [];
   List<String> _imagesWH = [];//图片的分辨率
@@ -245,14 +247,11 @@ class _ApplyActivityState extends State<ApplyActivity> {
       child: ListTile(
         onTap: () async {
           _contentfocusNode.unfocus();
-          Navigator.pushNamed(context, '/MyProfileEdit').then((value){
-            setState(() {
-
-            });
-          });
+          Navigator.pushNamed(context, '/MyProfileEdit').then((_) => getUserInfo());
         },
         title: Container(
-            child: Text("基本信息不完整, 请点击修改~", style: TextStyle(color: Colors.redAccent, fontSize: 14),)
+            child: checkBaseInfoComplete()? Text("基本信息已填写完整", style: TextStyle(color: Colors.lightGreen, fontSize: 14),) :
+            Text("基本信息不完整, 请点击修改~", style: TextStyle(color: Colors.redAccent, fontSize: 14),)
         ),
         leading: Icon(Icons.person),
         trailing: Icon(Icons.edit),
@@ -267,14 +266,10 @@ class _ApplyActivityState extends State<ApplyActivity> {
       child: ListTile(
         onTap: () async {
           _contentfocusNode.unfocus();
-          Navigator.pushNamed(context, '/MyProfileEdit').then((value){
-            setState(() {
-
-            });
-          });
+          Navigator.pushNamed(context, '/MyCertifyEdit').then((_) => getUserInfo());
         },
         title: Container(
-          child: Text("学历和收入认证未完成, 请点击认证~", style: TextStyle(color: Colors.redAccent, fontSize: 14),)
+          child: checkCertificated() ? Text("学历和收入信息已认证", style: TextStyle(color: Colors.lightGreen, fontSize: 14),) : Text("学历和收入认证未完成, 请点击认证~", style: TextStyle(color: Colors.redAccent, fontSize: 14),)
         ),
         leading: Icon(Icons.where_to_vote_outlined),
         trailing: Icon(Icons.edit),
@@ -283,11 +278,11 @@ class _ApplyActivityState extends State<ApplyActivity> {
   }
 
   bool checkBaseInfoComplete() {
-    return _user.birthday != "" && _user.username != "" && _user.sex != "2";
+    return _user.birthday != "" && _user.username != "" && _user.sex != "2" && _user.height != 0 && _user.career != "";
   }
 
   bool checkCertificated() {
-    return _user.birthday != "" && _user.username != "" && _user.sex != "2";
+    return _user.education != "" && _user.educationImage != "" && _user.earning != "" && _user.educationImage != "";
   }
   //活动位置
   Container buildLocation(){
@@ -598,6 +593,16 @@ class _ApplyActivityState extends State<ApplyActivity> {
                     return;
                   }
 
+                  if (!checkBaseInfoComplete()) {
+                    ShowMessage.showToast("亲，您的基本信息还未填写完成~");
+                    return;
+                  }
+
+                  if (!checkCertificated()) {
+                    ShowMessage.showToast("亲，平台提供可信交友服务，请进行学历和收入认证~");
+                    return;
+                  }
+
                   setState(() {
                     _loading = true;
                   });
@@ -649,6 +654,12 @@ class _ApplyActivityState extends State<ApplyActivity> {
       );
   }
 
+  Future<void> getUserInfo() async {
+    print("[applyactivity]: getUserInfo ---------------------------------------");
+    setState(() {
+      _user = Global.profile.user!;
+    });
+  }
   Future<void> getActivityInfo() async {
     widget._activity =
     await _activityService.getActivityInfo(widget._activity!.actid, errorCallBack);

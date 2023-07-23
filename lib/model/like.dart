@@ -32,7 +32,7 @@ class Like {
   Like.fromMap(Map<String, dynamic> data) {
 //    User user = User.fromJson(data['sender'] as Map<String, dynamic>);
     this.likeid = data['likeid'];
-    this.user = User(0,"", "","","","","","","",0,"",0,0,"",0,"",0,0,0,0,0, "", 0, 0, 0, 0, 0, "", "", "", 0, "", "", false, 0, 0, 0, "", "", "");
+    this.user = User(0,"", "","","","","","","",0,"",0,0,"",0,"",0,0,0,0,0, "", 0, 0, 0, 0, 0, "", "", "", 0, "", "", false, 0, 0, 0, "", "", "", "", 0, "", "", "", "");
     this.user!.profilepicture = data['profilepicture'];
     this.user!.username = data['username'];
     this.user!.uid = data['uid'];

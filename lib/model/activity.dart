@@ -59,7 +59,7 @@ class Activity {
   factory Activity.fromNullObject(){
     Activity activity = Activity("", 0, "", "", "", "", "", 0, null,"","", "","", 0,0,0,0,0,0, 0.0, 0.0, "", 0.0, 0.0, "", 0, "", "", 0, 0, 0, null);
 
-    activity.user = User(0, "", "","","","","","","",0,"",0,0,"",0,"",0 ,0 ,0 ,0 ,0, "", 0, 0, 0, 0, 0, "", "", "", 0, "", "", false, 0,0,0, "", "", "");
+    activity.user = User(0, "", "","","","","","","",0,"",0,0,"",0,"",0 ,0 ,0 ,0 ,0, "", 0, 0, 0, 0, 0, "", "", "", 0, "", "", false, 0,0,0, "", "", "", "", 0, "", "", "", "");
     return activity;
   }
 
@@ -71,7 +71,7 @@ class Activity {
     this.content = data['content'];
 
     this.peoplenum = data['peoplenum'];
-    this.user = User(0, "", "","","","","","","",0,"",0,0,"",0,"",0,0,0,0,0, "", 0, 0, 0, 0, 0, "", "", "", 0, "", "", false, 0,0,0, "", "", "");
+    this.user = User(0, "", "","","","","","","",0,"",0,0,"",0,"",0,0,0,0,0, "", 0, 0, 0, 0, 0, "", "", "", 0, "", "", false, 0,0,0, "", "", "", "", 0, "", "", "", "");
     this.user!.profilepicture = data['profilepicture'];
     this.user!.username = data['username'];
 
@@ -92,7 +92,7 @@ class Activity {
 
     this.peoplenum = data['peoplenum'];
     this.user = User(0, "", data["user"]["username"],"","","","","",data["user"]["profilepicture"],0,"",0,0,"",0,"",0,0,0,0,0, "",
-        0, 0, 0, 0, 0, "", "", "", 0,"","", false, 0, 0, 0, "", "", "");
+        0, 0, 0, 0, 0, "", "", "", 0,"","", false, 0, 0, 0, "", "", "", "", 0, "", "", "", "");
     this.user!.profilepicture = data["user"]["profilepicture"];
     this.user!.username = data["user"]["username"];
 
@@ -112,7 +112,7 @@ class Activity {
     this.content = data['content'];
     this.peoplenum = data['peoplenum'];
     this.user = User(0, "", data["username"],"","","","","",data["profilepicture"],0,"",0,0,"",0,"",0,0,0,0,0, "", 0, 0, 0, 0, 0,
-        "", "", "", 0, "", "", false, 0, 0, 0, "", "", "");
+        "", "", "", 0, "", "", false, 0, 0, 0, "", "", "", "", 0, "", "", "", "");
     this.user!.profilepicture = data["profilepicture"];
     this.user!.username = data["username"];
     this.address = data["address"];

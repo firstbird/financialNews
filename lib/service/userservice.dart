@@ -362,6 +362,36 @@ class UserService {
     return isupdateImage;
   }
 
+  Future<bool> updateEducationImageByUrl(String token, int uid, String imgpath, Function errorCallBack) async {
+    bool isupdateImage = false;
+
+    var formData = {
+      //"path": await MultipartFile.fromFile(imgpath),
+      "path": imgpath,
+      "token": token,
+      "uid": uid
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/updateEducationImage", (Map<String, dynamic> data) {
+      isupdateImage = true;
+    }, errorCallBack);
+    return isupdateImage;
+  }
+
+  Future<bool> updateEarningImageByUrl(String token, int uid, String imgpath, Function errorCallBack) async {
+    bool isupdateImage = false;
+
+    var formData = {
+      //"path": await MultipartFile.fromFile(imgpath),
+      "path": imgpath,
+      "token": token,
+      "uid": uid
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/updateEarningImage", (Map<String, dynamic> data) {
+      isupdateImage = true;
+    }, errorCallBack);
+    return isupdateImage;
+  }
+
   //更新性别
   Future<bool> updateSex(String token, int uid, String sex, Function errorCallBack) async {
     bool isUpdate = false;
@@ -420,6 +450,20 @@ class UserService {
     return isUpdate;
   }
 
+  //更新身高
+  Future<bool> updateUserHeight(String token, int uid, int height, Function errorCallBack) async {
+    bool isUpdate = false;
+    var formData = {
+      "token": token,
+      "uid": uid,
+      "userheight": height
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/updateUserHeight", (Map<String, dynamic> data) {
+      isUpdate = true;
+    }, errorCallBack);
+    return isUpdate;
+  }
+
   //更新位置
   Future<bool> updateLocation(String token, int uid, String province, String city, Function errorCallBack) async {
     bool isUpdate = false;
@@ -430,6 +474,48 @@ class UserService {
       "city": city
     };
     await NetUtil.getInstance().postJson(formData, "/api/user/updateLocation", (Map<String, dynamic> data) {
+      isUpdate = true;
+    }, errorCallBack);
+    return isUpdate;
+  }
+
+  //更新职业
+  Future<bool> updateCareer(String token, int uid, String career, Function errorCallBack) async {
+    bool isUpdate = false;
+    var formData = {
+      "token": token,
+      "uid": uid,
+      "career": career,
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/updateCareer", (Map<String, dynamic> data) {
+      isUpdate = true;
+    }, errorCallBack);
+    return isUpdate;
+  }
+
+  //更新学历
+  Future<bool> updateEducation(String token, int uid, String education, Function errorCallBack) async {
+    bool isUpdate = false;
+    var formData = {
+      "token": token,
+      "uid": uid,
+      "education": education,
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/updateEducation", (Map<String, dynamic> data) {
+      isUpdate = true;
+    }, errorCallBack);
+    return isUpdate;
+  }
+
+  //更新收入
+  Future<bool> updateEarning(String token, int uid, String earning, Function errorCallBack) async {
+    bool isUpdate = false;
+    var formData = {
+      "token": token,
+      "uid": uid,
+      "earning": earning,
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/updateEarning", (Map<String, dynamic> data) {
       isUpdate = true;
     }, errorCallBack);
     return isUpdate;
@@ -616,6 +702,23 @@ class UserService {
       "currentIndex": currentIndex
     };
     await NetUtil.getInstance().postJson(formData, "/api/user/getFollowUsers", (Map<String, dynamic> data) {
+      if(data["data"] != null){
+        for(int i=0; i<data["data"].length; i++){
+          users.add(User.fromJson(data["data"][i]));
+        }
+      }
+    }, errorResponse);
+    return users;
+  }
+  //获取订阅服务
+  Future<List<User>> getSubscribes(int currentIndex, int uid, String token ) async {
+    List<User> users = [];
+    var formData = {
+      "token": token,
+      "uid": uid,
+      "currentIndex": currentIndex
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/getSubscribes", (Map<String, dynamic> data) {
       if(data["data"] != null){
         for(int i=0; i<data["data"].length; i++){
           users.add(User.fromJson(data["data"][i]));

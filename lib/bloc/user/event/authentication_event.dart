@@ -90,6 +90,49 @@ class UpdateImagePressed extends AuthenticationEvent{
   String toString() =>
       'LoginButtonPressed { user: $user, imgpath: $imgpath, serverimgpath: $serverimgpath }';
 }
+
+///更新Education image
+class UpdateEducationImagePressed extends AuthenticationEvent{
+  final User user;
+  final String imgpath;
+  final String serverimgpath;
+
+
+  const UpdateEducationImagePressed({
+    required this.user,
+    required this.imgpath,
+    this.serverimgpath = ""
+
+  });
+  @override
+  List<Object> get props => [user, imgpath, serverimgpath];
+
+  @override
+  String toString() =>
+      'UpdateEducationImagePressed { user: $user, imgpath: $imgpath, serverimgpath: $serverimgpath }';
+}
+
+///更新Education image
+class UpdateEarningImagePressed extends AuthenticationEvent{
+  final User user;
+  final String imgpath;
+  final String serverimgpath;
+
+
+  const UpdateEarningImagePressed({
+    required this.user,
+    required this.imgpath,
+    this.serverimgpath = ""
+
+  });
+  @override
+  List<Object> get props => [user, imgpath, serverimgpath];
+
+  @override
+  String toString() =>
+      'UpdateEarningImagePressed { user: $user, imgpath: $imgpath, serverimgpath: $serverimgpath }';
+}
+
 ///更新昵称
 class UpdateUserNamePressed extends AuthenticationEvent{
   final User user;
@@ -105,6 +148,23 @@ class UpdateUserNamePressed extends AuthenticationEvent{
   @override
   String toString() =>
       'UpdateUserNamePressed { user: $user, imgpath: $username }';
+}
+
+///更新身高
+class UpdateUserHeightPressed extends AuthenticationEvent{
+  final User user;
+  final int height;
+
+  const UpdateUserHeightPressed({
+    required this.user,
+    required this.height
+  });
+  @override
+  List<Object> get props => [user, height];
+
+  @override
+  String toString() =>
+      'UpdateUserHeightPressed { user: $user, height: $height }';
 }
 ///更新所在地
 class UpdateUserLocationPressed extends AuthenticationEvent{
@@ -124,6 +184,58 @@ class UpdateUserLocationPressed extends AuthenticationEvent{
   String toString() =>
       'UpdateUserLocationPressed { user: $user, province: $province, city: $city }';
 }
+
+///更新职业
+class UpdateCareerPressed extends AuthenticationEvent{
+  final User user;
+  final String career;
+
+  const UpdateCareerPressed({
+    required this.user,
+    required this.career,
+  });
+  @override
+  List<Object> get props => [user, career];
+
+  @override
+  String toString() =>
+      'UpdateCareerPressed { user: $user, career: $career }';
+}
+
+///更新职业
+class UpdateEducationPressed extends AuthenticationEvent{
+  final User user;
+  final String education;
+
+  const UpdateEducationPressed({
+    required this.user,
+    required this.education,
+  });
+  @override
+  List<Object> get props => [user, education];
+
+  @override
+  String toString() =>
+      'UpdateEducationPressed { user: $user, education: $education }';
+}
+
+///更新收入
+class UpdateEarningPressed extends AuthenticationEvent{
+  final User user;
+  final String earning;
+
+  const UpdateEarningPressed({
+    required this.user,
+    required this.earning,
+  });
+  @override
+  List<Object> get props => [user, earning];
+
+  @override
+  String toString() =>
+      'UpdateEarningPressed { user: $user, education: $earning }';
+}
+
 ///更新密码
 class UpdateUserPasswordPressed extends AuthenticationEvent{
   final User user;

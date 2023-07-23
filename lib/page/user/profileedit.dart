@@ -235,6 +235,113 @@ class _MyProfileEditState extends State<MyProfileEdit> {
                       color: Colors.white,
                       child: ListTile(
                         onTap: (){
+                          Navigator.pushNamed(context, '/MyUserHeight', arguments: {"type": "1","content": user.height.toString()}).then((onValue){
+                            if(onValue!=null && onValue != 0){
+                              user.height = int.tryParse(onValue.toString())!;
+                              setState(() {
+
+                              });
+                            }
+                          });
+                       },
+                        title: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("身高", style: TextStyle(fontSize: fontsize)),
+                              Text(user.height !=null ? user.height!.toString() :"",
+                                style: TextStyle(color: Colors.black45, fontSize: contentfontsize),)
+                            ],
+                          ),
+                        ),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                      ),
+                    ), // 设置身高
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: (){
+                          Navigator.pushNamed(context, '/ListViewEducation', arguments:{"isPermanent":true}).then((dynamic value) async {
+                            if(value != null){
+                              String educationcode = value["code"].toString();
+                              _bloc.add(UpdateEducationPressed(user: user, education: educationcode));
+                              setState(() {
+
+                              });
+                            }
+                          });
+                        },
+                        title: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("学历", style: TextStyle(fontSize: fontsize)),
+                              Text(user.education!=null && user.education!.isNotEmpty?CommonUtil.getEducationName(user.education!):'选择学历',
+                                style: TextStyle(color: Colors.black45, fontSize: contentfontsize),)
+                            ],
+                          ),
+                        ),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                      ),
+                    ),//学历
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: (){
+                          Navigator.pushNamed(context, '/MyUpdateEarning', arguments:{"isPermanent":true}).then((dynamic value) async {
+                            if(value != null){
+                              String earningcode = value["code"].toString();
+                              _bloc.add(UpdateEarningPressed(user: user, earning: earningcode));
+                              setState(() {
+
+                              });
+                            }
+                          });
+                        },
+                        title: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("收入", style: TextStyle(fontSize: fontsize)),
+                              Text(user.earning!=null && user.earning!.isNotEmpty?CommonUtil.getEarningName(user.earning!):'未填写',
+                                style: TextStyle(color: Colors.black45, fontSize: contentfontsize),)
+                            ],
+                          ),
+                        ),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                      ),
+                    ),//收入
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: (){
+                          Navigator.pushNamed(context, '/ListViewCareer', arguments:{"isPermanent":true}).then((dynamic value) async {
+                            if(value != null){
+                              String educationcode = value["code"].toString();
+                              _bloc.add(UpdateEducationPressed(user: user, education: educationcode));
+                              setState(() {
+
+                              });
+                            }
+                          });
+                        },
+                        title: Container(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("职业", style: TextStyle(fontSize: fontsize)),
+                              Text(user.career!=null && user.career!.isNotEmpty?CommonUtil.getCareerName(user.career):'选择职业',
+                                style: TextStyle(color: Colors.black45, fontSize: contentfontsize),)
+                            ],
+                          ),
+                        ),
+                        trailing: Icon(Icons.keyboard_arrow_right),
+                      ),
+                    ),//职业
+                    Container(
+                      color: Colors.white,
+                      child: ListTile(
+                        onTap: (){
                           //类型等于1是修改昵称,0修改个人简介
                           Navigator.pushNamed(context, '/NameAndSignature', arguments: {"type": "0","content": user.signature}).then((onValue){
                             if(onValue!=null && onValue != ""){

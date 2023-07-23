@@ -47,6 +47,12 @@ User _$UserFromJson(Map<String, dynamic> json) => User(
       json['wxuserid'] as String,
       json['iosuserid'] as String,
       json['subject'] as String,
+      json['career'] as String,
+      json['height'] as int,
+      json['education'] as String,
+      json['earning'] as String,
+      json['earningImage'] as String,
+      json['educationImage'] as String,
     )..isfollow = json['isfollow'] as bool;
 
 Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
@@ -91,4 +97,10 @@ Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
       'isNew': instance.isNew,
       'business': instance.business,
       'subject': instance.subject,
+      'career': instance.career,
+      'height': instance.height,
+      'education': instance.education,
+      'earning': instance.earning,
+      'educationImage': instance.educationImage,
+      'earningImage': instance.earningImage,
     };

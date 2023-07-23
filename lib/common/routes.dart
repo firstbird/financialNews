@@ -1,11 +1,15 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:recipe/page/user/updateheight.dart';
+import 'package:recipe/page/user/uservip.dart';
 
 
 import '../page/about.dart';
 import '../page/activity/applyactivity.dart';
+import '../page/activity/career.dart';
 import '../page/activity/collection.dart';
+import '../page/activity/education.dart';
 import '../page/activity/mycreateactivity.dart';
 import '../page/activity/myjoinactivity.dart';
 import '../page/index.dart';
@@ -44,6 +48,7 @@ import '../page/im/sharedrelationlist.dart';
 import '../page/im/redpacket.dart';
 import '../page/im/redpacketlist.dart';
 import '../page/user/browhistory.dart';
+import '../page/user/mysubscription.dart';
 import '../page/user/order/finish.dart';
 import '../page/user/order/pending.dart';
 import '../page/user/order/refund.dart';
@@ -64,6 +69,8 @@ import '../page/user/bugsuggest/suggestinfo.dart';
 import '../page/user/bugsuggest/suggestreport.dart';
 import '../page/user/bugsuggest/reportlist.dart';
 import '../page/user/order/orderevaluatelist.dart';
+import '../page/user/updateearning.dart';
+import '../page/user/usercertify.dart';
 import '../page/user/usersafe.dart';
 import '../page/user/updatemobile.dart';
 import '../page/user/exit.dart';
@@ -145,7 +152,20 @@ var onGenerateRoute = (RouteSettings settings){
         return UnitaryCupertinoPageRoute(builder: (_) => ListViewCity(arguments:settings.arguments), settings: settings.copyWith());
       }
       break;
-
+    case '/ListViewCareer'://省份选择
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => ListViewCareer(), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => ListViewCareer(), settings: settings.copyWith());
+      }
+      break;
+    case '/ListViewEducation'://学历选择
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => ListViewEducation(), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => ListViewEducation(), settings: settings.copyWith());
+      }
+      break;
     case '/MapLocationShowNav'://IM地图显示导航
       if (Platform.isAndroid) {
         return AnimationPageRoute(builder: (_) => MapLocationShowNav(arguments: settings.arguments), settings: settings.copyWith());
@@ -277,6 +297,14 @@ var onGenerateRoute = (RouteSettings settings){
       }
       break;
 
+    case '/MyPaidMemberShip':
+      if(Platform.isAndroid){
+        return AnimationPageRoute(builder: (_) => MyOrderRefund(), settings: settings.copyWith());
+      }
+      else if(Platform.isIOS){
+        return CupertinoPageRoute(builder: (_) => MyOrderRefund(), settings: settings.copyWith());
+      }
+      break;
 
     case '/ProAndSuggestion':
       if (Platform.isAndroid) {
@@ -347,6 +375,14 @@ var onGenerateRoute = (RouteSettings settings){
       }
       break;
 
+    case '/MyCertifyEdit'://用户编辑
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => MyCertifyEdit(), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => MyCertifyEdit(), settings: settings.copyWith());
+      }
+      break;
+
     case '/NameAndSignature'://昵称和个人签名
       if (Platform.isAndroid) {
         return AnimationPageRoute(builder: (_) => NameAndSignature(arguments:settings.arguments), settings: settings.copyWith());
@@ -368,6 +404,36 @@ var onGenerateRoute = (RouteSettings settings){
         return AnimationPageRoute(builder: (_) => MyUpdateMobile(), settings: settings.copyWith());
       } else if (Platform.isIOS) {
         return CupertinoPageRoute(builder: (_) => MyUpdateMobile(), settings: settings.copyWith());
+      }
+      break;
+    case '/MyUserHeight':
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => MyUpdateHeight(arguments:settings.arguments), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => MyUpdateHeight(arguments:settings.arguments), settings: settings.copyWith());
+      }
+      break;
+    case '/MyUpdateEarning':
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => MyUpdateEarning(), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => MyUpdateEarning(), settings: settings.copyWith());
+      }
+      break;
+
+    case '/UserVip':
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => UserVip(), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => UserVip(), settings: settings.copyWith());
+      }
+      break;
+
+    case '/MySubscription':
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => MySubscription(), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => MySubscription(), settings: settings.copyWith());
       }
       break;
 

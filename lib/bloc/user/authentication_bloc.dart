@@ -126,6 +126,47 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
          emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
     });
+
+    ///更新education认证照片
+    on<UpdateEducationImagePressed>((event, emit) async {
+      try {
+        bool ret = await userRepository.updateEducationImage(event.user, event.serverimgpath, errorCallBack);
+        if(ret) {
+          // await userRepository.updateUserPicture(event.user, event.imgpath);
+          event.user.educationImage = event.imgpath;
+          userRepository.persistToken(event.user);
+          emit(AuthenticationAuthenticated(isUserImage: true));
+        }
+        else{
+          ///验证未通过
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+        }
+
+      } catch (error) {
+        ///验证未通过
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+      }
+    });
+    ///更新earning认证照片
+    on<UpdateEarningImagePressed>((event, emit) async {
+      try {
+        bool ret = await userRepository.updateEarningImage(event.user, event.serverimgpath, errorCallBack);
+        if(ret) {
+          // await userRepository.updateUserPicture(event.user, event.imgpath);
+          event.user.earningImage = event.imgpath;
+          userRepository.persistToken(event.user);
+          emit(AuthenticationAuthenticated(isUserImage: true));
+        }
+        else{
+          ///验证未通过
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+        }
+
+      } catch (error) {
+        ///验证未通过
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+      }
+    });
     ///更新昵称
     on<UpdateUserNamePressed>((event, emit) async {
       try {
@@ -143,6 +184,25 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       } catch (error) {
         ///验证未通过
          emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+      }
+    });
+    ///更新身高
+    on<UpdateUserHeightPressed>((event, emit) async {
+      try {
+        bool ret = await userRepository.updateUserHeight(event.user, event.height, errorCallBack);
+        if(ret) {
+          event.user.height = event.height;
+          userRepository.persistToken(event.user);
+          emit(AuthenticationAuthenticated());
+        }
+        else{
+          ///验证未通过
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+        }
+
+      } catch (error) {
+        ///验证未通过
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
       }
     });
     ///更新个人简介
@@ -181,6 +241,60 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
           emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
         }
 
+      } catch (error) {
+        ///验证未通过
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+      }
+    });
+    /// 更新职业
+    on<UpdateCareerPressed>((event, emit) async {
+      try {
+        bool ret = await userRepository.updateCareer(event.user, event.career,  errorCallBack);
+        if(ret) {
+          event.user.career = event.career;
+          userRepository.persistToken(event.user);
+          emit(AuthenticationAuthenticated());
+        }
+        else{
+          ///验证未通过
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+        }
+      } catch (error) {
+        ///验证未通过
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+      }
+    });
+    /// 更新学历
+    on<UpdateEducationPressed>((event, emit) async {
+      try {
+        bool ret = await userRepository.updateEducation(event.user, event.education,  errorCallBack);
+        if(ret) {
+          event.user.education = event.education;
+          userRepository.persistToken(event.user);
+          emit(AuthenticationAuthenticated());
+        }
+        else{
+          ///验证未通过
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+        }
+      } catch (error) {
+        ///验证未通过
+        emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));
+      }
+    });
+    /// 更新收入
+    on<UpdateEarningPressed>((event, emit) async {
+      try {
+        bool ret = await userRepository.updateEarning(event.user, event.earning,  errorCallBack);
+        if(ret) {
+          event.user.earning = event.earning;
+          userRepository.persistToken(event.user);
+          emit(AuthenticationAuthenticated());
+        }
+        else{
+          ///验证未通过
+          emit(AuthenticationUnauthenticated(error: error, errorstatusCode: errorstatusCode));
+        }
       } catch (error) {
         ///验证未通过
         emit(AuthenticationUnauthenticated(error: errorNet, errorstatusCode: errorNetCode));

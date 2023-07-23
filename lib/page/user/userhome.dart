@@ -99,6 +99,38 @@ class _MyHomeState extends State<MyHome> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage('images/vip_background.png'), // 图片路径
+                                  fit: BoxFit.cover, // 图片填充方式
+                                )
+                            ),
+                            child:
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Image.asset("images/vip_icon.png",
+                                    width: 25.0,
+                                    height: 25.0,),
+                                  Spacer(),
+                                  Text('首月9.9尊享会员特权', style: TextStyle(color: Colors.brown, fontSize: 16), ),
+                                  TextButton(
+                                      child: Text('查看权益', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),),
+                                      style: ButtonStyle(
+                                        backgroundColor:   MaterialStateProperty.all(Global.defredcolor),
+                                        shape: MaterialStateProperty.all(
+                                            RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20))),
+                                      ) ,
+                                      onPressed: () async {
+                                          Navigator.pushNamed(context, "/UserVip");
+                                      }
+                                  ),
+                            ]),
+                            padding: EdgeInsets.only(top: 6),
+                          ),
+                          SizedBox(height: 10,),
+                          Container(
                             child: Text('我的活动', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16), ),
                             padding: EdgeInsets.only(top: 6),
                           ),
