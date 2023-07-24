@@ -10,14 +10,14 @@ abstract class  MySubscribeEvent extends Equatable {
 ///加载更多
 class SubscribePostFetched extends MySubscribeEvent{
   final User? user;
-  final List<int>? ids;
-  SubscribePostFetched({required this.user, this.ids});
+  final int type;
+  SubscribePostFetched({required this.user, required this.type});
 }
 ///刷新
 class SubscribeRefreshed extends MySubscribeEvent{
   final User user;
-  final List<int>? ids;
+  final int type;
 
-  SubscribeRefreshed({required this.user, this.ids});
+  SubscribeRefreshed({required this.user, required this.type});
 }
 

@@ -3,17 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:intl/intl.dart';
 
 import '../../bloc/user/event/mysubscribe_event.dart';
 import '../../bloc/user/mysubscribe_bloc.dart';
 import '../../bloc/user/state/mysubscribe_state.dart';
 import '../../model/activity.dart';
+import '../../model/subscription.dart';
 import '../../model/user.dart';
 import '../../util/common_util.dart';
 import '../../global.dart';
 import '../../widget/circle_headimage.dart';
 
 class MySubscribe extends StatefulWidget {
+  int type = 0; // 0: current, 1: all
+  MySubscribe({required this.type});
+
   @override
   _MySubscribeState createState() => _MySubscribeState();
 }
@@ -36,15 +41,22 @@ class _MySubscribeState extends State<MySubscribe> {
   ScrollController _scrollControllerContent = new ScrollController(initialScrollOffset: 0);
   ScrollController _scrollControllerUserContent = new ScrollController(initialScrollOffset: 0);
 
+  Map<int, dynamic> subscriptionTitle = {
+    1 : "单月付费VIP",
+    2: "季度付费VIP",
+    3: "半年付费VIP",
+    4: "年付费VIP  ",
+  };
+
   @override
   initState(){
-    _mySubscribeBloc.add(SubscribePostFetched(user: Global.profile.user));
+    _mySubscribeBloc.add(SubscribePostFetched(user: Global.profile.user, type: widget.type));
 
     _scrollControllerContent.addListener(() {
       final maxScroll = _scrollControllerContent.position.maxScrollExtent;
       double currentScroll = _scrollControllerContent.position.pixels;
       if (maxScroll - currentScroll <= _scrollThreshold && !_lock) {
-        _mySubscribeBloc.add(SubscribePostFetched(user: Global.profile.user!));
+        _mySubscribeBloc.add(SubscribePostFetched(user: Global.profile.user!, type: widget.type));
         _lock = true;//加载完毕后再解锁
       }
     });
@@ -75,7 +87,7 @@ class _MySubscribeState extends State<MySubscribe> {
     return RefreshIndicator(
         color: Colors.redAccent,
         onRefresh: () async{
-        _mySubscribeBloc.add(SubscribeRefreshed(user: Global.profile.user!));
+        _mySubscribeBloc.add(SubscribeRefreshed(user: Global.profile.user!, type: widget.type));
       },
       child: Container(
           child: BlocBuilder<MySubscribeBloc, MySubscribeState>(
@@ -89,7 +101,7 @@ class _MySubscribeState extends State<MySubscribe> {
                 onTap: (){
                   Navigator.pushNamed(context, '/Login').then((value){
                     if(Global.profile.user != null)
-                      _mySubscribeBloc.add(SubscribeRefreshed(user: Global.profile.user!));
+                      _mySubscribeBloc.add(SubscribeRefreshed(user: Global.profile.user!, type: widget.type));
                   });
                 },
               );
@@ -105,7 +117,7 @@ class _MySubscribeState extends State<MySubscribe> {
               return ListView(
                   addAutomaticKeepAlives: true,
                   controller: _scrollControllerContent,
-                  children: buildContent(state.users, state.activitys, state)
+                  children: buildContent(state.subscriptions, state)
               );
             }
             else{
@@ -121,19 +133,19 @@ class _MySubscribeState extends State<MySubscribe> {
   }
 
   //内容
-  List<Widget> buildContent(List<User> users, List<Activity> activitys, MySubscribeState state){
+  List<Widget> buildContent(List<Subscription> subscriptions, MySubscribeState state){
     List<Widget> contents = [];
-    List<Widget> subscribe = [];
+    List<Widget> subscribes = [];
 //    contents.add(
 //        SearchBar()
 //    );
 
-    if(users != null && users.length > 0){
-      for(int i=0; i< users.length; i++){
-        if(i == activitys.length-1) {
-          this._lockUser = false;//加载完毕后解锁，允许再次加载
-        }
-        subscribe.add(buildSubscribe(users[i]));
+    if(subscriptions != null && subscriptions.length > 0){
+      for(int i=0; i< subscriptions.length; i++){
+        // if(i == subscriptions.length-1) {
+        //   this._lockUser = false;//加载完毕后解锁，允许再次加载
+        // }
+        subscribes.add(buildSubscribe(subscriptions[i]));
       }
     }
 
@@ -141,60 +153,76 @@ class _MySubscribeState extends State<MySubscribe> {
       child: Padding(
         padding: EdgeInsets.only(left: 10, top: 5, bottom: 5),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          // mainAxisAlignment: MainAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text('', style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),),
-                Padding(
-                  padding: EdgeInsets.only(right: 10),
-                  child: InkWell(
-                    child: Text('全部>', style: TextStyle(color: Colors.black54, fontSize: 13),),
-                    onTap: (){
-                      Navigator.pushNamed(context, '/MyFollowCommunityList');
-                    },
-                  ),
-                )
-              ],
+            Padding(
+              padding: EdgeInsets.only(right: 15),
+              child: subscriptions.length == 0 ? SizedBox.shrink() : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('订阅服务', style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),),
+                  Text('订阅时间', style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),),
+                  Text('到期时间', style: TextStyle(color: Colors.black87, fontSize: 14, fontWeight: FontWeight.bold),),
+                  // Padding(
+                  //   padding: EdgeInsets.only(right: 10),
+                  //   child: InkWell(
+                  //     child: Text('全部>', style: TextStyle(color: Colors.black54, fontSize: 13),),
+                  //     onTap: (){
+                  //       Navigator.pushNamed(context, '/MyFollowCommunityList');
+                  //     },
+                  //   ),
+                  // )
+                ],
+              ),
             ),
-            users.length == 0 ? SizedBox(height: 10,) : SizedBox(height: 5,),
-            users.length == 0 ? Container(height: 26,
-              child: Center(child: Text('被你关注的人或许会分享有趣的活动给你',
-                style: TextStyle(color: Colors.black54, fontSize: 14, ),),),): Container(
+            // subscriptions.length == 0 ? SizedBox(height: 10,) : SizedBox(height: 5,),
+            subscriptions.length == 0 ? Container(height: 26,
+              child: Center(child: Text('您还未订阅会员服务',
+                style: TextStyle(color: Colors.black54, fontSize: 14, ),),),):
+            Container(
               margin: EdgeInsets.only(top: 10),
               height: 85,
               child: ListView(
                 controller: _scrollControllerUserContent,
-                scrollDirection: Axis.horizontal,
-                children: subscribe,
+                scrollDirection: Axis.vertical,
+                children: subscribes,
               ),
             ),
-            users.length == 0 ? SizedBox(height: 10,) : SizedBox(height: 0,),
+            subscriptions.length == 0 ? SizedBox(height: 10,) : SizedBox(height: 0,),
           ],
         ),
       ),
     )) ;
-    if (activitys.length != 0) {
-      contents.add(indexPageView(activitys, state)) ;
-    }
+    // if (activitys.length != 0) {
+    //   contents.add(indexPageView(activitys, state)) ;
+    // }
 
     return contents;
   }
 
-  Widget buildSubscribe(User user){
+  Widget buildSubscribe(Subscription subscription){
     return Padding(
       padding: EdgeInsets.only(right: 15),
-      child: Column(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          NoCacheClipRRectHeadImage(imageUrl: user.profilepicture??"", uid: user.uid,
-            width: 50,),
-          SizedBox(height: 5,),
-          Text(user.username.length > 6 ? '${user.username.substring(0, 5)}' :
-          user.username, style: TextStyle(color: Colors.black45, fontSize: 13),)      ],
+          // NoCacheClipRRectHeadImage(imageUrl: subscription.profilepicture??"", uid: subscription.uid,
+          //   width: 50,),
+          Text(subscriptionTitle[subscription.type], style: TextStyle(color: Colors.black45, fontSize: 13),),
+          // SizedBox(width: 5,),
+          Text(timeFormat(subscription.substime!), style: TextStyle(color: Colors.black45, fontSize: 13),),
+          // SizedBox(width: 5,),
+          Text(timeFormat(subscription.expiretime!), style: TextStyle(color: Colors.black45, fontSize: 13),),
+        ]
       ),
     );
+  }
+
+  String timeFormat(String input) {
+    DateTime dateTime = DateFormat('yyyy-MM-dd HH:mm:ss').parse(input);
+    String formattedDate = DateFormat('yyyy/MM/dd').format(dateTime);
+    return formattedDate;
   }
 
   Widget indexPageView(List<Activity> activitys, MySubscribeState state){

@@ -20,7 +20,7 @@ class _MySubscriptionState extends State<MySubscription> with SingleTickerProvid
   final GlobalKey<_TabBarItemState> _itemKey1 = GlobalKey();
   final GlobalKey<_TabBarItemState> _itemKey2 = GlobalKey();
 
-  int _currentIndex= 1;
+  int _currentIndex= 0;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -114,10 +114,10 @@ class _MySubscriptionState extends State<MySubscription> with SingleTickerProvid
   MyTabBarView _buildTabView(){
     return MyTabBarView(
         controller: _tabController,
-        //physics: new NeverScrollableScrollPhysics(),
+        physics: new NeverScrollableScrollPhysics(),
         children: <Widget>[
-          MySubscribe(),
-          MySubscribe(),
+          MySubscribe(type: 0),
+          MySubscribe(type: 1),
           //CityActivity(parentJumpShop: widget.parentJumpMyProfile),
         ]
     );
@@ -173,7 +173,7 @@ class TabBarItem extends StatefulWidget {
 class _TabBarItemState extends State<TabBarItem> {
   Alignment _bottomAlignment;
   int _itemtype;
-  int _currentIndex = 1;
+  int _currentIndex = 0;
   int _itemindex;
 
   // late ActivityDataBloc _activityDataBloc;

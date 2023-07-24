@@ -6,6 +6,7 @@ import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
 import 'package:tobias/tobias.dart' as tobias;
 
+import '../model/subscription.dart';
 import '../model/user.dart';
 import '../model/dynamic.dart';
 import '../model/im/grouprelation.dart';
@@ -711,21 +712,36 @@ class UserService {
     return users;
   }
   //获取订阅服务
-  Future<List<User>> getSubscribes(int currentIndex, int uid, String token ) async {
-    List<User> users = [];
+  Future<List<Subscription>> getSubscribes(int currentIndex, int uid, String token, int type) async {
+    List<Subscription> users = [];
     var formData = {
       "token": token,
       "uid": uid,
-      "currentIndex": currentIndex
+      "currentIndex": currentIndex,
+      "type": type
     };
     await NetUtil.getInstance().postJson(formData, "/api/user/getSubscribes", (Map<String, dynamic> data) {
       if(data["data"] != null){
         for(int i=0; i<data["data"].length; i++){
-          users.add(User.fromJson(data["data"][i]));
+          users.add(Subscription.fromJson(data["data"][i]));
         }
       }
     }, errorResponse);
     return users;
+  }
+  Future<bool> addSubscribe(int uid, String token, int type) async {
+    bool res = false;
+    var formData = {
+      "token": token,
+      "uid": uid,
+      "type": type
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/addSubscribe", (Map<String, dynamic> data) {
+      if(data["data"] != null){
+        res = true;
+      }
+    }, errorResponse);
+    return res;
   }
   //获取我关注的社团，myhome页面中使用只返回5条记录
   Future<List<User>> getFollowUsersInCommunityALL(int currentIndex, int uid, String token ) async {

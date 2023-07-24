@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../model/subscription.dart';
 import '../../../model/user.dart';
 import '../../../model/activity.dart';
 
@@ -17,15 +18,15 @@ class PostInitial extends MySubscribeState {}
 class PostFailure extends MySubscribeState {}
 
 class PostSuccess extends MySubscribeState {
-  final List<User> users;
-  final List<Activity> activitys;
+  // final List<User> users;
+  final List<Subscription> subscriptions;
   bool hasReachedActivityMax = false;
   bool hasReachedUserMax = false;
   String? time = "";
 
   PostSuccess({
-    required this.users,
-    required this.activitys,
+    // required this.users,
+    required this.subscriptions,
     this.hasReachedActivityMax = false,
     this.hasReachedUserMax = false,
     this.time
@@ -36,8 +37,8 @@ class PostSuccess extends MySubscribeState {
     bool hasReachedUserMax = false,
   }) {
     return PostSuccess(
-      users: users,
-      activitys: activitys,
+      // users: users,
+      subscriptions: subscriptions,
       hasReachedActivityMax: hasReachedActivityMax,
       hasReachedUserMax: hasReachedUserMax,
       time: time
@@ -45,11 +46,11 @@ class PostSuccess extends MySubscribeState {
   }
 
   @override
-  List<Object> get props => [users, activitys, hasReachedActivityMax, hasReachedUserMax, time??"" ];
+  List<Object> get props => [subscriptions, hasReachedActivityMax, hasReachedUserMax, time??"" ];
 
   @override
   String toString() =>
-      'PostSuccess { posts: ${users.length}, hasReachedActivityMax: $hasReachedActivityMax, hasReachedActivityMax: $hasReachedUserMax }';
+      'PostSuccess { posts: ${subscriptions.length}, hasReachedActivityMax: $hasReachedActivityMax, hasReachedActivityMax: $hasReachedUserMax }';
 }
 
 class PostLoading extends MySubscribeState {}

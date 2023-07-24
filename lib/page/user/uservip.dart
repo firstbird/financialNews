@@ -2,12 +2,15 @@ import 'dart:ui';
 
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:recipe/widget/icontext.dart';
 
+import '../../service/userservice.dart';
 import '../../util/imhelper_util.dart';
 import '../../util/common_util.dart';
 import '../../common/iconfont.dart';
+import '../../util/showmessage_util.dart';
 import '../../widget/btnpositioned.dart';
 import '../../widget/circle_headimage.dart';
 import '../../global.dart';
@@ -38,6 +41,9 @@ class _UserVipState extends State<UserVip> {
   int _collectioncount = 0;
   int _pendingOrderCount = 0;
   int _finishOrderCount = 0;
+
+  UserService _userService = new UserService();
+  Counter _payCount = Counter();
 
   bool _isagree = false;
 
@@ -184,18 +190,18 @@ class _UserVipState extends State<UserVip> {
                   margin: EdgeInsets.symmetric(horizontal: 15.0),
                   child:
                   ChangeNotifierProvider(
-                      create: (_) => Counter(),
+                      create: (_) => _payCount,
                   child: ListView(scrollDirection: Axis.horizontal,
                       children: [
                     // payItem('1个月', '68', ''),
                     PayItemWidget(
-                        focusNode: FocusScopeNode(), itemIndex: 0, text1: '1个月', text2: '68'),
+                        focusNode: FocusScopeNode(), itemIndex: 1, text1: '1个月', text2: '68'),
                     SizedBox(
                       width: 5,
                     ),
                     PayItemWidget(
                         focusNode: FocusScopeNode(),
-                        itemIndex: 1,
+                        itemIndex: 2,
                         text1: '3个月',
                         text2: '180',
                         text3: '￥60/月'),
@@ -205,7 +211,7 @@ class _UserVipState extends State<UserVip> {
                     ),
                     PayItemWidget(
                         focusNode: FocusScopeNode(),
-                        itemIndex: 2,
+                        itemIndex: 3,
                         text1: '6个月',
                         text2: '300',
                         text3: '￥50/月'),
@@ -215,7 +221,7 @@ class _UserVipState extends State<UserVip> {
                     ),
                     PayItemWidget(
                         focusNode: FocusScopeNode(),
-                        itemIndex: 3,
+                        itemIndex: 4,
                         text1: '12个月',
                         text2: '480',
                         text3: '￥40/月'),
@@ -225,22 +231,34 @@ class _UserVipState extends State<UserVip> {
               SizedBox(height: 20.0),
               _builduseragree(context),
               SizedBox(height: 10.0),
-              Container(
-                height: 40,
-                // margin: EdgeInsets.all(5),
-                margin: EdgeInsets.symmetric(horizontal: 15.0),
-                alignment: Alignment.center,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('立即开通', style: TextStyle(color: Colors.white, fontSize: 18)),
-                  ],
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xffe3b28a),
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
+              InkWell(
+                onTap: () async {
+                  if(!_isagree){
+                    _isagree = await _buildReadAgreement();
+                    setState(() {
+
+                    });
+                  }
+                  if(!_isagree) {
+                    return;
+                  }
+                  if(Global.profile.user != null){
+                    addSubscribe(_payCount.payItemIndex);
+                  }
+                },
+                child:
+                  Container(
+                      height: 40,
+                      // margin: EdgeInsets.all(5),
+                      margin: EdgeInsets.symmetric(horizontal: 15.0),
+                      alignment: Alignment.center,
+                      child:
+                          Text('立即开通', style: TextStyle(color: Colors.white, fontSize: 18)),
+                      decoration: BoxDecoration(
+                        color: Color(0xffe3b28a),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                    )
               ),
               Spacer(),
             ],
@@ -250,6 +268,107 @@ class _UserVipState extends State<UserVip> {
         // )
         // )
         );
+  }
+
+  //弹出底部菜单确认是否已阅读条款
+  Future<bool> _buildReadAgreement() async {
+    bool ret = await showModalBottomSheet<bool>(
+      isScrollControlled: true,
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return AnimatedPadding(
+          padding: MediaQuery.of(context).viewInsets,
+          duration: const Duration(milliseconds: 100),
+          child: Container(
+              alignment: Alignment.center,
+              height: 200,
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.top),  // !important
+              width: double.infinity,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Column(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.only(top: 20),
+                        child: Text('请阅读并同意以下条款'),
+                      ),
+                      SizedBox(height: 40,),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            child: Text(
+                              '《XX会员服务协议》',
+                              style: TextStyle(color: Colors.blue, fontSize: 12),
+                            ),
+                            onTap: () {
+                              //TODO 跳转到登录用户协议页面
+                              Navigator.pushNamed(context, '/HtmlContent', arguments: {"parameterkey": "loginuseragree", "title": ""});
+                            },
+                          ),
+                          Text('和', style: TextStyle(color: Colors.grey, fontSize: 12)),
+                          GestureDetector(
+                            child: Text(
+                              '《隐私政策》',
+                              style: TextStyle(color: Colors.blue, fontSize: 12),
+                            ),
+                            onTap: () {
+                              //TODO 跳转到登录用户协议页面
+                              Navigator.pushNamed(context, '/HtmlContent', arguments: {"parameterkey": "useragreement", "title": ""});
+                            },
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  Container(
+                    margin: EdgeInsets.only(left: 10, right: 10, bottom: 20),
+                    height: 39,
+                    width: double.infinity,
+                    child: TextButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Global.defredcolor),
+                        shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.67))),
+                      ) ,
+                      child: Text('同意并继续',
+                        style: TextStyle(color: Colors.white, fontSize: 14),),
+                      onPressed: () {
+                        Navigator.pop(context, true);
+                      },
+                    ),
+                  )
+                ],
+              ),
+              decoration: new BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(topLeft: Radius.circular(9.0), topRight: Radius.circular(9.0)),)),
+        );
+      },
+    ).then((value) async {
+      if(value != null){
+        return true;
+      }
+      return false;
+    });
+
+    return ret;
+  }
+
+  Future<void> addSubscribe(int payType) async {
+
+    print("[uservip] addSubscribe begin, payType: ${payType}-----------------------------------");
+    bool res = await _userService.addSubscribe(Global.profile.user!.uid, Global.profile.user!.token!, payType);
+    if(res){
+        print("[uservip] addSubscribe success：-----------------------------------");
+        Navigator.pushNamed(context, '/MySubscription');
+    }
   }
 
   ///用户协议
@@ -416,7 +535,7 @@ class _UserVipState extends State<UserVip> {
 }
 
 class Counter extends ChangeNotifier {
-  int _payItemIndex = 0;
+  int _payItemIndex = 1;
 
   int get payItemIndex => _payItemIndex;
 

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:recipe/model/subscription.dart';
 import '../../model/activity.dart';
 import '../../model/dynamic.dart';
 import '../../model/user.dart';
@@ -10,7 +11,6 @@ import 'state/mysubscribe_state.dart';
 
 class MySubscribeBloc extends Bloc<MySubscribeEvent, MySubscribeState> {
   final UserService _userService = new UserService();
-  final ActivityService _activityService = new ActivityService();
 
   MySubscribeBloc():super(PostInitial()) {
     on<SubscribePostFetched>((event, emit) async {
@@ -22,13 +22,13 @@ class MySubscribeBloc extends Bloc<MySubscribeEvent, MySubscribeState> {
               return;
             }
             emit(PostLoading());
-            users = await _userService.getFollowUsers(
-                0, event.user!.uid, event.user!.token!);
-            if (users != null && users.length > 0) {
-              activitys = await _activityService.getActivityListByFollow(
-                  0, users);
-            }
-            emit(PostSuccess(users: users, activitys: activitys, hasReachedActivityMax: false,
+            subscriptions = await _userService.getSubscribes(
+                0, event.user!.uid, event.user!.token!, event.type);
+            // if (subscriptions != null && subscriptions.length > 0) {
+            //   activitys = await _activityService.getActivityListByFollow(
+            //       0, subscriptions);
+            // }
+            emit(PostSuccess(subscriptions: subscriptions, hasReachedActivityMax: false,
                 hasReachedUserMax: false));
             return;
           }
@@ -38,49 +38,60 @@ class MySubscribeBloc extends Bloc<MySubscribeEvent, MySubscribeState> {
       }
     });
 
-
+    on<SubscribeRefreshed>((event, emit) async {
+      final currentState = state;
+      try {
+        subscriptions = await _userService.getSubscribes(0, event.user.uid, event.user.token!, event.type);
+        // if(subscriptions != null && subscriptions.length > 0) {
+        //   activitys = await _activityService.getActivityListByFollow(0, subscriptions);
+        // }
+        emit(PostSuccess(subscriptions: subscriptions, hasReachedActivityMax: false, hasReachedUserMax: false));
+      } catch (_) {
+        emit(PostFailure());
+      }
+    });
   }
 
   // @override
   // // TODO: implement initialState
   // MyFollowState get initialState => PostInitial();
-  List<User> users = [];
+  List<Subscription> subscriptions = [];
   List<Activity> activitys = [];
 
-  @override
-  Stream<MySubscribeState> mapEventToState(MySubscribeEvent event) async* {
-    final currentState = state;
-    try {
-      if (event is SubscribePostFetched ) {
-        if (currentState is PostInitial) {
-          if(event.user == null){
-            yield NoLogin();
-            return;
-          }
-          yield PostLoading();
-          users = await _userService.getFollowUsers(0, event.user!.uid, event.user!.token!);
-          if(users != null &&users.length  > 0) {
-            activitys = await _activityService.getActivityListByFollow(0, users);
-          }
-          yield PostSuccess(users: users, activitys: activitys, hasReachedActivityMax: false,
-              hasReachedUserMax: false);
-          return;
-        }
-        //加载更多
-      }
-
-      if (event is SubscribeRefreshed){
-        users = await _userService.getFollowUsers(0, event.user.uid, event.user.token!);
-        if(users != null && users.length > 0) {
-          activitys = await _activityService.getActivityListByFollow(0, users);
-        }
-        yield PostSuccess(users: users, activitys: activitys, hasReachedActivityMax: false, hasReachedUserMax: false);
-      }
-    }
-    catch(_){
-      yield PostFailure();
-    }
-  }
+  // @override
+  // Stream<MySubscribeState> mapEventToState(MySubscribeEvent event) async* {
+  //   final currentState = state;
+  //   try {
+  //     if (event is SubscribePostFetched ) {
+  //       if (currentState is PostInitial) {
+  //         if(event.user == null){
+  //           yield NoLogin();
+  //           return;
+  //         }
+  //         yield PostLoading();
+  //         subscriptions = await _userService.getSubscribes(0, event.user!.uid, event.user!.token!, event.type);
+  //         // if(subscriptions != null &&subscriptions.length  > 0) {
+  //         //   activitys = await _activityService.getActivityListByFollow(0, subscriptions);
+  //         // }
+  //         yield PostSuccess(subscriptions: subscriptions, hasReachedActivityMax: false,
+  //             hasReachedUserMax: false);
+  //         return;
+  //       }
+  //       //加载更多
+  //     }
+  //
+  //     if (event is SubscribeRefreshed){
+  //       subscriptions = await _userService.getSubscribes(0, event.user.uid, event.user.token!, event.type);
+  //       // if(subscriptions != null && subscriptions.length > 0) {
+  //       //   activitys = await _activityService.getActivityListByFollow(0, subscriptions);
+  //       // }
+  //       yield PostSuccess(subscriptions: subscriptions, hasReachedActivityMax: false, hasReachedUserMax: false);
+  //     }
+  //   }
+  //   catch(_){
+  //     yield PostFailure();
+  //   }
+  // }
 
   @override
   void onTransition(Transition<MySubscribeEvent, MySubscribeState> transition) {
