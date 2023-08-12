@@ -152,8 +152,10 @@ class _MyCreateActivityState extends State<MyCreateActivity> with AutomaticKeepA
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            e.coverimg != null && e.coverimg != "" ? ClipRRectOhterHeadImageContainer(imageUrl: e.coverimg!,  width: 109, height: 109, cir: 9,) : SizedBox.shrink(),
-                            e.coverimg != null && e.coverimg != "" ? SizedBox(width: 10,) : SizedBox.shrink(),
+                            e.coverimg != null && e.coverimg != "" ? ClipRRectOhterHeadImageContainer(imageUrl: e.coverimg!,  width: 109, height: 109, cir: 9,) : Image.asset("images/no_pic.png",
+                              width: 109.0,
+                              height: 109.0,),
+                            // e.coverimg != null && e.coverimg != "" ? SizedBox(width: 10,) : SizedBox.shrink(),
                             Expanded(
                                 child: Container(
                                   height: e.coverimg != null && e.coverimg != "" ? 119 : 80,

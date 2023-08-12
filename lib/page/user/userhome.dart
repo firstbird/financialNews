@@ -42,9 +42,10 @@ class _MyHomeState extends State<MyHome> {
     _newSharedCount = await _imHelper.getUserSharedCount();
     _myOrderCount = await _imHelper.getUserOrder(-1);//-1是获取所有数据
 
-    _collectioncount = (await _imHelper.selGoodPriceCollectionByUid(Global.profile.user!.uid)).length +
-        ( await _imHelper.selActivityCollectionByUid(Global.profile.user!.uid)).length;
-
+    int goodsCount = (await _imHelper.selGoodPriceCollectionByUid(Global.profile.user!.uid)).length;
+    int activityCount = (await _imHelper.selActivityCollectionByUid(Global.profile.user!.uid)).length;
+    _collectioncount = goodsCount;
+    print("[userhome] goodsCount: ${goodsCount} activityCount: ${activityCount}");
 
     setState(() {
 

@@ -1,8 +1,11 @@
-import 'package:flappy_search_bar_ns/flappy_search_bar_ns.dart';
-import 'package:flappy_search_bar_ns/scaled_tile.dart';
-import 'package:flappy_search_bar_ns/search_bar_style.dart';
+// import 'package:flappy_search_bar_ns/flappy_search_bar_ns.dart';
+// import 'package:flappy_search_bar_ns/scaled_tile.dart';
+// import 'package:flappy_search_bar_ns/search_bar_style.dart';
 import 'package:flutter/material.dart';
 
+import '../../component/search_bar/custom_search_bar.dart';
+import '../../component/search_bar/scaled_tile.dart';
+import '../../component/search_bar/search_bar_style.dart';
 import '../../model/searchresult.dart';
 import '../../model/hissearch.dart';
 import '../../service/gpservice.dart';
@@ -19,7 +22,7 @@ class Post {
 
 class SearchProduct extends StatefulWidget {
   Object? arguments;
-  String contentDef = "商家活动内容";
+  String contentDef = "活动内容";
   SearchProduct({this.arguments}){
     if(arguments != null && (arguments as Map)["content"] != null)
       contentDef =  (arguments as Map)["content"];
@@ -32,11 +35,12 @@ class SearchProduct extends StatefulWidget {
 class _SearchProductState extends State<SearchProduct> {
   GPService _gpService = GPService();
   ImHelper _imHelper = ImHelper();
-  final SearchBarController<SearchResult> _searchBarController = SearchBarController();
+  final CustomSearchBarController<SearchResult> _searchBarController = CustomSearchBarController();
   bool isReplay = false;
   List<Widget> hotSearchs = [];
   List<Widget> hisSearchs = [];
   String content = "";
+  final FocusNode _focusNode = FocusNode();
 
   Future<List<SearchResult>> _getALlPosts(String? text) async {
     content =text!;
@@ -53,6 +57,11 @@ class _SearchProductState extends State<SearchProduct> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _focusNode.dispose();
+  }
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
@@ -60,6 +69,8 @@ class _SearchProductState extends State<SearchProduct> {
     hisSearchs.add(SizedBox.shrink());
     getHostSearch();
     getHisSearchs();
+    // 自动获取焦点
+    Future.delayed(Duration.zero, () => _focusNode.requestFocus());
   }
 
   @override
@@ -68,11 +79,13 @@ class _SearchProductState extends State<SearchProduct> {
       backgroundColor: Colors.white,
 
       body: SafeArea(
-        child: SearchBar<SearchResult>(
+        child:
+        MySearchBar<SearchResult>(
           textInputType: TextInputType.text,
           minimumChars: 1,
           isCustList: true,
           isShowSearch: widget.contentDef != "商家活动内容",
+          isFocusOnShow: true,
           searchBarStyle: SearchBarStyle(
               padding: EdgeInsets.all(5)
           ),
@@ -85,15 +98,16 @@ class _SearchProductState extends State<SearchProduct> {
           textStyle: TextStyle(color: Colors.black87, fontSize: 14),
           searchBarController: _searchBarController,
           placeHolder: buildSearchRecommend(),
-          cancellationWidget: Text("搜索"),
-//          emptyWidget: Text('111111'),
+          cancellationWidget: Text("取消"),
+          // emptyWidget: Text('111111'),
           indexedScaledTileBuilder: (int index) => ScaledTile.count(1, index.isEven ? 2 : 1),
           onCancelled: () {
             if(content.isEmpty){
               content = widget.contentDef;
             }
             _imHelper.saveSearchHistory(2, content);
-            Navigator.pushNamed(context, '/SearchProductResultPage', arguments: {"content": content});
+            Navigator.pop(context);
+            // Navigator.pushNamed(context, '/SearchProductResultPage', arguments: {"content": content});
           },
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,

@@ -79,6 +79,7 @@ class GPService {
       isUpdate = true;
     }, errorCallBack);
 
+    print("[updateGoodPriceCollection] save Goods size: ${1}");
     await imhelper.saveGoodPriceCollectionState(goodPiceModel, uid);
     return isUpdate;
   }
@@ -150,26 +151,38 @@ class GPService {
     return ret;
   }
 
-  Future<void> getUserGoodPriceCollection(int uid, String token) async {
+  Future<void> getUserGoodPriceCollection(int currentIndex, int uid, String token) async {
     int count = await imhelper.selGoodPriceCollectionStateByUid(uid);
+    print("[getUserGoodPriceCollection] uid: ${uid}, count: ${count}");
     if(count <= 0) {
-      var formData = {
-        "token": token,
-        "uid": uid,
-      };
-      await NetUtil.getInstance().postJson(
-          formData, "/api/grouppurchase/getUserGoodPriceCollectionInfo", (
-          Map<String, dynamic> data) async {
-        if (data != null) {
-          if (data["data"] != null) {
-            for (int i = 0; i < data["data"].length; i++) {
-              GoodPiceModel goodPiceModel =  GoodPiceModel.fromJson(data["data"][i]);
-              await imhelper.delGoodPriceCollectionState(goodPiceModel.goodpriceid, uid);
-              await imhelper.saveGoodPriceCollectionState(goodPiceModel, uid);
-            }
+      // var formData = {
+      //   "token": token,
+      //   "uid": uid,
+      // };
+      await
+      NetUtil.getInstance().get("/api/grouppurchase/getUserGoodPriceCollectionInfo", (Map<String, dynamic> data){
+        if (data["data"] != null) {
+          for(int i=0; i<data["data"].length; i++){
+            GoodPiceModel goodPiceModel =  GoodPiceModel.fromJson(data["data"][i]);
+            imhelper.delGoodPriceCollectionState(goodPiceModel.goodpriceid, uid);
+            imhelper.saveGoodPriceCollectionState(goodPiceModel, uid);
           }
         }
-      }, () {});
+      },params: {"currentIndex": currentIndex.toString(),"uid": uid.toString(), "token": token}, errorCallBack: errorResponse);
+      // NetUtil.getInstance().postJson(
+      //     formData, "/api/grouppurchase/getUserGoodPriceCollectionInfo", (
+      //     Map<String, dynamic> data) async {
+      //   if (data != null) {
+      //     if (data["data"] != null) {
+      //       print("[getUserGoodPriceCollection] response data size: ${data["data"].length}");
+      //       for (int i = 0; i < data["data"].length; i++) {
+      //         GoodPiceModel goodPiceModel =  GoodPiceModel.fromJson(data["data"][i]);
+      //         await imhelper.delGoodPriceCollectionState(goodPiceModel.goodpriceid, uid);
+      //         await imhelper.saveGoodPriceCollectionState(goodPiceModel, uid);
+      //       }
+      //     }
+      //   }
+      // }, () {});
     }
   }
   //留言

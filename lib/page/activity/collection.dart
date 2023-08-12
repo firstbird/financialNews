@@ -5,6 +5,8 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 import '../../model/activity.dart';
 import '../../model/user.dart';
+import '../../service/activity.dart';
+import '../../service/gpservice.dart';
 import '../../util/imhelper_util.dart';
 import '../../util//common_util.dart';
 import '../../global.dart';
@@ -25,9 +27,13 @@ class _MyCollectionActivityState extends State<MyCollectionActivity>  {
   double _leftHeight = 0;//左边列的高度
   double _rigthHeight = 0;//右边列的高度
   double _contentText = 83;//图片下面的文字描述与间距
+  ActivityService _actService = new ActivityService();
 
   getMyCollection() async {
     _activitys = await _imHelper.selActivityCollectionByUid(Global.profile.user!.uid);
+    if (_activitys.isEmpty) {
+      _activitys = await _actService.getCollectionActivityListByUser(0, Global.profile.user!.uid, Global.profile.user!.token!);
+    }
     _isPageLoad = true;
     setState(() {
 

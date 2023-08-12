@@ -99,7 +99,8 @@ class _MyFollowUserState extends State<MyFollowUser> {
   }
 
   void _getFollowList() async {
-    users = await _userService.getFollowUsersCommunity(Global.profile.user!.uid, 0);
+    // users = await _userService.getFollowUsersCommunity(Global.profile.user!.uid, 0);
+    users = await _userService.getFollowUsers(0, Global.profile.user!.uid, Global.profile.user!.token!);
     _refreshController.refreshCompleted();
     if(mounted)
       setState(() {
@@ -109,7 +110,8 @@ class _MyFollowUserState extends State<MyFollowUser> {
 
   void _onLoading() async{
     if(!_ismore) return;
-    final moredata = await _userService.getFollowUsersCommunity(Global.profile.user!.uid, users.length);
+    // final moredata = await _userService.getFollowUsersCommunity(Global.profile.user!.uid, users.length);
+    final moredata = await _userService.getFollowUsers(users.length, Global.profile.user!.uid, Global.profile.user!.token!);
 
     if(moredata.length > 0)
       users = users + moredata;
@@ -135,7 +137,9 @@ class _MyFollowUserState extends State<MyFollowUser> {
         widgets.add(SizedBox.shrink());
       }
       else {
+        print("[followuserlist] buildMemberList");
         String tem = element.isfollow ? "已关注" : " ＋ 关注";
+        // String tem = "已关注";
         widgets.add(
             Padding(
               padding: EdgeInsets.only(left: 5, right: 5, top: 0),

@@ -29,7 +29,7 @@ class _MyJoinActivityState extends State<MyJoinActivity> with AutomaticKeepAlive
   }
 
   _getMyActivity() async {
-    _activityJoinList = await _activityService.getALLJoinActivityListByUserCount5(0, Global.profile.user!.uid,
+    _activityJoinList = await _activityService.getAllJoinActivityListByUser(0, Global.profile.user!.uid,
         Global.profile.user!.token!);
 
     if(_activityJoinList.length < 25){
@@ -48,7 +48,7 @@ class _MyJoinActivityState extends State<MyJoinActivity> with AutomaticKeepAlive
   _onLoading() async{
     if(!_ismore) return;
 
-    final moredata = await _activityService.getALLJoinActivityListByUserCount5(_activityJoinList.length, Global.profile.user!.uid,
+    final moredata = await _activityService.getAllJoinActivityListByUser(_activityJoinList.length, Global.profile.user!.uid,
         Global.profile.user!.token!);
 
 

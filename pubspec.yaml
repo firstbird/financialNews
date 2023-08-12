@@ -204,6 +204,7 @@ flutter:
     - images/ic_launcher.png
     - images/vip_icon.png
     - images/vip_background.png
+    - images/no_pic.png
     - mock/
   fonts:
     - family: iconfont

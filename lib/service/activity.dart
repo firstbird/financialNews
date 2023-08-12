@@ -233,9 +233,9 @@ class ActivityService{
     return activityList;
   }
 
-  Future<List<Activity>> getALLJoinActivityListByUserCount5(int currentIndex, int uid, String token) async {
+  Future<List<Activity>> getAllJoinActivityListByUser(int currentIndex, int uid, String token) async {
     List<Activity> activityList = [];
-    await NetUtil.getInstance().get("/api/Activity/getALLJoinActivityListByUserCount5", (Map<String, dynamic> data){
+    await NetUtil.getInstance().get("/api/Activity/getAllJoinActivityListByUser", (Map<String, dynamic> data){
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
@@ -252,6 +252,9 @@ class ActivityService{
       if (data["data"] != null) {
         for(int i=0; i<data["data"].length; i++){
           activityList.add(Activity.fromJson(data["data"][i]));
+          Activity activity = (Activity.fromMapCollection(data["data"][i]));
+          imhelper.delActivityCollectionState(activity.actid, uid);
+          imhelper.saveActivityCollectionState(activity, uid);
         }
       }
     },params: {"currentIndex": currentIndex.toString(),"uid": uid.toString(), "token": token}, errorCallBack: errorResponse);
@@ -442,6 +445,7 @@ class ActivityService{
 
   Future<void> getUserCollection(int uid, String token) async {
     int count = await imhelper.selActivityCollectionCount(uid);
+    print("[getActivityCollection] uid: ${uid}, count: ${count}");
     if(count <= 0) {
       var formData = {
         "token": token,
@@ -451,6 +455,7 @@ class ActivityService{
           Map<String, dynamic> data) async {
         if (data != null) {
           if (data["data"] != null) {
+            print("[getActivityCollection] response data size: ${data["data"].length}");
             for (int i = 0; i < data["data"].length; i++) {
               Activity activity = (Activity.fromMapCollection(data["data"][i]));
               await imhelper.delActivityCollectionState(activity.actid, uid);
@@ -638,6 +643,7 @@ class ActivityService{
       isUpdate = true;
     }, errorCallBack);
 
+    print("[updateCollection] saveActivityCollection size: ${1}");
     await imhelper.saveActivityCollectionState(activity, uid);
     return isUpdate;
   }

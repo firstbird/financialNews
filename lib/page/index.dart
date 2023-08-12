@@ -77,7 +77,9 @@ class _IndexPageState extends State<IndexPage> {
     _appUpdate();
     _getCategoryType();
     print("[index] initState GroupPurchase");
-    _pages = [HomePage(parentJumpMyProfile: _pageJump, isPop: widget.isPop),GroupPurchase(),
+    _pages = [
+      HomePage(parentJumpMyProfile: _pageJump, isPop: widget.isPop),
+      GroupPurchase(),
       CityActivity(parentJumpShop: _pageJump),
     //   MomentList(momentStateKey, (){
     //   if(Global.profile.user != null) {
@@ -91,7 +93,8 @@ class _IndexPageState extends State<IndexPage> {
     //   }
     // },
     // "allCode"),
-      RelationList(), MyHome()];
+      RelationList(),
+      MyHome()];
     WidgetsBinding.instance!.addPostFrameCallback((data){
       _pageJump(0);
     });

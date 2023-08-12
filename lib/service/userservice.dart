@@ -676,7 +676,7 @@ class UserService {
     };
     await NetUtil.getInstance().postJson(formData, "/api/user/follwerCommunity", (Map<String, dynamic> data) {
     if(data["data"] != null)
-      ret = true;
+       ret = true;
     }, errorCallBack, isloginOut: true);
     return ret;
   }
@@ -779,10 +779,11 @@ class UserService {
     return users;
   }
   //获取用户粉丝
-  Future<List<User>> getFans(int uid, int currentIndex) async {
+  Future<List<User>> getFans(int uid, String token, int currentIndex) async {
     bool ret = false;
     List<User> lists = [];
     var formData = {
+      "token": token,
       "uid": uid,
       "currentIndex": currentIndex
     };

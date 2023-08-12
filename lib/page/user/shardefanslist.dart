@@ -51,7 +51,7 @@ class _ShardeFansListState extends State<ShardeFansList> {
   ImHelper imHelper = ImHelper();
 
   void _getFansList() async {
-    users = await userService.getFans(Global.profile.user!.uid, 0);
+    users = await userService.getFans(Global.profile.user!.uid, Global.profile.user!.token!, 0);
 
     _refreshController.refreshCompleted();
     if(mounted)
@@ -62,7 +62,7 @@ class _ShardeFansListState extends State<ShardeFansList> {
 
   void _onLoading() async{
     if(!_ismore) return;
-    final moredata = await userService.getFans(Global.profile.user!.uid, users.length);
+    final moredata = await userService.getFans(Global.profile.user!.uid, Global.profile.user!.token!, users.length);
 
     if(moredata.length > 0)
       users = users + moredata;

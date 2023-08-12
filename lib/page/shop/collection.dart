@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../service/gpservice.dart';
 import '../../widget/icontext.dart';
 import '../../widget/circle_headimage.dart';
 import '../../util/imhelper_util.dart';
@@ -17,10 +18,14 @@ class _MyCollectionGoodPriceState extends State<MyCollectionGoodPrice> {
   List<GoodPiceModel> _goodPriceModels = [];
   ImHelper _imHelper = new ImHelper();
   bool _isPageLoad = false;
+  GPService _gpService = GPService();
 
   getMyCollection() async {
 
     _goodPriceModels = await _imHelper.selGoodPriceCollectionByUid(Global.profile.user!.uid);
+    if (_goodPriceModels.isEmpty) {
+      _goodPriceModels = await _gpService.getUserGoodPriceCollectionInfo(0, Global.profile.user!.uid, Global.profile.user!.token!);
+    }
     _isPageLoad = true;
     setState(() {
 

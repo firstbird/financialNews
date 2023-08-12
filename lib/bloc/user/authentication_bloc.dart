@@ -654,7 +654,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     }
     print("[auth] loginSuccess, check likesuggest done");
     if(user.collectionact! > 0) {
-      activityService.getUserCollection(user.uid, user.token!); //收藏的活动
+      // activityService.getUserCollection(user.uid, user.token!); //收藏的活动
+      activityService.getCollectionActivityListByUser(0, Global.profile.user!.uid, Global.profile.user!.token!);
     }
     print("[auth] loginSuccess, check collectionact done");
     if(user.likecomment > 0 || user.likeevaluate! > 0) {
@@ -676,7 +677,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
 
     print("[auth] loginSuccess, check likebugcomment and likesuggestcomment and likemomentcomment done");
     if(user.collectionproduct! > 0) {
-      gpService.getUserGoodPriceCollection(
+      gpService.getUserGoodPriceCollection(0,
           user.uid, user.token!); //获取用户收藏的优惠商品
     }
     print("[auth] loginSuccess, check collectionproduct done");

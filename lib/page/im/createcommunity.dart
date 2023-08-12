@@ -64,7 +64,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
   }
 
   void _getFansList() async {
-    users = await _userService.getFans(Global.profile.user!.uid, 0);
+    users = await _userService.getFans(Global.profile.user!.uid, Global.profile.user!.token!, 0);
     _refreshController.refreshCompleted();
     if(mounted)
       setState(() {
@@ -74,7 +74,7 @@ class _CreateCommunityState extends State<CreateCommunity> {
 
   void _onLoading() async{
     if(!_ismore) return;
-    final moredata = await _userService.getFans(Global.profile.user!.uid, users.length);
+    final moredata = await _userService.getFans(Global.profile.user!.uid, Global.profile.user!.token!, users.length);
 
     if(moredata.length > 0)
       users = users + moredata;

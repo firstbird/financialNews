@@ -16,7 +16,7 @@ class MyBrowHistory extends StatefulWidget {
 class _MyBrowHistoryState extends State<MyBrowHistory> {
   double _activityContentHeight = 1.0;//瀑布组件高度
   double _leftHeight = 0;//左边列的高度
-  double _rigthHeight = 0;//右边列的高度
+  double _rightHeight = 0;//右边列的高度
   double _contentText = 83;//图片下面的文字描述与间距
   double _pageWidth = 0;
   var _loadstate = 0;
@@ -162,17 +162,17 @@ class _MyBrowHistoryState extends State<MyBrowHistory> {
   //瀑布流内容高度
   void _getContentHeight(List<Activity> data){
     List<Activity> activitys = data;
-    _rigthHeight = 0;
+    _rightHeight = 0;
     _leftHeight = 0;
     for(int i=0; i<activitys.length; i++ ){
-      if(_rigthHeight < _leftHeight){
-        _rigthHeight += getImageWH(activitys[i]) + _contentText;
+      if(_rightHeight < _leftHeight){
+        _rightHeight += getImageWH(activitys[i]) + _contentText;
       }
       else{
         _leftHeight += getImageWH(activitys[i]) + _contentText;
       }
     }
-    _activityContentHeight = (_leftHeight >= _rigthHeight ? _leftHeight : _rigthHeight) +  0;//最后取左右两边的最大值作为瀑布组件的高,再加上分类的高
+    _activityContentHeight = (_leftHeight >= _rightHeight ? _leftHeight : _rightHeight) +  0;//最后取左右两边的最大值作为瀑布组件的高,再加上分类的高
   }
   //计算图片高度和宽度
   double getImageWH(Activity activity){

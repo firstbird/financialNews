@@ -112,6 +112,7 @@ class _ActivityState extends State<ActivityInfo> {
   @override
   Widget build(BuildContext context) {
     _pageWidth = MediaQuery.of(context).size.width - 28; //28是左右间隔
+    print("[activityinfo] build");
 
     if(_activity != null){
       actContent = Container(
@@ -222,7 +223,9 @@ class _ActivityState extends State<ActivityInfo> {
             leading: IconButton(icon: Icon(Icons.arrow_back_ios, size: 20,),
               color: Colors.black,
               onPressed: () {
-                Navigator.pop(context);
+                // Map<String, dynamic> map = {"code":  keys[index], "provinceCode": keys[index], "name": provincesData[keys[index]]!.split(',')[0]};
+                // Navigator.of(context).pop<Map>(map);
+                Navigator.pop(context, _activity);
               },
             ),
             actions: <Widget>[

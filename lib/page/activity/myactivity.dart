@@ -159,6 +159,7 @@ class _ActivityWidgetState extends State<ActivityWidget> {
             children: [
               ShareView(icon: Icon(IconFont.icon_iconfontfenxiang, color: Colors.black45, size: 16,), image: _activity.coverimg, contentid: _activity.actid,
                 content: _activity.content, sharedtype: "0", actid: _activity.actid, createuid: _activity.user!.uid,),
+              SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [

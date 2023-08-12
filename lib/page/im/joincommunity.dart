@@ -47,7 +47,7 @@ class _JoinCommunityState extends State<JoinCommunity> {
   RefreshController _refreshController = RefreshController(initialRefresh: true);
 
   void _getFansList() async {
-    users = await _userService.getFans(Global.profile.user!.uid, 0);
+    users = await _userService.getFans(Global.profile.user!.uid, Global.profile.user!.token!, 0);
     await getFansRemoveOld();
     _refreshController.refreshCompleted();
 
@@ -60,7 +60,7 @@ class _JoinCommunityState extends State<JoinCommunity> {
 
   void _onLoading() async{
     if(!_ismore) return;
-    final moredata = await _userService.getFans(Global.profile.user!.uid, users.length);
+    final moredata = await _userService.getFans(Global.profile.user!.uid, Global.profile.user!.token!, users.length);
 
     if(moredata.length > 0)
       users = users + moredata;

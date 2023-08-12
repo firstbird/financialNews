@@ -97,6 +97,7 @@ UnitaryAnimationPageRoute? route;
 
 
 var onGenerateRoute = (RouteSettings settings){
+  print("[onGenerateRoute] path: ${settings.name}");
   switch (settings.name) {
     case '/main'://根目录
       if (Platform.isAndroid) {

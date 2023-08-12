@@ -105,7 +105,7 @@ class _MyFansUserState extends State<MyFansUser> {
   }
 
   void _getFollowList() async {
-    users = await _userService.getFans(widget.uid, 0);
+    users = await _userService.getFans(widget.uid, Global.profile.user!.token!, 0);
     if(users != null){
       await getFollowInfo();
     }
@@ -118,7 +118,7 @@ class _MyFansUserState extends State<MyFansUser> {
 
   void _onLoading() async{
     if(!_ismore) return;
-    final moredata = await _userService.getFans(widget.uid, users.length);
+    final moredata = await _userService.getFans(widget.uid, Global.profile.user!.token!, users.length);
 
     if(moredata.length > 0)
       users = users + moredata;
