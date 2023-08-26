@@ -124,8 +124,13 @@ class NetworkManager{
     if(Global.profile.user != null) {
       UserNotice? userNotice = await activityService.syncUserNotice(
           Global.profile.user!.uid, Global.profile.user!.token!, () {});
-      _imBloc.add(new UserRelationAndMessage(
-          Global.profile.user!, userNotice: userNotice));
+      bool res = await activityService.receiveUserNotice(
+          Global.profile.user!.uid, Global.profile.user!.token!, () {});
+      print("----------------------initLogin res: ${res} -------------------------");
+      if (res) {
+        _imBloc.add(new UserRelationAndMessage(
+            Global.profile.user!, userNotice: userNotice));
+      }
     }
   }
 

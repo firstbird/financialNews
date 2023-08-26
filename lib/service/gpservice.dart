@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:dio/dio.dart';
+import '../model/evaluategoodsitem.dart';
 import '../util/showmessage_util.dart';
 import '../util/imhelper_util.dart';
 import '../util/net_util.dart';
@@ -634,7 +635,7 @@ class GPService {
     List<GoodPiceModel> goodpicemodels = [];
     await NetUtil.getInstance().get("/api/grouppurchase/getRecommendGoodPriceList", (Map<String, dynamic> data){
       if (data["data"] != null) {
-        for(int i=0; i<data["data"].length; i++){
+        for(int i=0; i<data["data"].length; i++) {
           goodpicemodels.add(GoodPiceModel.fromJson(data["data"][i]));
         }
       }
@@ -685,6 +686,28 @@ class GPService {
     }
 
     return evaluateActivities;
+  }
+
+  Future<EvaluateGoodsItem?> updateEvaluateGoodPrice(String goodpriceid, int likeuid, String token, int touid, String content,
+      int likenum,
+      String imagepaths,
+      String gooditemcontent,
+      Function errorCallBack) async{
+    EvaluateGoodsItem? evaluate;
+    var formData = {
+      "token": token,
+      "goodpriceid": goodpriceid,
+      "likeuid": likeuid,
+      "touid": touid,
+      "content": content,
+      "likenum": likenum,
+      "imagepaths": imagepaths,
+      "gooditemcontent": gooditemcontent
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/grouppurchase/updateEvaluateGoodPrice", (Map<String, dynamic> data) {
+      evaluate = EvaluateGoodsItem.fromJson(data["data"]);
+    }, errorCallBack);
+    return evaluate;
   }
 
   errorResponse(String statusCode, String msg) {

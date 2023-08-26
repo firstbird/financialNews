@@ -13,8 +13,9 @@ import '../../global.dart';
 
 class CityActivityWidget extends StatefulWidget {
   Activity activity;
+  Function refreshCallBack;
 
-  CityActivityWidget({required this.activity});
+  CityActivityWidget({required this.activity, required this.refreshCallBack});
 
   @override
   _CityActivityWidgetState createState() => _CityActivityWidgetState();
@@ -167,13 +168,16 @@ class _CityActivityWidgetState extends State<CityActivityWidget> {
                               });
                             }
                           } else {
-                            retLike = false;
+                            setState(() {
+                               retLike = false;
+                            });
                           }
                         });
                         canEnter = true;
                         setState(() {
                           // 更新状态
                         });
+                        widget.refreshCallBack();
                       }
                     });
                   },
@@ -228,22 +232,29 @@ class _CityActivityWidgetState extends State<CityActivityWidget> {
                                 Global.profile.user!.uid,
                                 Global.profile.user!.token!,
                                     () {});
-                            widget.activity.likenum =
-                                widget.activity.likenum - 1;
-                            retLike = false;
+                            if (ret) {
+                              setState(() {
+                                widget.activity.likenum =
+                                    widget.activity.likenum - 1;
+                                retLike = false;
+                              });
+                            }
+                            canEnter = true;
                           } else {
                             ret = await _activityService.updateLike(
                                 widget.activity.actid,
                                 Global.profile.user!.uid,
                                 Global.profile.user!.token!,
                                     () {});
-                            widget.activity.likenum =
-                                widget.activity.likenum + 1;
-                            retLike = true;
-                          }
-                          if (ret) {
+
+                            if (ret) {
+                              setState(() {
+                                widget.activity.likenum =
+                                    widget.activity.likenum + 1;
+                                retLike = true;
+                              });
+                            }
                             canEnter = true;
-                            setState(() {});
                           }
                         }
                       },
@@ -272,6 +283,7 @@ class _CityActivityWidgetState extends State<CityActivityWidget> {
                                 widget.activity = result as Activity;
                                 _imHelper
                                     .selActivityState(widget.activity.actid, Global.profile.user!.uid, (List<String> actid) {
+                                  print("[city activity widget2] pop back refresh act size: ${actid.length} mounted: ${mounted}");
                                   if (actid.length > 0) {
                                     if (mounted) {
                                       setState(() {
@@ -279,13 +291,16 @@ class _CityActivityWidgetState extends State<CityActivityWidget> {
                                       });
                                     }
                                   } else {
-                                    retLike = false;
+                                      setState(() {
+                                        retLike = false;
+                                      });
                                   }
                                 });
                                 canEnter = true;
                                 setState(() {
                                   // 更新状态
                                 });
+                                widget.refreshCallBack();
                               }
                             });
                       },

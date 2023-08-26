@@ -1055,7 +1055,7 @@ class ActivityService{
       "token": token,
       "uid": uid,
     };
-    await NetUtil.getInstance().postJson(formData, "/api/Activity/syncUserNotice", (
+    await NetUtil.getInstance().postJson(formData, "/api/user/syncUserNotice", (
         Map<String, dynamic> data) {
       if (data["data"] != null) {
         userNotice = UserNotice.fromJson(
@@ -1064,6 +1064,21 @@ class ActivityService{
     }, errorCallBack);
     return userNotice;
   }
+
+  Future<bool> receiveUserNotice(int uid, String token, Function errorCallBack) async {
+    bool res = false;
+
+    var formData = {
+      "token": token,
+      "uid": uid,
+    };
+    await NetUtil.getInstance().postJson(formData, "/api/user/syncUserNotice", (
+        Map<String, dynamic> data) {
+      res = true;
+    }, errorCallBack);
+    return res;
+  }
+
   //下载未读数据到本地存储
   Future<void> saveLocalStore(
       UserNotice userNotice, String token, int uid,
@@ -1071,121 +1086,121 @@ class ActivityService{
     ///同步数据分为
     ///1，必须和服务器保持同步，重装后从服务器下载全部历史数据
     ///2, 不用和服务器保持同步，只同步最新数据，未读数量被重置为0后就不下载历史数据
-    if (Global.isInDebugMode) {
-      print("unread_comment:${userNotice.unread_comment},readindex:${userNotice.read_commentindex},"
-          "unread_reply:${userNotice.unread_reply}, readindex:${userNotice.read_replyindex},"
-          "unread_sysnotice:${userNotice.unread_sysnotice},readindex:${userNotice.read_sysnoticeindex}, "
-          "unread_evaluate:${userNotice.unread_evaluate},readindex:${userNotice.read_evaluate}");
-    }
+    // if (Global.isInDebugMode) {
+      print("unread_comment:${userNotice.unreadComment},readindex:${userNotice.readCommentindex},"
+          "unread_reply:${userNotice.unreadReply}, readindex:${userNotice.readReplyindex},"
+          "unread_sysnotice:${userNotice.unreadSysnotice},readindex:${userNotice.readSysnoticeindex}, "
+          "unread_evaluate:${userNotice.unreadEvaluate},readindex:${userNotice.readEvaluate}");
+    // }
 
     //留言消息同步
-    if (userNotice.unread_comment > 0) {
+    if (userNotice.unreadComment > 0) {
       await syncCommentFun(userNotice, uid, token, errorCallBack);
     }
-    if(userNotice.unread_reply > 0){
+    if(userNotice.unreadReply > 0){
       await syncReplyFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_bugcomment > 0) {
+    if (userNotice.unreadBugcomment > 0) {
       await syncBugCommentFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_bugreply > 0){
+    if (userNotice.unreadBugreply > 0){
       await syncBugReplyFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_suggestcomment > 0) {
+    if (userNotice.unreadSuggestcomment > 0) {
       await syncSuggestCommentFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_suggestreply > 0){
+    if (userNotice.unreadSuggestreply > 0){
       await syncSuggestReplyFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_momentcomment > 0) {
+    if (userNotice.unreadMomentcomment > 0) {
       await syncMomentCommentFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_momentreply > 0){
+    if (userNotice.unreadMomentreply > 0){
       await syncMomentReplyFun(userNotice, uid, token, errorCallBack);
     }
 
 
-    if(userNotice.unread_goodpricecomment > 0){
+    if(userNotice.unreadGoodpricecomment > 0){
       await syncGoodPriceCommentFun(userNotice, uid, token, errorCallBack);
     }
-    if(userNotice.unread_goodpricereply > 0){
+    if(userNotice.unreadGoodpricereply > 0){
       await syncGoodPriceReplyFun(userNotice, uid, token, errorCallBack);
     }
     //活动点赞同步
-    if (userNotice.unread_actlike > 0) {
+    if (userNotice.unreadActlike > 0) {
       await syncActivityLikeFun(userNotice, uid, token, errorCallBack);
     }
     //bug点赞同步
-    if (userNotice.unread_buglike > 0) {
+    if (userNotice.unreadBuglike > 0) {
       await syncBugLikeFun(userNotice, uid, token, errorCallBack);
     }
     //建议点赞同步
-    if (userNotice.unread_suggestlike > 0) {
+    if (userNotice.unreadSuggestlike > 0) {
       await syncSuggestLikeFun(userNotice, uid, token, errorCallBack);
     }
     //动态点赞同步
-    if (userNotice.unread_momentlike > 0) {
+    if (userNotice.unreadMomentlike > 0) {
       await syncMomentLikeFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_commentlike > 0) {
+    if (userNotice.unreadCommentlike > 0) {
       await syncActivityCommentLikeFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_goodpricecommentlike > 0) {
+    if (userNotice.unreadGoodpricecommentlike > 0) {
       await syncGoodPriceCommentLikeFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_bugcommentlike > 0) {
+    if (userNotice.unreadBugcommentlike > 0) {
       await syncBugCommentLikeFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_suggestcommentlike > 0) {
+    if (userNotice.unreadSuggestcommentlike > 0) {
       await syncSuggestCommentLikeFun(userNotice, uid, token, errorCallBack);
     }
-    if (userNotice.unread_momentcommentlike > 0) {
+    if (userNotice.unreadMomentcommentlike > 0) {
       await syncMomentCommentLikeFun(userNotice, uid, token, errorCallBack);
     }
 
 
-    if (userNotice.unread_evaluatelike > 0) {
+    if (userNotice.unreadEvaluatelike > 0) {
       await syncActivityEvaluateLikeFun(userNotice, uid, token, errorCallBack);
     }
     //系统通知消息同步
-    if(userNotice.unread_sysnotice > 0){
+    if(userNotice.unreadSysnotice > 0){
       await syncSysNoticeFun(userNotice, uid, token, errorCallBack);
     }
 
     //有新的用户关注
-    if(userNotice.unread_follow > 0){
+    if(userNotice.unreadFollow > 0){
       await syncFollowFun(userNotice, uid, token, errorCallBack);
     }
 
     //有新的未评论活动，需要和本地的对比，如果未评论数大于本地数再从服务器下载
     //分享和未评价活动都是读取本地数据库，需要保持同步，具体参考未评价活动
-    if(userNotice.unevaluate_activity >= 0){
-      await syncOrderUnEvaluateUpdateFun(uid, userNotice.unevaluate_activity, errorCallBack);
+    if(userNotice.unevaluateActivity >= 0){
+      await syncOrderUnEvaluateUpdateFun(uid, userNotice.unevaluateActivity, errorCallBack);
     }
 
     //活动评价消息同步
-    if(userNotice.unread_evaluate > 0){
+    if(userNotice.unreadEvaluate > 0){
       await syncEvaluateFun(userNotice, uid, token, errorCallBack);
     }
 
     //活动评价回复同步
-    if(userNotice.unread_evaluatereply > 0){
+    if(userNotice.unreadEvaluatereply > 0){
       await syncEvaluateReplyFun(userNotice, uid, token, errorCallBack);
     }
 
     //来自朋友的分享
-    if(userNotice.unread_shared > 0){
+    if(userNotice.unreadShared > 0){
       await syncSharedFun(userNotice, uid, token, errorCallBack);
     }
 
     //订单状态有改变,把各种状态的订单数量存入本地数据库，不用设置已读和上面几种不一样，这里只记录数量
-    if(userNotice.unread_orderpending >= 0){
+    if(userNotice.unreadOrderpending >= 0){
       //0是待付款 1是完成付款待确认
-      await syncOrderUpdateFun( uid, 0, userNotice.unread_orderpending, token, errorCallBack);
+      await syncOrderUpdateFun( uid, 0, userNotice.unreadOrderpending, token, errorCallBack);
     }
 
-    if(userNotice.unread_orderfinish >= 0){
-      await syncOrderUpdateFun( uid, 1, userNotice.unread_orderfinish, token, errorCallBack);
+    if(userNotice.unreadOrderfinish >= 0){
+      await syncOrderUpdateFun( uid, 1, userNotice.unreadOrderfinish, token, errorCallBack);
     }
   }
 
@@ -1193,7 +1208,7 @@ class ActivityService{
     //读取消息是否成功  issuccess
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
     List<CommentReply> commentReplys = [];
-    int sequence_id = userNotice.read_commentindex;
+    int sequence_id = userNotice.readCommentindex;
     if(Global.isInDebugMode){
       print("load activity Comment... ");
     }
@@ -1201,7 +1216,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.commentmsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_commentindex)
+    if (temsequence_id != null && temsequence_id > userNotice.readCommentindex)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1230,7 +1245,7 @@ class ActivityService{
     //bug评论同步
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
     List<CommentReply> commentReplys = [];
-    int sequence_id = userNotice.read_bugcomment;
+    int sequence_id = userNotice.readBugcomment;
     if(Global.isInDebugMode){
       print("load activity Comment... ");
     }
@@ -1238,7 +1253,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.bugcommentmsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_bugcomment)
+    if (temsequence_id != null && temsequence_id > userNotice.readBugcomment)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1267,7 +1282,7 @@ class ActivityService{
     //bug评论同步
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
     List<CommentReply> commentReplys = [];
-    int sequence_id = userNotice.read_suggestcomment;
+    int sequence_id = userNotice.readSuggestcomment;
     if(Global.isInDebugMode){
       print("load activity Comment... ");
     }
@@ -1275,7 +1290,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.suggestcommentmsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_suggestcomment)
+    if (temsequence_id != null && temsequence_id > userNotice.readSuggestcomment)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1304,7 +1319,7 @@ class ActivityService{
     //moment评论同步
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
     List<CommentReply> commentReplys = [];
-    int sequence_id = userNotice.read_momentcomment;
+    int sequence_id = userNotice.readMomentcomment;
     if(Global.isInDebugMode){
       print("load moment Comment... ");
     }
@@ -1312,7 +1327,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.momentcommentmsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_momentcomment)
+    if (temsequence_id != null && temsequence_id > userNotice.readMomentcomment)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1342,7 +1357,7 @@ class ActivityService{
     //读取消息是否成功  issuccess
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
     List<CommentReply> commentReplys = [];
-    int sequence_id = userNotice.read_goodpricecommentindex;
+    int sequence_id = userNotice.readGoodpricecommentindex;
     if(Global.isInDebugMode){
       print("load activity Comment... ");
     }
@@ -1350,7 +1365,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.goodpricecommentmsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_goodpricecommentindex)
+    if (temsequence_id != null && temsequence_id > userNotice.readGoodpricecommentindex)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1379,14 +1394,14 @@ class ActivityService{
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
 
-    int sequence_id = userNotice.read_actlike;
+    int sequence_id = userNotice.readActlike;
     if(Global.isInDebugMode){
       print("load activity like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(0);//0是活动的点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_actlike)
+    if (temsequence_id != null && temsequence_id > userNotice.readActlike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1415,14 +1430,14 @@ class ActivityService{
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
 
-    int sequence_id = userNotice.read_buglike;
+    int sequence_id = userNotice.readBuglike;
     if(Global.isInDebugMode){
       print("load bug like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(3);//3bug
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_buglike)
+    if (temsequence_id != null && temsequence_id > userNotice.readBuglike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1451,14 +1466,14 @@ class ActivityService{
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
 
-    int sequence_id = userNotice.read_suggestlike;
+    int sequence_id = userNotice.readSuggestlike;
     if(Global.isInDebugMode){
       print("load bug like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(4);//0是活动的点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_suggestlike)
+    if (temsequence_id != null && temsequence_id > userNotice.readSuggestlike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1487,14 +1502,14 @@ class ActivityService{
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
 
-    int sequence_id = userNotice.read_momentlike;
+    int sequence_id = userNotice.readMomentlike;
     if(Global.isInDebugMode){
       print("load moment like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(8);//0是活动的点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_momentlike)
+    if (temsequence_id != null && temsequence_id > userNotice.readMomentlike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1522,14 +1537,14 @@ class ActivityService{
   Future<void> syncActivityCommentLikeFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_commentlike;
+    int sequence_id = userNotice.readCommentlike;
     if(Global.isInDebugMode){
       print("load activity like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(1);//0是活动的点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_commentlike)
+    if (temsequence_id != null && temsequence_id > userNotice.readCommentlike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1557,14 +1572,14 @@ class ActivityService{
   Future<void> syncGoodPriceCommentLikeFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_goodpricecommentlike;
+    int sequence_id = userNotice.readGoodpricecommentlike;
     if(Global.isInDebugMode){
       print("load activity like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(7);//7是goodprice点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_goodpricecommentlike)
+    if (temsequence_id != null && temsequence_id > userNotice.readGoodpricecommentlike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1592,14 +1607,14 @@ class ActivityService{
   Future<void> syncActivityEvaluateLikeFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_evaluatelike;
+    int sequence_id = userNotice.readEvaluatelike;
     if(Global.isInDebugMode){
       print("load activity like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(2);//0是活动的点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_evaluate)
+    if (temsequence_id != null && temsequence_id > userNotice.readEvaluate)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1627,14 +1642,14 @@ class ActivityService{
   Future<void> syncBugCommentLikeFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_bugcommentlike;
+    int sequence_id = userNotice.readBugcommentlike;
     if(Global.isInDebugMode){
       print("load activity like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(5);//5是bugcomment点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_bugcommentlike)
+    if (temsequence_id != null && temsequence_id > userNotice.readBugcommentlike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1662,14 +1677,14 @@ class ActivityService{
   Future<void> syncSuggestCommentLikeFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_suggestcommentlike;
+    int sequence_id = userNotice.readSuggestcommentlike;
     if(Global.isInDebugMode){
       print("load activity like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(6);//5是bugcomment点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_suggestcommentlike)
+    if (temsequence_id != null && temsequence_id > userNotice.readSuggestcommentlike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1697,14 +1712,14 @@ class ActivityService{
   Future<void> syncMomentCommentLikeFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<Like> likes = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_momentcommentlike;
+    int sequence_id = userNotice.readMomentcommentlike;
     if(Global.isInDebugMode){
       print("load momentcomment like... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxLikeID(9);//5是momentcomment点赞
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_momentcommentlike)
+    if (temsequence_id != null && temsequence_id > userNotice.readMomentcommentlike)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1732,14 +1747,14 @@ class ActivityService{
   Future<void> syncFollowFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<Follow> follows = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_follow;
+    int sequence_id = userNotice.readFollow;
     if(Global.isInDebugMode){
       print("load myFollow... ");
     }
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var temsequence_id = await imhelper.getMaxFollowid();
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_follow)
+    if (temsequence_id != null && temsequence_id > userNotice.readFollow)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1771,7 +1786,7 @@ class ActivityService{
   Future<void> syncReplyFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<CommentReply> commentReplys = [];//留言，评价，回复共同使用一个类型
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_replyindex;
+    int sequence_id = userNotice.readReplyindex;
     if(Global.isInDebugMode){
       print("load CommentReply... ");
     }
@@ -1779,7 +1794,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.replymsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_replyindex)
+    if (temsequence_id != null && temsequence_id > userNotice.readReplyindex)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1807,7 +1822,7 @@ class ActivityService{
   Future<void> syncGoodPriceReplyFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<CommentReply> commentReplys = [];//留言，评价，回复共同使用一个类型
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_goodpricereplyindex;
+    int sequence_id = userNotice.readGoodpricereplyindex;
     if(Global.isInDebugMode){
       print("load CommentReply... ");
     }
@@ -1815,7 +1830,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.goodpricereplymsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_goodpricereplyindex)
+    if (temsequence_id != null && temsequence_id > userNotice.readGoodpricereplyindex)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1843,7 +1858,7 @@ class ActivityService{
   Future<void> syncBugReplyFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<CommentReply> commentReplys = [];//留言，评价，回复共同使用一个类型
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_bugreply;
+    int sequence_id = userNotice.readBugreply;
     if(Global.isInDebugMode){
       print("load CommentReply... ");
     }
@@ -1851,7 +1866,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.bugreplymsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_bugreply)
+    if (temsequence_id != null && temsequence_id > userNotice.readBugreply)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1879,7 +1894,7 @@ class ActivityService{
   Future<void> syncSuggestReplyFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<CommentReply> commentReplys = [];//留言，评价，回复共同使用一个类型
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_suggestreply;
+    int sequence_id = userNotice.readSuggestreply;
     if(Global.isInDebugMode){
       print("load CommentReply... ");
     }
@@ -1887,7 +1902,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.suggestreplymsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_suggestreply)
+    if (temsequence_id != null && temsequence_id > userNotice.readSuggestreply)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1915,7 +1930,7 @@ class ActivityService{
   Future<void> syncMomentReplyFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<CommentReply> commentReplys = [];//留言，评价，回复共同使用一个类型
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.unread_momentreply;
+    int sequence_id = userNotice.unreadMomentreply;
     if(Global.isInDebugMode){
       print("load CommentReply... ");
     }
@@ -1923,7 +1938,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.momentreplymsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.unread_momentreply)
+    if (temsequence_id != null && temsequence_id > userNotice.unreadMomentreply)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1951,7 +1966,7 @@ class ActivityService{
   Future<void> syncSysNoticeFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<CommentReply> commentReplys = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_sysnoticeindex;
+    int sequence_id = userNotice.readSysnoticeindex;
     if(Global.isInDebugMode){
       print("load sysnotice...");
     }
@@ -1959,7 +1974,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.sysnotice);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_sysnoticeindex)
+    if (temsequence_id != null && temsequence_id > userNotice.readSysnoticeindex)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -1986,7 +2001,7 @@ class ActivityService{
 
   Future<void> syncSharedFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<UserShared> userShareds = [];
-    int sequence_id = userNotice.read_shared;
+    int sequence_id = userNotice.readShared;
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
     if(Global.isInDebugMode){
       print("load shared...");
@@ -1994,7 +2009,7 @@ class ActivityService{
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var id = await imhelper.getMaxUserSharedId();
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (id != null && id > userNotice.read_shared)
+    if (id != null && id > userNotice.readShared)
       sequence_id = id;
     var formData = {
       "uid": uid,
@@ -2043,15 +2058,15 @@ class ActivityService{
   Future<void> syncUnActivityEvaluateFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<EvaluateActivityReply> evaluateActivityReplys = [];
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int unnum = userNotice.unevaluate_activity;
+    int unnum = userNotice.unevaluateActivity;
 
     ///判断服务器未评论活动是否大于本地
     List<ActivityEvaluate>? activitys = await imhelper.getUnEvaluateActivity(
         0, 10000, 0);
     ///确保本地数据是最新的
-    if ((activitys != null && userNotice.unevaluate_activity > 0) ||
-        ((activitys == null || activitys.length == 0) && userNotice.evaluate_activity > 0)  ||
-        ((activitys == null || activitys.length == 0) && userNotice.unevaluate_activity > 0) ) {
+    if ((activitys != null && userNotice.unevaluateActivity > 0) ||
+        ((activitys == null || activitys.length == 0) && userNotice.evaluateActivity > 0)  ||
+        ((activitys == null || activitys.length == 0) && userNotice.unevaluateActivity > 0) ) {
       if(Global.isInDebugMode){
         print("load activityEvaluates....");
       }
@@ -2083,7 +2098,7 @@ class ActivityService{
 
   Future<void> syncUnActivityEvaluateFunReadIndex(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<EvaluateActivityReply> evaluateActivityReplys = [];
-    int sequence_id = userNotice.evaluate_activity;
+    int sequence_id = userNotice.evaluateActivity;
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
     if(Global.isInDebugMode){
       print("load shared...");
@@ -2091,7 +2106,7 @@ class ActivityService{
     ///服务器获取的已读数据和本地缓存的对比，使用最新的
     var id = await imhelper.getMaxUnEvaluateActivityid();
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (id != null && id > userNotice.evaluate_activity)
+    if (id != null && id > userNotice.evaluateActivity)
       sequence_id = id;
     var formData = {
       "uid": uid,
@@ -2124,7 +2139,7 @@ class ActivityService{
   Future<void> syncEvaluateFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<CommentReply> commentReplys = [];//留言，评价，回复共同使用一个类型
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_evaluate;
+    int sequence_id = userNotice.readEvaluate;
     if(Global.isInDebugMode){
       print("load activity Comment... ");
     }
@@ -2132,7 +2147,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.evaluatemsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_evaluate)
+    if (temsequence_id != null && temsequence_id > userNotice.readEvaluate)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,
@@ -2160,7 +2175,7 @@ class ActivityService{
   Future<void> syncEvaluateReplyFun(UserNotice userNotice, uid, token, Function errorCallBack) async {
     List<CommentReply> commentReplys = [];//留言，评价，回复共同使用一个类型
     bool issuccess = false;//正常从服务器返回就标记为已读,避免数据删除后一直从服务器拉取数据
-    int sequence_id = userNotice.read_evaluatereply;
+    int sequence_id = userNotice.readEvaluatereply;
     if(Global.isInDebugMode){
       print("load read_evaluatereply reply... ");
     }
@@ -2168,7 +2183,7 @@ class ActivityService{
     var temsequence_id = await imhelper.getMaxReplyid(
         ReplyMsgType.evaluatereplymsg);
     ///如果本地已储存的数据大于服务器则使用本地最新数据id
-    if (temsequence_id != null && temsequence_id > userNotice.read_evaluatereply)
+    if (temsequence_id != null && temsequence_id > userNotice.readEvaluatereply)
       sequence_id = temsequence_id;
     var formData = {
       "uid": uid,

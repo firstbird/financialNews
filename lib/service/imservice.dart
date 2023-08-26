@@ -30,12 +30,12 @@ class ImService {
       for (GroupRelation groupRelation in grouprelationlist) {
         //如果有未读消息，链接服务器获取
         if (groupRelation.unreadcount > 0) {
-          if (Global.isInDebugMode) {
+          // if (Global.isInDebugMode) {
             print("groupname:${groupRelation
                 .group_name1},timeline_id:${groupRelation
                 .timeline_id},unread:${groupRelation.unreadcount},"
                 "readindex:${groupRelation.readindex}");
-          }
+          // }
           int sequence_id = groupRelation.readindex!;
 
           ///服务器获取的已读数据和本地缓存的对比，使用最新的
@@ -50,7 +50,7 @@ class ImService {
           var formData = {
             "token": token,
             "uid": uid,
-            "timeline_id": groupRelation.timeline_id,//取消唯一ID，可以批量获取数据，暂时不使用
+            "timeline_id": groupRelation.timeline_id,//[取消唯一ID，可以批量获取数据，暂时不使用]
             "sequence_id": sequence_id, //服务器已读的
           };
 
@@ -63,7 +63,7 @@ class ImService {
                     data["data"][i]);
                 timelinesynclist.add(timeLineSync);
               }
-              var count = await imhelper.saveMessage(timelinesynclist);
+              var count = await imhelper.saveTimeLineMessage(timelinesynclist);
               if (count > 0) {
                 await postReadMessage(groupRelation.timeline_id, token, uid, errorCallBack);
               }
@@ -72,7 +72,7 @@ class ImService {
                 await postReadMessage(groupRelation.timeline_id, token, uid, errorCallBack);
               }
 
-              if (Global.isInDebugMode)
+              // if (Global.isInDebugMode)
                 print("save timelinesync_table count: ${count}");
             }, errorCallBack);
           }
@@ -95,7 +95,7 @@ class ImService {
                   }
                 }
               }
-              var count = await imhelper.saveMessage(timelinesynclist);
+              var count = await imhelper.saveTimeLineMessage(timelinesynclist);
               if (count > 0) {
                 await postCommunityReadMessage(
                     groupRelation.timeline_id, token, uid, errorCallBack);
@@ -104,12 +104,13 @@ class ImService {
                 //本地大于服务器将服务器重新设置为0
                 await postReadMessage(groupRelation.timeline_id, token, uid, errorCallBack);
               }
-              if (Global.isInDebugMode)
+              // if (Global.isInDebugMode)
                 print("save timelinesync_table count: ${count}");
             }, errorCallBack);
           }
           //私聊
           if(groupRelation.relationtype == 2){
+            print("[save local store] relation type == 2");
             await NetUtil.getInstance().postJson(
                 formData, "/api/IM/getSingleConversationTimelineId", (
                 Map<String, dynamic> data) async {
@@ -119,7 +120,7 @@ class ImService {
                     data["data"][i]);
                 timelinesynclist.add(timeLineSync);
               }
-              var count = await imhelper.saveMessage(timelinesynclist);
+              var count = await imhelper.saveTimeLineMessage(timelinesynclist);
               if (count > 0) {
                 await postSingleReadMessage(
                     groupRelation.timeline_id, token, uid, errorCallBack);
@@ -128,7 +129,7 @@ class ImService {
                 //本地大于服务器将服务器重新设置为0
                 await postReadMessage(groupRelation.timeline_id, token, uid, errorCallBack);
               }
-              if (Global.isInDebugMode)
+              // if (Global.isInDebugMode)
                 print("save timelinesync_table count: ${count}");
             }, errorCallBack);
           }
@@ -142,7 +143,7 @@ class ImService {
   Future<bool> saveTimeLineSync(TimeLineSync timeLineSync,  token, uid, errorCallBack) async {
     List<TimeLineSync> tem = [];
     tem.add(timeLineSync);
-    var count = await imhelper.saveMessage(tem);
+    var count = await imhelper.saveTimeLineMessage(tem);
     if (count > 0) {
       await postReadMessage(
           timeLineSync.timeline_id!, token, uid, errorCallBack);
@@ -153,7 +154,7 @@ class ImService {
   Future<bool> saveCommunityTimeLineSync(TimeLineSync timeLineSync,  token, uid, errorCallBack) async {
     List<TimeLineSync> tem = [];
     tem.add(timeLineSync);
-    var count = await imhelper.saveMessage(tem);
+    var count = await imhelper.saveTimeLineMessage(tem);
     if (count > 0) {
       await postCommunityReadMessage(
           timeLineSync.timeline_id!, token, uid, errorCallBack);
@@ -165,7 +166,7 @@ class ImService {
   Future<bool> saveSingleTimeLineSync(TimeLineSync timeLineSync,  token, uid, errorCallBack) async {
     List<TimeLineSync> tem = [];
     tem.add(timeLineSync);
-    var count = await imhelper.saveMessage(tem);
+    var count = await imhelper.saveTimeLineMessage(tem);
     if (count > 0) {
       await postSingleReadMessage(
           timeLineSync.timeline_id!, token, uid, errorCallBack);

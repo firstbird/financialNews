@@ -45,6 +45,14 @@ class QuietApp extends ConsumerWidget {
               borderSide: BorderSide(width: 2, color: Colors.amberAccent),
             ),
           ),
+          sliderTheme: SliderThemeData(
+              overlayColor: Colors.red,
+              showValueIndicator: ShowValueIndicator.always,
+              tickMarkShape: SliderTickMarkShape.noTickMark,
+              rangeTickMarkShape: RoundRangeSliderTickMarkShape(tickMarkRadius: 0),
+              valueIndicatorColor: Color(0xFFFEC92B),
+              valueIndicatorTextStyle: TextStyle(color: Colors.black, fontSize: 16),
+          )
         ),
         supportedLocales: const [Locale('en'), Locale('zh')],
         localizationsDelegates: const [

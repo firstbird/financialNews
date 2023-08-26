@@ -301,16 +301,19 @@ class _ActivityState extends State<ActivityInfo> {
       return;
     }
 
+
     if(Global.profile.user == null) {
       _listComments = await _activityService.getCommentList(widget.actid, 0, errorCallBack);
     }
     else{
+      _activityService.getCollectionActivityListByUser(0, Global.profile.user!.uid, Global.profile.user!.token!);
       imhelper.saveBrowseHistory(_activity!.actid, _activity!.content, _activity!.coverimg ?? "", _activity!.coverimgwh, _activity!.user!.profilepicture ?? "",
           _activity!.user!.username, _activity!.peoplenum ?? 0, _activity!.goodprice!.mincost, _activity!.goodprice!.maxcost);
       Map likecollectionstate = await _activityService.getLikeCollectionState(widget.actid, Global.profile.user!.uid);
       _islike = likecollectionstate["islike"];
       _iscollection = likecollectionstate["iscollection"];
       _listComments = await _activityService.getCommentList(widget.actid, Global.profile.user!.uid, errorCallBack);
+      print("[activityinfo] _islike: ${_islike} _iscollection: ${_iscollection} mounted: ${mounted}");
     }
     if(mounted)
     setState(() {
@@ -623,17 +626,17 @@ class _ActivityState extends State<ActivityInfo> {
                   IconButton(
                     icon: Icon(_islike ? IconFont.icon_zan1 : IconFont.icon_aixin, color: _islike ?
                     Global.profile.backColor : Colors.grey,),
-                    onPressed: () {
+                    onPressed: () async {
                       if(!_islogin())
                         return;
 
                       if(_isLikeEnter) {
                         _isLikeEnter = false;
                         if (!_islike){
-                          updateLike();//点赞
+                           await updateLike();//点赞
                         }
                         else{
-                          updateDelLike();
+                          await updateDelLike();
                         }
                       }
                     },
@@ -669,13 +672,13 @@ class _ActivityState extends State<ActivityInfo> {
                         _iscollection ? IconFont.icon_collection_b : IconFont
                             .icon_shoucang, color:
                     _iscollection ? Colors.blueAccent : Colors.grey),
-                    onPressed: () {
+                    onPressed: () async {
                       if(_isCollectEnter) {
                         _isCollectEnter = false;
                         if (!_iscollection)
-                          updateCollection();
+                          await updateCollection();
                         else
-                          updateDelCollection();
+                          await updateDelCollection();
                       }
                     },
                   ),
@@ -735,34 +738,35 @@ class _ActivityState extends State<ActivityInfo> {
     );
   }
 
-  Future<void> updateLike() async {
+  Future<bool> updateLike() async {
     bool ret = await _activityService.updateLike(_activity!.actid, Global.profile.user!.uid,  Global.profile.user!.token!, errorCallBack);
     if(ret) {
-      _activity!.likenum = _activity!.likenum + 1;
       setState(() {
+        _activity!.likenum = _activity!.likenum + 1;
         _islike = true;
       });
     }
     _isLikeEnter = true;
-
+    return ret;
   }
 
-  Future<void> updateDelLike() async {
+  Future<bool> updateDelLike() async {
     bool ret = await _activityService.delLike(_activity!.actid, Global.profile.user!.uid,  Global.profile.user!.token!, errorCallBack);
     if(ret) {
-      _activity!.likenum = _activity!.likenum - 1;
       setState(() {
+        _activity!.likenum = _activity!.likenum - 1;
         _islike = false;
       });
     }
     _isLikeEnter = true;
+    return ret;
   }
 
   Future<void> updateCollection() async {
     bool ret = await _activityService.updateCollection(_activity!, Global.profile.user!.uid,  Global.profile.user!.token!, errorCallBack);
     if(ret) {
-      _activity!.collectionnum =  _activity!.collectionnum + 1;
       setState(() {
+        _activity!.collectionnum =  _activity!.collectionnum + 1;
         _iscollection = true;
       });
     }
@@ -772,8 +776,8 @@ class _ActivityState extends State<ActivityInfo> {
   Future<void> updateDelCollection() async {
     bool ret = await _activityService.delCollection(_activity!.actid, Global.profile.user!.uid,  Global.profile.user!.token!, errorCallBack);
     if(ret) {
-      _activity!.collectionnum =  _activity!.collectionnum - 1;
       setState(() {
+        _activity!.collectionnum =  _activity!.collectionnum - 1;
         _iscollection = false;
       });
     }
@@ -814,10 +818,9 @@ class _ActivityState extends State<ActivityInfo> {
       });
       sortComment();
       setState(() {
-
+        _isCommentLike = true;
       });
     }
-    _isCommentLike = true;
   }
 
   Future<void> updateDelCommentLike(commentid, int touid) async {
@@ -832,10 +835,9 @@ class _ActivityState extends State<ActivityInfo> {
       });
       sortComment();
       setState(() {
-
+        _isCommentLike = true;
       });
     }
-    _isCommentLike = true;
   }
 
   Future<void> updatedelMessageReply(int replyid) async{

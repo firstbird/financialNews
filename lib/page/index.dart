@@ -400,7 +400,7 @@ class _IndexPageState extends State<IndexPage> {
                     activeIcon: Icon(IconFont.icon_shouye1,color: Global.profile.backColor,size: 23 ), label: '首页'),
                 BottomNavigationBarItem(icon: Icon(IconFont.icon_icon_shangcheng_xian, color: Colors.black45,size: 23 ),
                   activeIcon: Icon(IconFont.icon_icon_shangcheng_mian,color: Global.profile.backColor,size: 23 ),
-                  label: '服务',
+                  label: '优选服务',
                 ),
                 BottomNavigationBarItem(icon: Icon(IconFont.icon_yumaobi1, size: 23, color: Colors.black45, ),
                   activeIcon: Icon(IconFont.icon_yumaobi_tianchong,color:  Global.profile.backColor,size: 23 ),
@@ -430,8 +430,8 @@ class _IndexPageState extends State<IndexPage> {
               },
             );
           }),
-      floatingActionButton: IssuedActivityButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // floatingActionButton: IssuedActivityButton(),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       body: _pages.length > 0 ? PageView.builder(
           physics: NeverScrollableScrollPhysics(),//禁止页面左右滑动切换
           controller: _pageController,
@@ -449,74 +449,7 @@ class _IndexPageState extends State<IndexPage> {
 
 }
 
-class IssuedActivityButton extends StatelessWidget {
-  const IssuedActivityButton({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    bool inDebugMode = false;
-
-    assert(inDebugMode = true);
-
-    return Container(
-        margin: EdgeInsets.only(top: 10),
-        padding: EdgeInsets.all(3),
-        height: 55,
-        width: 55,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(60),
-          color: Colors.white,
-        ),
-        child: Center(
-            child: Stack(
-              children: <Widget>[
-                FloatingActionButton(
-                  heroTag: UniqueKey(),
-                  elevation: 0,
-                  backgroundColor: Global.profile.backColor,
-                  child: IconButton(
-                    padding: EdgeInsets.only(bottom: 5),
-                    icon: Icon(IconFont.icon_tianjiajiahaowubiankuang, size: 25, color: Global.profile.fontColor,),
-                    color: Colors.black,
-                    onPressed: (){
-                      if(Global.profile.user == null) {
-                        Navigator.pushNamed(context, '/Login');
-                      }
-                      else {
-                        Navigator.pushNamed(context, '/IssuedActivity');
-                      }
-                    },
-                  ),
-                  onPressed: (){
-                    if(Global.profile.user == null) {
-                      Navigator.pushNamed(context, '/Login');
-                    }
-                    else {
-                      Navigator.pushNamed(context, '/IssuedActivity');
-                    }
-                  },
-                ),
-                Container(
-                    width: 55,
-                    height: 50,
-                    margin: EdgeInsets.only(top: 35),
-                    decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      borderRadius: inDebugMode?null:BorderRadius.only(bottomLeft: Radius.circular(8.0), bottomRight: Radius.circular(8.0)),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '超多人来',
-                        style: TextStyle(fontSize: 8, color: Colors.black),
-                      ),
-                    )
-                )
-              ],
-            )
-        )
-    );
-  }
-}
 
 class _TaskInfo {
   String? name;

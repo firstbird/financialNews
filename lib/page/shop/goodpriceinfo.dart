@@ -4,12 +4,14 @@ import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:rate_in_stars/rate_in_stars.dart';
 
 import '../../model/grouppurchase/goodpice_model.dart';
+import '../../model/im/grouprelation.dart';
 import '../../model/user.dart';
 import '../../model/comment.dart';
 import '../../model/commentreply.dart';
 import '../../model/activity.dart';
 import '../../model/evaluateactivity.dart';
 import '../../common/iconfont.dart';
+import '../../service/userservice.dart';
 import '../../util/showmessage_util.dart';
 import '../../util/imhelper_util.dart';
 import '../../util/common_util.dart';
@@ -48,10 +50,13 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
   String _message = "";
   double _pageWidth = 0;
   bool  _iscollection = false,_isCollectEnter = true, isMessageEnter = true, _isCommentLike = true;
+  bool _isLikeEnter = true;
+  bool _islike = false;
   List<Map<String, String>> imglist = [];
   List<Map<String, String>> albumpicslist = [];
   GPService _gpService = GPService();
   ActivityService _activityService = ActivityService();
+  UserService _userService = new UserService();
   String error = "";
   String errorstatusCode = "";
   ImHelper imHelper = new ImHelper();
@@ -142,7 +147,7 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
           Navigator.pop(context);
         },
       );
-      getCollectionAndComment();
+      initGoodpriceState();
     } catch(e) {
       print("[goodpriceinfo] build with exception: e: ${e.toString()}");
     }
@@ -150,33 +155,36 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
   }
 
 
-  getCollectionAndComment() async {
-    if(Global.profile.user != null)
-      _comments = await _gpService.getCommentList(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, errorCallBack);
-    else{
-      _comments = await _gpService.getCommentList(widget.goodPiceModel.goodpriceid, 0, errorCallBack);
-    }
-    sortComment(_comments, "1");
+  initGoodpriceState() async {
+    // todo comment in version2.0
+    // if(Global.profile.user != null)
+    //   _comments = await _gpService.getCommentList(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, errorCallBack);
+    // else{
+    //   _comments = await _gpService.getCommentList(widget.goodPiceModel.goodpriceid, 0, errorCallBack);
+    // }
+    // sortComment(_comments, "1");
 
     _evaluates = await _gpService.getEvaluateGoodPriceList(widget.goodPiceModel.goodpriceid, 0, errorCallBack);
 
+    _islike = await imHelper.selGoodPriceState(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, 1);
 
     if(Global.profile.user != null) {
       Map collectionstate = await _gpService.getGoodPriceCollectionState(
           widget.goodPiceModel.goodpriceid, Global.profile.user!.uid);
+      print("[initGoodpriceState] collectionstate[iscollection]: ${collectionstate["iscollection"]}");
       _iscollection = collectionstate["iscollection"];
     }
-    print("[getCollectionAndComment] goodpriceid: ${widget.goodPiceModel.goodpriceid}");
+    print("[getCollectionAndComment] goodpriceid: ${widget.goodPiceModel.goodpriceid}, _islike: ${_islike}");
     //获取相关活动
     _activitys = await _gpService.getActivityList(widget.goodPiceModel.goodpriceid);
 
-    if(_iscollection || (_comments != null && _comments.length>0) || (_activitys != null && _activitys.length > 0)) {
+    // if(_iscollection || (_comments != null && _comments.length>0) || (_activitys != null && _activitys.length > 0)) {
       if (mounted) {
         setState(() {
 
         });
       }
-    }
+    // }
   }
 
   double maxOffset = 80.0;
@@ -237,127 +245,173 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
           children: [
             SizedBox(width: 10,),
             InkWell(
-              child: Column(
+              onTap: () async {
+                  if(!_islogin()) {
+                    return;
+                  }
+                  _islike = await imHelper.selGoodPriceState(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, 1);
+                  print("[goodpriceinfo] ontap _isLike: ${_islike}");
+
+                  if(_isLikeEnter) {
+                    _isLikeEnter = false;
+                    if (!_islike){
+                      await updateLike();//点赞
+                    }
+                    else{
+                      await updateDelLike();
+                    }
+                  }
+              },
+              child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  Text('赞',
-                      style: TextStyle(fontSize: 17)),
-                  Text(widget.goodPiceModel.satisfactionrate == 0 ? '0' : '${(widget.goodPiceModel.satisfactionrate * 100).toInt()}%',
-                      style: TextStyle(fontSize: 16, )),
+                  Icon(_islike ? IconFont.icon_zan1 : IconFont.icon_aixin, color: _islike ?
+                      Global.profile.backColor : Colors.grey,),
+                  SizedBox(height: 5,),
+                  Text(widget.goodPiceModel == null ? "0" : widget.goodPiceModel!.likenum.toString(),
+                        style: TextStyle(color: Colors.black54, fontSize: 10, fontWeight: FontWeight.w500)),
                 ],
-              ),
-              onTap: () async {
-                if(Global.profile.user != null) {
-                  bool isLike = await imHelper.selGoodPriceState(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, 1);
-                  bool isUnLike = await imHelper.selGoodPriceState(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, 0);
 
-
-                  showModalBottomSheet(
-                      context: context,
-                      builder: (BuildContext context){
-                        return new Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            InkWell(
-                              child: Container(
-                                margin: EdgeInsets.only(top: 20, bottom: 20),
-                                alignment: Alignment.center,
-                                child: Text("赞 ${widget.goodPiceModel.likenum}",style: TextStyle(color: isLike ? Colors.red : Colors.black87),),
-                              ),
-                              onTap: () async {
-                                if(isLike) {
-                                  bool ret =await _gpService.delGoodPriceLike(
-                                      widget.goodPiceModel.goodpriceid,
-                                      Global.profile.user!.uid,
-                                      Global.profile.user!.token!, errorCallBack);
-                                  if(ret)
-                                    widget.goodPiceModel.likenum =  widget.goodPiceModel.likenum-1;
-                                }
-                                else{
-                                  //先取消不赞，在点赞
-                                  if(isUnLike){
-                                    bool ret = await _gpService.updateCancelUnLike(
-                                        widget.goodPiceModel.goodpriceid,
-                                        Global.profile.user!.uid,
-                                        Global.profile.user!.token!, errorCallBack);
-                                    if(ret)
-                                      widget.goodPiceModel.unlikenum =  widget.goodPiceModel.unlikenum-1;
-                                  }
-                                  bool ret =await _gpService.updateGoodPriceLike(
-                                      widget.goodPiceModel.goodpriceid,
-                                      Global.profile.user!.uid,
-                                      Global.profile.user!.token!, errorCallBack);
-                                  if(ret)
-                                    widget.goodPiceModel.likenum =  widget.goodPiceModel.likenum+1;
-                                }
-                                if(widget.goodPiceModel.likenum + widget.goodPiceModel.unlikenum > 0){
-                                  widget.goodPiceModel.satisfactionrate = widget.goodPiceModel.likenum/(widget.goodPiceModel.likenum + widget.goodPiceModel.unlikenum);
-                                }
-                                else{
-                                  widget.goodPiceModel.satisfactionrate = 0;
-                                }
-                                Navigator.pop(context);
-                                setState(() {
-
-                                });
-                              },
-                            ),
-                            MyDivider(),
-                            InkWell(
-                              onTap: () async {
-                                if(isUnLike){
-                                  bool ret = await _gpService.updateCancelUnLike(
-                                      widget.goodPiceModel.goodpriceid,
-                                      Global.profile.user!.uid,
-                                      Global.profile.user!.token!, errorCallBack);
-                                  if(ret)
-                                    widget.goodPiceModel.unlikenum =  widget.goodPiceModel.unlikenum-1;
-                                }
-                                else {
-                                  if(isLike){
-                                    bool ret =await _gpService.delGoodPriceLike(
-                                        widget.goodPiceModel.goodpriceid,
-                                        Global.profile.user!.uid,
-                                        Global.profile.user!.token!, errorCallBack);
-                                    if(ret)
-                                      widget.goodPiceModel.likenum =  widget.goodPiceModel.likenum-1;
-                                  }
-                                  bool ret = await _gpService.updateUnLike(
-                                      widget.goodPiceModel.goodpriceid,
-                                      Global.profile.user!.uid,
-                                      Global.profile.user!.token!, errorCallBack);
-                                  if(ret)
-                                    widget.goodPiceModel.unlikenum =  widget.goodPiceModel.unlikenum+1;
-                                }
-
-                                if(widget.goodPiceModel.likenum + widget.goodPiceModel.unlikenum > 0){
-                                  widget.goodPiceModel.satisfactionrate = widget.goodPiceModel.likenum/(widget.goodPiceModel.likenum
-                                      + widget.goodPiceModel.unlikenum);
-                                }
-                                else{
-                                  widget.goodPiceModel.satisfactionrate = 0;
-                                }
-                                Navigator.pop(context);
-                                setState(() {
-
-                                });
-                              },
-                              child: Container(
-                                margin: EdgeInsets.only(top: 20, bottom: 20),
-                                alignment: Alignment.center,
-                                child: Text("不赞 ${widget.goodPiceModel.unlikenum}",style: TextStyle(color: isUnLike ? Colors.red : Colors.black87)),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                  );
-                }
-                else{
-                  Navigator.pushNamed(context, '/Login');
-                }
-              },
+              )
+              // onTap: () async {
+              //   if(Global.profile.user != null) {
+              //     bool isLike = await imHelper.selGoodPriceState(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, 1);
+              //     bool isUnLike = await imHelper.selGoodPriceState(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, 0);
+              //
+              //
+              //     showModalBottomSheet(
+              //         context: context,
+              //         builder: (BuildContext context){
+              //           return new Column(
+              //             mainAxisAlignment: MainAxisAlignment.start,
+              //             children: <Widget>[
+              //               IconButton(
+              //                 icon: Icon(isLike ? IconFont.icon_zan1 : IconFont.icon_aixin, color: isLike ?
+              //                 Global.profile.backColor : Colors.grey,),
+              //                 onPressed: () async {
+              //                   if(!_islogin())
+              //                     return;
+              //
+              //                   if(_isLikeEnter) {
+              //                     _isLikeEnter = false;
+              //                     if (!_islike){
+              //                       await updateLike();//点赞
+              //                     }
+              //                     else{
+              //                       await updateDelLike();
+              //                     }
+              //                   }
+              //                 },
+              //               ),
+              //               Text(widget.goodPiceModel == null ? "0" : widget.goodPiceModel!.likenum.toString(),
+              //                   style: TextStyle(color: Colors.black54, fontSize: 14, fontWeight: FontWeight.w500)),
+              //             ],
+              //           );
+              //
+              //
+              //           //   Column(
+              //           //   mainAxisSize: MainAxisSize.min,
+              //           //   children: <Widget>[
+              //           //     InkWell(
+              //           //       child: Container(
+              //           //         margin: EdgeInsets.only(top: 20, bottom: 20),
+              //           //         alignment: Alignment.center,
+              //           //         child: Text("赞 ${widget.goodPiceModel.likenum}",style: TextStyle(color: isLike ? Colors.red : Colors.black87),),
+              //           //       ),
+              //           //       onTap: () async {
+              //           //         if(isLike) {
+              //           //           bool ret =await _gpService.delGoodPriceLike(
+              //           //               widget.goodPiceModel.goodpriceid,
+              //           //               Global.profile.user!.uid,
+              //           //               Global.profile.user!.token!, errorCallBack);
+              //           //           if(ret)
+              //           //             widget.goodPiceModel.likenum =  widget.goodPiceModel.likenum-1;
+              //           //         }
+              //           //         else{
+              //           //           //先取消不赞，在点赞
+              //           //           if(isUnLike){
+              //           //             bool ret = await _gpService.updateCancelUnLike(
+              //           //                 widget.goodPiceModel.goodpriceid,
+              //           //                 Global.profile.user!.uid,
+              //           //                 Global.profile.user!.token!, errorCallBack);
+              //           //             if(ret)
+              //           //               widget.goodPiceModel.unlikenum =  widget.goodPiceModel.unlikenum-1;
+              //           //           }
+              //           //           bool ret =await _gpService.updateGoodPriceLike(
+              //           //               widget.goodPiceModel.goodpriceid,
+              //           //               Global.profile.user!.uid,
+              //           //               Global.profile.user!.token!, errorCallBack);
+              //           //           if(ret)
+              //           //             widget.goodPiceModel.likenum =  widget.goodPiceModel.likenum+1;
+              //           //         }
+              //           //         if(widget.goodPiceModel.likenum + widget.goodPiceModel.unlikenum > 0){
+              //           //           widget.goodPiceModel.satisfactionrate = widget.goodPiceModel.likenum/(widget.goodPiceModel.likenum + widget.goodPiceModel.unlikenum);
+              //           //         }
+              //           //         else{
+              //           //           widget.goodPiceModel.satisfactionrate = 0;
+              //           //         }
+              //           //         Navigator.pop(context);
+              //           //         setState(() {
+              //           //
+              //           //         });
+              //           //       },
+              //           //     ),
+              //           //     MyDivider(),
+              //           //     InkWell(
+              //           //       onTap: () async {
+              //           //         if(isUnLike){
+              //           //           bool ret = await _gpService.updateCancelUnLike(
+              //           //               widget.goodPiceModel.goodpriceid,
+              //           //               Global.profile.user!.uid,
+              //           //               Global.profile.user!.token!, errorCallBack);
+              //           //           if(ret)
+              //           //             widget.goodPiceModel.unlikenum =  widget.goodPiceModel.unlikenum-1;
+              //           //         }
+              //           //         else {
+              //           //           if(isLike){
+              //           //             bool ret =await _gpService.delGoodPriceLike(
+              //           //                 widget.goodPiceModel.goodpriceid,
+              //           //                 Global.profile.user!.uid,
+              //           //                 Global.profile.user!.token!, errorCallBack);
+              //           //             if(ret)
+              //           //               widget.goodPiceModel.likenum =  widget.goodPiceModel.likenum-1;
+              //           //           }
+              //           //           // bool ret = await _gpService.updateUnLike(
+              //           //           //     widget.goodPiceModel.goodpriceid,
+              //           //           //     Global.profile.user!.uid,
+              //           //           //     Global.profile.user!.token!, errorCallBack);
+              //           //           // if(ret)
+              //           //           //   widget.goodPiceModel.unlikenum =  widget.goodPiceModel.unlikenum+1;
+              //           //         }
+              //           //
+              //           //         if(widget.goodPiceModel.likenum + widget.goodPiceModel.unlikenum > 0){
+              //           //           widget.goodPiceModel.satisfactionrate = widget.goodPiceModel.likenum/(widget.goodPiceModel.likenum
+              //           //               + widget.goodPiceModel.unlikenum);
+              //           //         }
+              //           //         else{
+              //           //           widget.goodPiceModel.satisfactionrate = 0;
+              //           //         }
+              //           //         Navigator.pop(context);
+              //           //         setState(() {
+              //           //
+              //           //         });
+              //           //       },
+              //           //       child: Container(
+              //           //         margin: EdgeInsets.only(top: 20, bottom: 20),
+              //           //         alignment: Alignment.center,
+              //           //         child: Text("不赞 ${widget.goodPiceModel.unlikenum}",style: TextStyle(color: isUnLike ? Colors.red : Colors.black87)),
+              //           //       ),
+              //           //     ),
+              //           //   ],
+              //           // );
+              //         }
+              //     );
+              //   }
+              //   else{
+              //     Navigator.pushNamed(context, '/Login');
+              //   }
+              // },
             ),
             SizedBox(width: 30,),
             InkWell(
@@ -381,20 +435,23 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                 if(_isCollectEnter) {
                   _isCollectEnter = false;
                   if (!_iscollection){
-                    await _gpService.updateGoodPriceCollection(widget.goodPiceModel, Global.profile.user!.uid, Global.profile.user!.token!, errorCallBack);
+                    bool res = await _gpService.updateGoodPriceCollection(widget.goodPiceModel, Global.profile.user!.uid, Global.profile.user!.token!, errorCallBack);
                     _isCollectEnter = true;
-                    _iscollection = true;
-                    setState(()  {
-                      widget.goodPiceModel.collectionnum = widget.goodPiceModel.collectionnum+1;
-                    });
+                    if (res) {
+                      setState(() {
+                        _iscollection = true;
+                        widget.goodPiceModel.collectionnum = widget
+                            .goodPiceModel.collectionnum + 1;
+                      });
+                    }
                   }
                   else {
-                    await _gpService.delGoodPriceCollection(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, Global.profile.user!.token!, errorCallBack);
+                    bool res = await _gpService.delGoodPriceCollection(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, Global.profile.user!.token!, errorCallBack);
                     _isCollectEnter = true;
-                    _iscollection = false;
-                    if (mounted) {
+                    if (mounted && res) {
                       setState(() {
                         widget.goodPiceModel.collectionnum = widget.goodPiceModel.collectionnum-1;
+                        _iscollection = false;
                       });
                     }
                   }
@@ -412,14 +469,15 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                   ),
                   SizedBox(height: 2,),
                   Text(
-                      "问问商家", style: TextStyle(fontSize: 14)),
+                      "评价", style: TextStyle(fontSize: 14)),
                 ],
               ),
               onTap: () {
                 if (Global.profile.user != null) {
                   if(Global.profile.user != null) {
-                    _hidemessage = "问问商家";
-                    sendMessage(0, widget.goodPiceModel.uid);
+                    _hidemessage = "亲，你可评价此服务如何~";
+                    // sendMessage(0, widget.goodPiceModel.uid);
+                    Navigator.pushNamed(context, '/EvaluateGoodPrice', arguments: {"goodpriceid": widget.goodPiceModel.goodpriceid, "content": widget.goodPiceModel.content, "touid": widget.goodPiceModel.uid});
                   }
                   else{
                     Navigator.pushNamed(context, '/Login');
@@ -444,7 +502,8 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text('购买', style: TextStyle(color: Colors.white, fontSize: 14)),
+                      // Text('购买', style: TextStyle(color: Colors.white, fontSize: 14)), // todo pay in 2.0
+                      Text('联系商家', style: TextStyle(color: Colors.white, fontSize: 14)),
                     ],
                   ),
                   decoration: BoxDecoration(
@@ -467,11 +526,13 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                     //   "pic": widget.goodPiceModel.pic,
                     //   "goodpriceid": widget.goodPiceModel.goodpriceid
                     // });
-                    // todo mzl what is actid
-                    Navigator.pushNamed(context, '/CreateOrder', arguments: {
-                      "goodprice": widget.goodPiceModel,
-                      "actid": widget.goodPiceModel.goodpriceid
-                    });
+                    // todo pay in 2.0
+                    // Navigator.pushNamed(context, '/CreateOrder', arguments: {
+                    //   "goodprice": widget.goodPiceModel,
+                    //   "actid": widget.goodPiceModel.goodpriceid
+                    // });
+                    joinPurchaseMessage("");
+
                   }
                   else{
                     Navigator.pushNamed(context, '/Login');
@@ -532,6 +593,74 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
     );
   }
 
+  Future<void> joinPurchaseMessage(String captchaVerification) async {
+    String timeline_id = "";
+    if(Global.profile.user!.uid > widget.goodPiceModel.uid){
+      timeline_id = widget.goodPiceModel.uid.toString() + Global.profile.user!.uid.toString();
+    }
+    else{
+      timeline_id = Global.profile.user!.uid.toString() + widget.goodPiceModel.uid.toString();
+    }
+    GroupRelation? groupRelation = await imHelper.getGroupRelationByGroupid(Global.profile.user!.uid, timeline_id);
+    if(groupRelation == null){
+      groupRelation  = await _userService.joinSingle(timeline_id, Global.profile.user!.uid, widget.goodPiceModel.uid, Global.profile.user!.token!,
+          captchaVerification, errorCallBack);
+    }
+    if(groupRelation != null){
+      List<GroupRelation> groupRelations = [];
+      groupRelations.add(groupRelation);
+      int ret = await imHelper.saveGroupRelation(groupRelations);
+      if(ret > 0) {
+        print("[joinMessage] ret > 0 /MyMessage：-----------------------------------");
+        Navigator.pushNamed(this.context, '/MyMessage', arguments: {"GroupRelation": groupRelation});
+      }
+    }
+  }
+
+  bool _islogin(){
+    if(Global.profile.user == null) {
+      Navigator.pushNamed(context, '/Login');
+
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+  Future<bool> updateLike() async {
+      bool ret =await _gpService.updateGoodPriceLike(
+          widget.goodPiceModel.goodpriceid,
+          Global.profile.user!.uid,
+          Global.profile.user!.token!, errorCallBack);
+
+    // bool ret = await _activityService.updateLike(_activity!.actid, Global.profile.user!.uid,  Global.profile.user!.token!, errorCallBack);
+    if(ret) {
+      setState(() {
+        // _activity!.likenum = _activity!.likenum + 1;
+        widget.goodPiceModel.likenum =  widget.goodPiceModel.likenum+1;
+        _islike = true;
+      });
+    }
+    _isLikeEnter = true;
+    return ret;
+  }
+
+  Future<bool> updateDelLike() async {
+    bool ret =await _gpService.delGoodPriceLike(
+        widget.goodPiceModel.goodpriceid,
+        Global.profile.user!.uid,
+        Global.profile.user!.token!, errorCallBack);
+    // bool ret = await _activityService.delLike(_activity!.actid, Global.profile.user!.uid,  Global.profile.user!.token!, errorCallBack);
+    if(ret) {
+      setState(() {
+        // _activity!.likenum = _activity!.likenum - 1;
+        widget.goodPiceModel.likenum =  widget.goodPiceModel.likenum-1;
+        _islike = false;
+      });
+    }
+    _isLikeEnter = true;
+    return ret;
+  }
   Widget buildContentHeadImg(){
     albumpicslist = [];
     List imagepaths = widget.goodPiceModel.albumpics.split(',');
@@ -1109,8 +1238,8 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                                     fontSize: 12),),
                               SizedBox(height: 3,),
                               RatingStars(
-                                editable: true,
-                                rating: double.parse(e.liketype!.toString()),
+                                editable: false,
+                                rating: double.parse(e.likenum!.toString()),
                                 color: Colors.redAccent,
                                 iconSize: 19,
                               ),
@@ -1171,49 +1300,49 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                     });
                   });                },
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconText(
-                    e.likenum == 0 ? '点赞':e.likenum.toString(),
-                    padding: EdgeInsets.only(right: 2),
-                    style: TextStyle(color: Colors.black54, fontSize: 13),
-                    icon: e.likeuid != 0 ? Icon(IconFont.icon_zan1, color: Colors.redAccent,size: 18,):
-                    Icon(IconFont.icon_aixin, color: Colors.black45,size: 18,),
-                    onTap: () async {
-                      if(Global.profile.user == null){
-                        Navigator.pushNamed(context, '/Login');
-                        return;
-                      }
-                      if(_isEnter) {
-                        _isEnter = false;
-                        if (e.likeuid == 0){
-                          await evaluateLike(e.evaluateid!, e.user!.uid);
-                          _isEnter = true;
-                        }
-                        else{
-                          await delevaluateLike(e.evaluateid!, e.user!.uid);
-                          _isEnter = true;
-                        }
-                      }
-                    },
-                  ),
-                  SizedBox(width: 20,),
-                  // IconText(
-                  //   e.replynum.toString() == "0" ? '回复' : e.replynum.toString(),
-                  //   padding: EdgeInsets.only(right: 2),
-                  //   style: TextStyle(color: Colors.black54, fontSize: 13),
-                  //   icon: Icon(IconFont.icon_navbar_xiaoxi, color: Colors.black45, size: 18,),
-                  //   onTap: (){
-                  //     Navigator.pushNamed(context, '/EvaluateInfo', arguments: {"evaluateActivity": e}).then((val){
-                  //       setState(() {
-                  //
-                  //       });
-                  //     });
-                  //   },
-                  // ),
-                ],
-              ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.end,
+              //   children: [
+              //     IconText(
+              //       e.likenum == 0 ? '点赞':e.likenum.toString(),
+              //       padding: EdgeInsets.only(right: 2),
+              //       style: TextStyle(color: Colors.black54, fontSize: 13),
+              //       icon: e.likeuid != 0 ? Icon(IconFont.icon_zan1, color: Colors.redAccent,size: 18,):
+              //       Icon(IconFont.icon_aixin, color: Colors.black45,size: 18,),
+              //       onTap: () async {
+              //         if(Global.profile.user == null){
+              //           Navigator.pushNamed(context, '/Login');
+              //           return;
+              //         }
+              //         if(_isEnter) {
+              //           _isEnter = false;
+              //           if (e.likeuid == 0){
+              //             await evaluateLike(e.evaluateid!, e.user!.uid);
+              //             _isEnter = true;
+              //           }
+              //           else{
+              //             await delevaluateLike(e.evaluateid!, e.user!.uid);
+              //             _isEnter = true;
+              //           }
+              //         }
+              //       },
+              //     ),
+              //     SizedBox(width: 20,),
+              //     // IconText(
+              //     //   e.replynum.toString() == "0" ? '回复' : e.replynum.toString(),
+              //     //   padding: EdgeInsets.only(right: 2),
+              //     //   style: TextStyle(color: Colors.black54, fontSize: 13),
+              //     //   icon: Icon(IconFont.icon_navbar_xiaoxi, color: Colors.black45, size: 18,),
+              //     //   onTap: (){
+              //     //     Navigator.pushNamed(context, '/EvaluateInfo', arguments: {"evaluateActivity": e}).then((val){
+              //     //       setState(() {
+              //     //
+              //     //       });
+              //     //     });
+              //     //   },
+              //     // ),
+              //   ],
+              // ),
               SizedBox(height: 10,),
             ],
           ),
@@ -1267,7 +1396,7 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                     icon: Icon(Icons.keyboard_hide,
                       color: Colors.black54,),
                     onPressed: () {
-                      Navigator.pop(context);
+                      Navigator.pop(context, "refresh");
                     },
                   ),
                   Expanded(
@@ -1306,45 +1435,55 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
                       if (_message.isNotEmpty) {
                         Navigator.pop(context);
 
-                        if(commentid == 0){
-                          commentid = await _gpService.updateMessage(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid,
-                              Global.profile.user!.token!, touid, _message, "", errorCallBack);
-                          if(commentid > 0){
-                            _comments.insert(0, Comment(commentid, widget.goodPiceModel.goodpriceid, Global.profile.user, _message, 0,
-                                CommonUtil.getTime(), 0));
-                            sortComment(_comments, _ordertype);
-                            setState(() {
+                        // EvaluateActivity? value = await _gpService.updateEvaluateGoodPrice(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid, Global.profile.user!.token!, touid, _message, errorCallBack);
+                        // if (value != null)
+                        // _evaluates.add(value);
+                        // sortEvaluate(_ordertype);
+                        // setState(() {
+                        //
+                        // });
 
-                            });
-                          }
-                          else{
-                            errorHandle(commentid == null ? 0 : commentid, touid, null);
-                          }
-                        }
-                        else{
-                          int temreplyid = await _gpService.updateCommentReply(commentid, widget.goodPiceModel.goodpriceid,  Global.profile.user!.uid,
-                              Global.profile.user!.token!, touid, _message, "", errorCallBack);
 
-                          if(temreplyid > 0){
-                            _comments.forEach((e){
-                              if(e.commentid == commentid){
-                                if(e.replys == null ){
-                                  e.replys = [];
-                                }
-                                e.replys!.add(CommentReply(temreplyid, commentid, Global.profile.user,
-                                    touser, _message, DateTime.now().toString(), false, widget.goodPiceModel.goodpriceid, false, "", "", 0, ""));
-                              }
-                            });
-                            sortComment(_comments, _ordertype);
-
-                            setState(() {
-
-                            });
-                          }
-                          else{
-                            errorHandle(commentid == null ? 0 : commentid, touid, touser);
-                          }
-                        }
+                        // todo comment in 2.0
+                        // if(commentid == 0){
+                        //   commentid = await _gpService.updateMessage(widget.goodPiceModel.goodpriceid, Global.profile.user!.uid,
+                        //       Global.profile.user!.token!, touid, _message, "", errorCallBack);
+                        //   if(commentid > 0){
+                        //     _comments.insert(0, Comment(commentid, widget.goodPiceModel.goodpriceid, Global.profile.user, _message, 0,
+                        //         CommonUtil.getTime(), 0));
+                        //     sortComment(_comments, _ordertype);
+                        //     setState(() {
+                        //
+                        //     });
+                        //   }
+                        //   else{
+                        //     errorHandle(commentid == null ? 0 : commentid, touid, null);
+                        //   }
+                        // }
+                        // else{
+                        //   int temreplyid = await _gpService.updateCommentReply(commentid, widget.goodPiceModel.goodpriceid,  Global.profile.user!.uid,
+                        //       Global.profile.user!.token!, touid, _message, "", errorCallBack);
+                        //
+                        //   if(temreplyid > 0){
+                        //     _comments.forEach((e){
+                        //       if(e.commentid == commentid){
+                        //         if(e.replys == null ){
+                        //           e.replys = [];
+                        //         }
+                        //         e.replys!.add(CommentReply(temreplyid, commentid, Global.profile.user,
+                        //             touser, _message, DateTime.now().toString(), false, widget.goodPiceModel.goodpriceid, false, "", "", 0, ""));
+                        //       }
+                        //     });
+                        //     sortComment(_comments, _ordertype);
+                        //
+                        //     setState(() {
+                        //
+                        //     });
+                        //   }
+                        //   else{
+                        //     errorHandle(commentid == null ? 0 : commentid, touid, touser);
+                        //   }
+                        // }
                       }
                       else {
                         ShowMessage.showToast('输入问题!');
@@ -1430,6 +1569,15 @@ class GoodPriceInfoState extends State<GoodPriceInfo> {
       comments.sort((a, b) => (b.likenum!).compareTo(a.likenum!));
     }
     return comments;
+  }
+
+  void sortEvaluate(String ordertype){
+    if(ordertype == "0")
+      _evaluates.sort((a, b) => (b.createtime!).compareTo(a.createtime!));
+    else{
+      _evaluates.sort((a, b) => (b.likenum!).compareTo(a.likenum!));
+    }
+    return;
   }
 
   List<Widget> getImageList(String imagepaths){

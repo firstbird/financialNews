@@ -20,48 +20,57 @@ import '../global.dart';
 class ImHelper{
 
   TableHelper _sql = TableHelper();
+  Database? dbClient = null;
 
   Future close() async {
     var result = _sql.close();
     return result;
   }
 
+  Future<int> saveSingleGroupRelation(GroupRelation groupRelation)async{
+    if (dbClient == null)
+    dbClient = await _sql.db;
+    var result = 0;
+    print("[ImHelper->saveGroupRelation] uid: ${groupRelation.uid}, timeline_id: ${groupRelation.timeline_id}, group_name1: ${groupRelation.group_name1} unreadcount: ${groupRelation.unreadcount}");
+    if(await isJoinGrid(groupRelation.uid!, groupRelation.timeline_id)){
+      int? unreadcount = Sqflite.firstIntValue(await dbClient!.rawQuery("SELECT unreadcount FROM ${TableHelper.im_group_relation} "
+          "WHERE  timeline_id='${groupRelation.timeline_id}'  "
+          "and uid=${Global.profile.user!.uid} "));
+
+      if(unreadcount == null) unreadcount = 0;
+      print('[saveSingleGroupRelation] unreadcount: ${unreadcount} groupRelation.unreadcount: ${groupRelation.unreadcount} newMsg: ${groupRelation.newmsg}');
+
+      await dbClient!.rawUpdate( 'UPDATE ${TableHelper.im_group_relation} SET unreadcount = ?, readindex = ?, group_name1 = ?,clubicon=?,'
+          'name =?,newmsgtime=?,newmsg=?,timelineType=?,status=?,locked=?,memberupdatetime=?,source_id=?,goodpriceid=? WHERE timeline_id = ? and uid = ? ',
+          [unreadcount + groupRelation.unreadcount, groupRelation.readindex, groupRelation.group_name1,groupRelation.clubicon,
+            groupRelation.name, groupRelation.newmsgtime, groupRelation.newmsg, groupRelation.timelineType,groupRelation.status,
+            groupRelation.locked, groupRelation.memberupdatetime, groupRelation.source_id, groupRelation.goodpriceid,
+            groupRelation.timeline_id,Global.profile.user!.uid]);
+      result++;
+      if(Global.isInDebugMode){
+        print("更新群信息 ------------------------------");
+      }
+    }
+    else{
+      if(Global.isInDebugMode){
+        print("插入群信息 ------------------------------");
+      }
+      await dbClient!.insert(
+          TableHelper.im_group_relation, groupRelation.toMap());
+      result++;
+    }
+    return result;
+  }
+
   ///获取最新relation
   ///获取以读索引，未读数量
   Future<int> saveGroupRelation(List<GroupRelation> grouprelations)async{
-    var dbClient = await _sql.db;
+    if (dbClient == null)
+      dbClient = await _sql.db;
     var result = 0;
-    List<String> timeline_ids = [];
-
     if(grouprelations.length > 0){
       for(GroupRelation groupRelation in grouprelations) {
-        print("[ImHelper->saveGroupRelation] uid: ${groupRelation.uid}, timeline_id: ${groupRelation.timeline_id}, group_name1: ${groupRelation.group_name1}");
-        timeline_ids.add(groupRelation.timeline_id);
-        if(await isJoinGrid(groupRelation.uid!, groupRelation.timeline_id)){
-          int? unreadcount = Sqflite.firstIntValue(await dbClient.rawQuery("SELECT unreadcount FROM ${TableHelper.im_group_relation} "
-              "WHERE  timeline_id='${groupRelation.timeline_id}'  "
-              "and uid=${Global.profile.user!.uid} "));
-          
-          if(unreadcount == null) unreadcount = 0; 
-          await dbClient.rawUpdate( 'UPDATE ${TableHelper.im_group_relation} SET unreadcount = ?, readindex = ?, group_name1 = ?,clubicon=?,'
-              'name =?,newmsgtime=?,newmsg=?,timelineType=?,status=?,locked=?,memberupdatetime=?,source_id=?,goodpriceid=? WHERE timeline_id = ? and uid = ? ',
-              [unreadcount + groupRelation.unreadcount, groupRelation.readindex, groupRelation.group_name1,groupRelation.clubicon,
-                groupRelation.name, groupRelation.newmsgtime, groupRelation.newmsg, groupRelation.timelineType,groupRelation.status,
-                groupRelation.locked, groupRelation.memberupdatetime, groupRelation.source_id, groupRelation.goodpriceid,
-                groupRelation.timeline_id,Global.profile.user!.uid]);
-          result++;
-          if(Global.isInDebugMode){
-            print("更新群信息 ------------------------------");
-          }
-        }
-        else{
-          if(Global.isInDebugMode){
-            print("插入群信息 ------------------------------");
-          }
-          await dbClient.insert(
-              TableHelper.im_group_relation, groupRelation.toMap());
-          result++;
-        }
+        result += await saveSingleGroupRelation(groupRelation);
       }
     }
     return result;
@@ -188,8 +197,8 @@ class ImHelper{
   }
   ///获取最新未读数据timeline
   ///更新timeline表
-  Future<int> saveMessage( List<TimeLineSync> timelinesync) async {
-    print("[IM helper->saveMessage] size: ${timelinesync.length}, global user: ${Global
+  Future<int> saveTimeLineMessage( List<TimeLineSync> timelinesync) async {
+    print("[IM helper->saveTimeLineMessage] size: ${timelinesync.length}, global user: ${Global
         .profile.user!.uid}");
     var dbClient = await _sql.db;
     var result = 0;
@@ -204,18 +213,18 @@ class ImHelper{
         var tem = Sqflite.firstIntValue(await dbClient.rawQuery(
             "SELECT COUNT(*) FROM ${TableHelper.im_timeline_sync_relation} "
                 "WHERE uid=${Global.profile.user!.uid} and timeline_id='${timelinesync.timeline_id}' and content='${timelinesync.content}'"));
-        print("[IM helper->saveMessage] query tem: ${tem}");
+        print("[IM helper->saveTimeLineMessage] query tem: ${tem}");
         if (tem == null || tem == 0) {
           int ret = await dbClient.insert(
               TableHelper.im_timeline_sync_relation, timelinesync.toMap());
-          print("[IM helper->saveMessage] timeline_id: ${timelinesync.timeline_id} insert: ${timelinesync.content}, uid: ${Global
+          print("[IM helper->saveTimeLineMessage] timeline_id: ${timelinesync.timeline_id} insert: ${timelinesync.content}, uid: ${Global
               .profile.user!.uid} ret: ${ret}");
           if (ret >
               0) {
             result++;
           }
         } else {
-          print("[IM helper->saveMessage] error: sequence_id: ${timelinesync.sequence_id}, global uid: ${Global
+          print("[IM helper->saveTimeLineMessage] error: sequence_id: ${timelinesync.sequence_id}, global uid: ${Global
               .profile.user!.uid}, timeline_id: ${timelinesync
               .timeline_id}");
         }
@@ -417,6 +426,7 @@ class ImHelper{
   Future<int> updateAlready(String timeline_id) async {
     var dbClient = await _sql.db;
     int readindex = await getMaxsequence_id(timeline_id);
+    print('[updateAlready] update unreadcount set 0,  readindex: ${readindex}');
     int count = await dbClient.rawUpdate(
         'UPDATE ${TableHelper.im_group_relation} SET unreadcount = ?, readindex = ? WHERE timeline_id = ? and uid=?',
         [0, readindex, timeline_id, Global.profile.user!.uid]);
@@ -632,6 +642,8 @@ class ImHelper{
         ret = true;
       });
     }
+    if(Global.isInDebugMode)
+      print('selGoodPriceState ret: ${ret}');
     return ret;
   }
 
@@ -772,8 +784,9 @@ class ImHelper{
     var dbClient = await _sql.db;
     var result = 0;
     result = await dbClient.insert(TableHelper.product_collection_state_table, {"productid": productid, "uid": uid});
-    if(Global.isInDebugMode)
-      print('ProductCollection num ${result}');
+    if(Global.isInDebugMode) {
+      print("saveProductCollectionState result: ${result}");
+    }
     return result;
   }
   //删除collection
@@ -816,7 +829,7 @@ class ImHelper{
       "profilepicture": goodPiceModel.profilepicture,
       "localuid": uid});
     if(Global.isInDebugMode)
-      print('goodprice_collection_state_table num ${result}');
+      print('saveGoodPriceCollectionState result: ${result} goodpriceid: ${goodPiceModel.goodpriceid} uid: ${uid}');
     return result;
   }
   //删除GoodPricecollection
@@ -837,10 +850,12 @@ class ImHelper{
     List<String> goodpriceids = [];
     if(maps != null){
       maps.forEach((element) {
+        print("selGoodPriceCollectionState goodpriceid: ${goodpriceid} element: ${element["goodpriceid"]} uid: ${uid}");
         goodpriceids.add(element["goodpriceid"]);
       });
       fun(goodpriceids);
     }
+    print("selGoodPriceCollectionState goodpriceids len: ${goodpriceids.length} goodpriceid: ${goodpriceid} uid: ${uid}");
     return "";
   }
   Future<int> selGoodPriceCollectionStateByUid(int uid) async{

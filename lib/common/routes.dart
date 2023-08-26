@@ -10,6 +10,7 @@ import '../page/activity/applyactivity.dart';
 import '../page/activity/career.dart';
 import '../page/activity/collection.dart';
 import '../page/activity/education.dart';
+import '../page/activity/evaluateGoodPrice.dart';
 import '../page/activity/mycreateactivity.dart';
 import '../page/activity/myjoinactivity.dart';
 import '../page/index.dart';
@@ -553,6 +554,14 @@ var onGenerateRoute = (RouteSettings settings){
         return AnimationPageRoute(builder: (_) => IssuedActivity(arguments:settings.arguments), settings: settings.copyWith());
       } else if (Platform.isIOS) {
         return CupertinoPageRoute(builder: (_) => IssuedActivity(arguments:settings.arguments), settings: settings.copyWith());
+      }
+      break;
+
+    case '/EvaluateGoodPrice'://用户编辑
+      if (Platform.isAndroid) {
+        return AnimationPageRoute(builder: (_) => EvaluateGoodPriceActivity(arguments:settings.arguments), settings: settings.copyWith());
+      } else if (Platform.isIOS) {
+        return CupertinoPageRoute(builder: (_) => EvaluateGoodPriceActivity(arguments:settings.arguments), settings: settings.copyWith());
       }
       break;
 

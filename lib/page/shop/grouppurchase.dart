@@ -21,7 +21,7 @@ class _GroupPurchaseState extends State<GroupPurchase> {
   bool _ismore = true;
   final GPService _gpService = new GPService();
   final ImHelper _imHelper = new ImHelper();
-  List<GoodPiceModel> goodPiceModels = [];
+  List<GoodPiceModel> _goodPiceModels = [];
   List<int> goodpricenotinteresteduids = [];
   RefreshController _refreshController = RefreshController(initialRefresh: true);
 
@@ -32,11 +32,11 @@ class _GroupPurchaseState extends State<GroupPurchase> {
   }
 
   void _getGoodPriceList() async {
-    goodPiceModels = await _gpService.getRecommendGoodPriceList(-1, 0);
+    _goodPiceModels = await _gpService.getRecommendGoodPriceList(-1, 0);
     if(Global.profile.user != null) {
       goodpricenotinteresteduids = await _imHelper.getGoodPriceNotInteresteduids(Global.profile.user!.uid);
     }
-    if(goodPiceModels.length < 25){
+    if(_goodPiceModels.length < 25){
       _ismore = false;
     }
 
@@ -51,10 +51,10 @@ class _GroupPurchaseState extends State<GroupPurchase> {
     if(!_ismore) return;
 
     final moredata = await  _gpService.getRecommendGoodPriceList(
-        -1, goodPiceModels.length);
+        -1, _goodPiceModels.length);
 
     if(moredata.length > 0)
-      goodPiceModels = goodPiceModels + moredata;
+      _goodPiceModels = _goodPiceModels + moredata;
 
     if(moredata.length >= 25)
       _refreshController.loadComplete();
@@ -153,7 +153,7 @@ class _GroupPurchaseState extends State<GroupPurchase> {
         padding: EdgeInsets.only(top: 1),
         child:SmartRefresher(
           enablePullDown: true,
-          enablePullUp: goodPiceModels.length >= 25,
+          enablePullUp: _goodPiceModels.length >= 25,
           onRefresh: _getGoodPriceList,
           header: MaterialClassicHeader(distance: 100, ),
           footer: CustomFooter(
@@ -187,12 +187,12 @@ class _GroupPurchaseState extends State<GroupPurchase> {
           ),
           controller: _refreshController,
           onLoading: _onLoading,
-          child: _refreshController.headerStatus == RefreshStatus.completed && goodPiceModels.length == 0 ? Center(
+          child: _refreshController.headerStatus == RefreshStatus.completed && _goodPiceModels.length == 0 ? Center(
             child: Text('emmm...还没有商家提供服务',
               style: TextStyle(color: Colors.black54, fontSize: 14), maxLines: 2,),
           ) : ListView(
             addAutomaticKeepAlives: true,
-            children: buildProductContent(goodPiceModels),
+            children: buildProductContent(_goodPiceModels),
           ),
         ),
       ),
@@ -264,7 +264,14 @@ class _GroupPurchaseState extends State<GroupPurchase> {
               }
             },
             activityHomeOnTap: (){
-              Navigator.pushNamed(context, '/GoodPriceInfo', arguments: {"goodprice": goodPiceModel});
+              Navigator.pushNamed(context, '/GoodPriceInfo', arguments: {"goodprice": goodPiceModel}).then((result) {
+                      print("[goodprice] pop back refresh");
+                      setState(() {
+                        // 更新状态
+                        _getGoodPriceList();
+                      });
+
+              });
             },
             sharedtype: "1",
             actid: goodPiceModel.goodpriceid,
@@ -330,7 +337,8 @@ class _GroupPurchaseState extends State<GroupPurchase> {
                                   ),
                                   SizedBox(width: 10,),
                                   IconText(
-                                    goodPiceModel.satisfactionrate == 0 ? '0' : '${(goodPiceModel.satisfactionrate * 100).toInt()}%',
+                                    // goodPiceModel.satisfactionrate == 0 ? '0' : '${(goodPiceModel.satisfactionrate * 100).toInt()}%',
+                                    goodPiceModel.likenum.toString(),
                                     padding: EdgeInsets.only(right: 2),
                                     style: TextStyle(color: Colors.black54, fontSize: 10),
                                     icon: Text('赞', style: TextStyle(fontSize: 8),),

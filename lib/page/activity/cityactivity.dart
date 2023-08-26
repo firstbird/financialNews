@@ -58,6 +58,7 @@ class _CityActivityState extends State<CityActivity>  with  AutomaticKeepAliveCl
       _lastScroll = currentScroll;
 
       if (maxScrollUser - currentUserScroll <= _scrollThreshold && !_lock) {
+        print("[city activity]on scroll PostFetched");
         _cityActivityDataBloc.add(PostFetched(citycode));
         _lock = true;//加载完毕后再解锁
       }
@@ -148,17 +149,31 @@ class _CityActivityState extends State<CityActivity>  with  AutomaticKeepAliveCl
     citycode = Global.profile.locationCode;
 //    print(_scrollController.position.viewportDimension	);
     return Scaffold(
-      floatingActionButton: _isTop? FloatingActionButton(
+      // floatingActionButton: _isTop? FloatingActionButton(
+      //     mini: true,
+      //     heroTag: UniqueKey(),
+      //     backgroundColor: Colors.white,
+      //     onPressed: (){
+      //       _scrollControllerUserContent.jumpTo(0);
+      //       setState(() {
+      //         _isTop = false;
+      //       });
+      //     },
+      //     child: Icon(IconFont.icon_rocket, color: Colors.black45,)) : SizedBox.shrink(),
+      floatingActionButton: FloatingActionButton(
           mini: true,
-          heroTag: UniqueKey(),
           backgroundColor: Colors.white,
           onPressed: (){
-            _scrollControllerUserContent.jumpTo(0);
-            setState(() {
-              _isTop = false;
-            });
+            if(Global.profile.user == null) {
+              Navigator.pushNamed(context, '/Login');
+            }
+            else {
+              Navigator.pushNamed(context, '/IssuedActivity');
+            }
           },
-          child: Icon(IconFont.icon_rocket, color: Colors.black45,)) : SizedBox.shrink(),
+          child: Icon(Icons.add_a_photo,  color:  Global.profile.backColor)
+      ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(statusBarHeight + 100),
         child: Container(
@@ -222,7 +237,10 @@ class _CityActivityState extends State<CityActivity>  with  AutomaticKeepAliveCl
                         state.activitys!.forEach((element) {
                           lists.add(Padding(
                             padding: EdgeInsets.only(left: 10, top: 10),
-                            child: CityActivityWidget(activity: element,),
+                            child: CityActivityWidget(activity: element, refreshCallBack: (){
+                              print("[city activity]refresh callback --------");
+                              _cityActivityDataBloc.add(Refreshed(Global.profile.locationCode));
+                            }),
                           ));
                         });
                         lists.add(maxWidget);
@@ -272,6 +290,7 @@ class _CityActivityState extends State<CityActivity>  with  AutomaticKeepAliveCl
         child: Text('轻触重试', style: TextStyle(color: Colors.black),),
       ),
       onTap: (){
+        print("[city activity]buildReLoadData ontap post fetched");
         _cityActivityDataBloc.add(PostFetched(citycode));
       },
     );
@@ -293,4 +312,72 @@ class _CityActivityState extends State<CityActivity>  with  AutomaticKeepAliveCl
   }
 }
 
+class IssuedActivityButton extends StatelessWidget {
+  const IssuedActivityButton({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    bool inDebugMode = false;
+
+    assert(inDebugMode = true);
+
+    return Container(
+        // margin: EdgeInsets.only(top: 10),
+        // padding: EdgeInsets.all(3),
+        height: 38,
+        width: 38,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(60),
+          color: Colors.white,
+        ),
+        child: Center(
+            child: Stack(
+              children: <Widget>[
+                FloatingActionButton(
+                  heroTag: UniqueKey(),
+                  elevation: 0,
+                  backgroundColor: Global.profile.backColor,
+                  child: IconButton(
+                    padding: EdgeInsets.only(bottom: 3, right: 3),
+                    icon: Icon(IconFont.icon_tianjiajiahaowubiankuang, size: 25, color: Global.profile.fontColor,),
+                    color: Colors.black,
+                    onPressed: (){
+                      if(Global.profile.user == null) {
+                        Navigator.pushNamed(context, '/Login');
+                      }
+                      else {
+                        Navigator.pushNamed(context, '/IssuedActivity');
+                      }
+                    },
+                  ),
+                  onPressed: (){
+                    if(Global.profile.user == null) {
+                      Navigator.pushNamed(context, '/Login');
+                    }
+                    else {
+                      Navigator.pushNamed(context, '/IssuedActivity');
+                    }
+                  },
+                ),
+                // Container(
+                //     width: 55,
+                //     height: 50,
+                //     margin: EdgeInsets.only(top: 35),
+                //     decoration: BoxDecoration(
+                //       color: Colors.yellow,
+                //       borderRadius: inDebugMode?null:BorderRadius.only(bottomLeft: Radius.circular(8.0), bottomRight: Radius.circular(8.0)),
+                //     ),
+                //     child: Center(
+                //       child: Text(
+                //         '超多人来',
+                //         style: TextStyle(fontSize: 8, color: Colors.black),
+                //       ),
+                //     )
+                // )
+              ],
+            )
+        )
+    );
+  }
+}
 

@@ -20,6 +20,8 @@ class MySpecialTextSpanBuilder extends SpecialTextSpanBuilder {
   @override
   TextSpan build(String data,
       {TextStyle? textStyle, SpecialTextGestureTapCallback? onTap}) {
+    print("[createSpecialText] build");
+
     if (kIsWeb) {
       return TextSpan(text: data, style: textStyle);
     }
@@ -31,8 +33,10 @@ class MySpecialTextSpanBuilder extends SpecialTextSpanBuilder {
   SpecialText? createSpecialText(String flag,
       {TextStyle? textStyle, SpecialTextGestureTapCallback? onTap, required int index}) {
     if (flag == null || flag == '') {
+      print("[createSpecialText] flag null return");
       return null;
     }
+    print("[createSpecialText] flag ${flag}");
     if(textStyle == null){
       textStyle = TextStyle(color: Colors.black87, fontSize: 13);
     }
@@ -55,6 +59,7 @@ class MySpecialTextSpanBuilder extends SpecialTextSpanBuilder {
           start: index - (EmojiText.flag.length - 1), isplay: this.isplay, isText: this.isText );
     }
     else if (isStart(flag, ImageText.flag)) {
+      print("[createSpecialText] is image flag");
       return ImageText(textStyle, null,
           start: index - (EmojiText.flag.length - 1), isText: this.isText, pageWidth: this.pagewidth);
     }
@@ -71,6 +76,11 @@ class MySpecialTextSpanBuilder extends SpecialTextSpanBuilder {
         start: index - (EmojiText.flag.length - 1), isText: this.isText, isopen: this.isopen, pageWidth: this.pagewidth, );
     }
     return null;
+  }
+
+  /// start with SpecialText
+  bool isStart(String value, String startFlag) {
+    return value.startsWith(startFlag);
   }
 
   @override
@@ -226,6 +236,7 @@ class ImageText extends SpecialText{
     key = key.replaceAll('|', '');
     List<String> imginfo = key.split('#');
 
+    print("[specialtextspan] finishText isText: ${isText} imageurl: ${imginfo[0]} sourceWidth: ${double.parse(imginfo[1].split(',')[0])}, sourceHeight: ${double.parse(imginfo[1].split(',')[1])}");
     Widget webContent = SizedBox.shrink();
     if(isText){
       webContent = Text("[图片]", style:  TextStyle(color: Colors.black45, fontSize: 13),);

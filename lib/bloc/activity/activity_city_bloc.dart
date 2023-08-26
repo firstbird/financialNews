@@ -15,6 +15,7 @@ class CityActivityDataBloc extends Bloc<PostEvent, CityActivityState> {
       try {
         if (!_hasReachedMax(currentState)) {
           if (currentState is PostInitial || currentState is PostFailure) {
+            print("[city activity bloc]PostFetched PostInitial or PostFailure");
             emit(PostLoading());
             final activitys = await _activityService
                 .getActivityListByCity(0, event.locationCode);
@@ -23,6 +24,7 @@ class CityActivityDataBloc extends Bloc<PostEvent, CityActivityState> {
           }
           //加载更多
           if (currentState is PostSuccess) {
+            print("[city activity bloc]PostFetched PostSuccess");
             final activitys = await _activityService
                 .getActivityListByCity(
                 currentState.activitys!.length, event.locationCode);

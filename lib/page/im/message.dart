@@ -34,6 +34,7 @@ import '../../model/grouppurchase/goodpice_model.dart';
 import '../../model/user.dart';
 import '../../model/im/redpacket.dart';
 import '../../common/iconfont.dart';
+import '../../model/usernotice.dart';
 import '../../util/showmessage_util.dart';
 import '../../util/permission_util.dart';
 import '../../util/common_util.dart';
@@ -511,13 +512,21 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
     if(serviceData != null && serviceData != "") {
       time = serviceData.split(",")[0];
       String sourceid = serviceData.split(",")[1];
+      print("[sendMessage] result time: ${time}, sourceid: ${sourceid}");
       temLine.add(TimeLineSync(_groupRelation.timeline_id, 0, user.uid, time,user, this._localmsgcontent, this._contenttype, localpath, sourceid));
     }
+
     if(time != null && time != ""){
       temLine[0].send_time = time;
+      print("[sendMessage] result time not null");
       if(await _imHelper.saveSelfMessage(temLine[0]) > 0){
+        print("[sendMessage] result saveSelfMessage success");
         timeLineSyncs = temLine + timeLineSyncs;
       }
+
+      _groupRelation.newmsg = this._msgcontent;
+      _groupRelation.newmsgtime = temLine[0].send_time;
+      await _imHelper.saveSingleGroupRelation(_groupRelation);
       _isMessageSent = true;
       setState(() {
 
@@ -891,7 +900,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
           backgroundColor: Colors.grey.shade100,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 20 ),
-            onPressed: (){
+            onPressed: () async {
               Navigator.pop(context,"return");
               if (!_isMessageSent && timeLineSyncs.length == 1 && timeLineSyncs[0].sender == 0 && _groupRelation.relationtype == 2) {
                 print("[message->Appbar] exit activity, timeline_id: ${_groupRelation.timeline_id}");
@@ -901,6 +910,10 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
                     _groupRelation.timeline_id, Global.profile.user!.uid,
                     Global.profile.user!.token!, errorCallBack);
               }
+              Global.timeline_id = _groupRelation.timeline_id;
+              // UserNotice? userNotice = await _activityService.syncUserNotice(
+              //     Global.profile.user!.uid, Global.profile.user!.token!, () {});
+              _imBloc.add(UserRelationAndMessage(Global.profile.user!));
               print("[message->Appbar] pop");
             },
           ),
@@ -1060,7 +1073,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
     for(int i=0; i < timeLineSyncs.length ; i++){
       //系统通知,两次消息间隔超过10分钟就在消息上方显示发送时间
 
-      print("[buildMsgContent] content: ${timeLineSyncs[i].content}, sender: ${timeLineSyncs[i].sender}");
+      print("[buildMsgContent] contenttype: ${timeLineSyncs[i].contenttype} content: ${timeLineSyncs[i].content},  sender: ${timeLineSyncs[i].sender}");
       if(timeLineSyncs[i].sender == 0){
         rows.add(buildSysMsg(timeLineSyncs[i]));
         if(timeLineSyncs[i].content!.indexOf("@安全活动规范@") < 0) {
@@ -1223,6 +1236,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
     double contentwidth = 0.0;
     Widget widContent = SizedBox.shrink();
     bool isImg = false;
+    print("[buildMyContent] message type: ${timeLineSync.contenttype}");
     if(timeLineSync.contenttype == ContentType.Type_Sound.index){
       String key = timeLineSync.content!.replaceAll('|sound: ', '').replaceAll('|', '');
       List<String> soundinfo = key.split('#');
@@ -1245,6 +1259,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
     else if(timeLineSync.contenttype == ContentType.Type_Image.index){
       //组件有问题要在外面处理，里面也处理了一次
       String key = timeLineSync.content!.replaceAll('|img: ', '').replaceAll('|', '');
+      print("[buildMyContent] receive image type, key: ${key}");
       List<String> imginfo = key.split('#');
       String imgurl = imginfo[0];
       isImg = true;
@@ -1511,6 +1526,7 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
     double contentwidth = 0.0;
     bool isImg = false;
     Widget widContent = SizedBox.shrink();
+    print("[buildHerContent] content type ------- ${timeLineSync.contenttype}  -- ${ContentType.Type_Sound.index}");
     if(timeLineSync.contenttype == ContentType.Type_Sound.index){
       String key = timeLineSync.content!.replaceAll('|sound: ', '').replaceAll('|', '');
       List<String> soundinfo = key.split('#');
@@ -1533,10 +1549,12 @@ class _MyMessageState extends State<MyMessage> with TickerProviderStateMixin {
     else if(timeLineSync.contenttype == ContentType.Type_Image.index){
       //组件有问题要在外面处理，里面也处理了一次
 
+      print("[buildHerContent] image type -------");
       String key = timeLineSync.content!.replaceAll('|img: ', '').replaceAll('|', '');
       List<String> imginfo = key.split('#');
       String imgurl = imginfo[0];
       isImg = true;
+      print("[buildHerContent] image type _pageWidth: ${_pageWidth}");
 
       widContent = Container(
         width: _pageWidth - 20,

@@ -49,7 +49,7 @@ class _EvaluateInfoState extends State<EvaluateInfo> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getEvaluateReplys();
+    // getEvaluateReplys();
   }
   
   @override
@@ -149,10 +149,10 @@ class _EvaluateInfoState extends State<EvaluateInfo> {
               ],
             ),
           ),
-          buildReply()
+          // buildReply()
         ],
       ),
-      bottomNavigationBar:buildBottomButton()
+      // bottomNavigationBar:buildBottomButton() //todo evaluate reply in 2.0
     );
   }
 
@@ -161,13 +161,16 @@ class _EvaluateInfoState extends State<EvaluateInfo> {
     List<Widget> images = [];
     paths.map((e){
       images.add(
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: ClipRRect(
-            borderRadius: BorderRadius.all(Radius.circular(0)),
-            child: CachedNetworkImage(
-              imageUrl: '${e.toString()}',//?x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80',
-              fit: BoxFit.cover,
+        Container(
+          height: 800,
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: ClipRRect(
+              borderRadius: BorderRadius.all(Radius.circular(0)),
+              child: CachedNetworkImage(
+                imageUrl: '${e.toString()}',//?x-oss-process=image/resize,m_fixed,w_1080/sharpen,50/quality,q_80',
+                fit: BoxFit.cover,
+              ),
             ),
           ),
         )

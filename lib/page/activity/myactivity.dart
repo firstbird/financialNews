@@ -95,7 +95,7 @@ class ActivityWidget extends StatefulWidget {
 
 class _ActivityWidgetState extends State<ActivityWidget> {
   Activity _activity;
-  bool retLike = false;
+  bool _retLike = false;
   ImHelper _imHelper = new ImHelper();
   final ActivityService _activityService = new ActivityService();
   _ActivityWidgetState(this._activity);
@@ -107,11 +107,11 @@ class _ActivityWidgetState extends State<ActivityWidget> {
       _imHelper.selActivityState(this._activity.actid, Global.profile.user!.uid, (List<String> actid){
         if(actid.length > 0){
           setState(() {
-            retLike = true;
+            _retLike = true;
           });
         }
         else{
-          retLike = false;
+          _retLike = false;
         }
       });
     }
@@ -167,30 +167,36 @@ class _ActivityWidgetState extends State<ActivityWidget> {
                     _activity.likenum.toString() == "0" ? '点赞':_activity.likenum.toString(),
                     padding: EdgeInsets.only(right: 2),
                     style: TextStyle(color: Colors.black45, fontSize: 13),
-                    icon: retLike ? Icon(IconFont.icon_zan1, color: Global.profile.backColor,size: 16,): Icon(IconFont.icon_aixin, color: Colors.black45,size: 16,),
+                    icon: _retLike ? Icon(IconFont.icon_zan1, color: Global.profile.backColor,size: 16,): Icon(IconFont.icon_aixin, color: Colors.black45,size: 16,),
                     onTap: () async {
                       if(isEnter) {
                         isEnter = false;
                         bool ret = false;
-                        if (retLike) {
+                        if (_retLike) {
                           ret = await _activityService.delLike(
                               _activity.actid,
                               Global.profile.user!.uid,
                               Global.profile.user!.token!, () {});
-                          _activity.likenum -= 1;
-                          retLike = false;
+                          if (ret) {
+                            setState(() {
+                              _activity.likenum -= 1;
+                              _retLike = false;
+                            });
+                          }
+                          isEnter = true;
                         }
                         else {
                           ret = await _activityService.updateLike(
                               _activity.actid,
                               Global.profile.user!.uid,
                               Global.profile.user!.token!, () {});
-                          _activity.likenum += 1;
-                          retLike = true;
-                        }
-                        if (ret) {
+                          if (ret) {
+                            setState(() {
+                              _activity.likenum += 1;
+                              _retLike = true;
+                            });
+                          }
                           isEnter = true;
-                          setState(() {});
                         }
                       }
                     },

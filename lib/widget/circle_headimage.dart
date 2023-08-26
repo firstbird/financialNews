@@ -527,7 +527,8 @@ class ClipRRectOhterHeadImageContainerByWidthNoEventNoHeight extends StatelessWi
           image: DecorationImage(
               fit: BoxFit.cover,
               image: CachedNetworkImageProvider(
-                '${temimageUrl}?x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80',
+                // '${temimageUrl}?x-oss-process=image/resize,m_fixed,w_600/sharpen,50/quality,q_80',
+                '${temimageUrl}',
               )
           )
       ),
@@ -575,7 +576,7 @@ class ClipRRectOhterHeadImageContainerByBigImg extends StatelessWidget {
             image: DecorationImage(
                 fit: BoxFit.cover,
                 image: CachedNetworkImageProvider(
-                  '${temimageUrl}?x-oss-process=image/resize,m_fixed,w_300/sharpen,50',
+                  '${temimageUrl}', //?x-oss-process=image/resize,m_fixed,w_300/sharpen,50'
                 )
             )
         ),

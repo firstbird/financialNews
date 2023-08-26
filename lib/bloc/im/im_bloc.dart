@@ -29,33 +29,40 @@ class ImBloc extends Bloc<ImEvent, ImState> {
   ImBloc():super( initImState()) {
     on<UserRelationAndMessage>((event, emit) async {
       List<GroupRelation>? grouprelationlist = [];
+      print("[UserRelationAndMessage] begin ---------------------");
       if(event.userNotice != null){
         //聊天通知
-        if(event.userNotice!.unread_gpmsg > 0){
+        print("[UserRelationAndMessage] event.userNotice not null ---------------------");
+        if(event.userNotice!.unreadGpmsg > 0){
           //群聊关系同步本地储存，消息数据异步写入
           //用户登录成功后执行 活动群，自建群聊，私人聊天的同步
           grouprelationlist = await imService.syncActivityRelation(event.user.uid, event.user.token!, errorCallBack);
           if(grouprelationlist != null && grouprelationlist.isNotEmpty) {
+            print("[UserRelationAndMessage] unread_gpmsg > 0 ---------------------");
             await imService.saveLocalStore(grouprelationlist, event.user.token!, event.user.uid, errorCallBack);
           }
         }
-        if(event.userNotice!.unread_communitymsg > 0){
+        if(event.userNotice!.unreadCommunitymsg > 0){
           grouprelationlist = await imService.syncCommunityRelation(event.user.uid, event.user.token!, errorCallBack);
           if(grouprelationlist != null && grouprelationlist.isNotEmpty) {
+            print("[UserRelationAndMessage] unread_communitymsg > 0 ---------------------");
             await imService.saveLocalStore(grouprelationlist, event.user.token!, event.user.uid, errorCallBack);
           }
         }
-        if(event.userNotice!.unread_singlemsg > 0){
+        if(event.userNotice!.unreadSinglemsg > 0){
           grouprelationlist = await imService.syncSingleRelation(event.user.uid, event.user.token!, errorCallBack);
           if(grouprelationlist != null && grouprelationlist.isNotEmpty) {
+            print("[UserRelationAndMessage] unread_singlemsg > 0 ---------------------");
             await imService.saveLocalStore(grouprelationlist, event.user.token!, event.user.uid, errorCallBack);
           }
         }
         //活动通知
+        print("[UserRelationAndMessage] saveLocalStore default ---------------------");
         await activityService.saveLocalStore(
             event.userNotice!, event.user.token!, event.user.uid,
             errorCallBack);
       }
+      print("[UserRelationAndMessage] setAppUnReadCount ---------------------");
       //获取本地
       NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
 
@@ -67,11 +74,12 @@ class ImBloc extends Bloc<ImEvent, ImState> {
         Global.timeline_id = "";
 
         print("[onUserRelationAndMessage] send groupRelations: ${newMessageState.groupRelations.length} ---------------------");
+
         emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: timeLineSyncs));
 
       }
       else {
-        print("[onUserRelationAndMessage] send groupRelations: ${newMessageState.groupRelations.length} ---------------------");
+        print("[onUserRelationAndMessage] Global.timeline_id null send groupRelations: ${newMessageState.groupRelations.length} ---------------------");
         emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: []));
       }
     });
@@ -108,6 +116,7 @@ class ImBloc extends Bloc<ImEvent, ImState> {
         }
         timeLineSyncs = await imHelper.getTimeLineSync(Global.profile.user!.uid, 0, timeLineSyncs.length + 30, groupRelation.timeline_id );
       }
+      print("[NewMessage] setAppUnReadCount ---------------------");
       //用户本地替换服务器数据
       NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
       print("[onNewMessage] send groupRelations: ${newMessageState.groupRelations.length} ---------------------");
@@ -132,6 +141,7 @@ class ImBloc extends Bloc<ImEvent, ImState> {
         }
         timeLineSyncs = await imHelper.getTimeLineSync(Global.profile.user!.uid, 0, timeLineSyncs.length + 30, groupRelation.timeline_id );
       }
+      print("[NewCommunityMessage] setAppUnReadCount ---------------------");
       //用户本地替换服务器数据
       NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
       emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations,  msgMessage: timeLineSyncs));
@@ -159,6 +169,7 @@ class ImBloc extends Bloc<ImEvent, ImState> {
       //群聊关系同步本地储存，消息数据异步写入
       //私人群聊同步
       //用户本地替换服务器数据
+      print("[NewUserMessage] setAppUnReadCount ---------------------");
       NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
       emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: timeLineSyncs));
     });
@@ -172,12 +183,14 @@ class ImBloc extends Bloc<ImEvent, ImState> {
       ///撤回数据
       await imHelper.recallMessageToUid(source_id, reCallContent);
       await imHelper.recallGroupRelation(source_id, reCallContent);
+      print("[ReCallMessage] setAppUnReadCount ---------------------");
       //用户本地替换服务器数据
       NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
       timeLineSyncs = await imHelper.getTimeLineSync(Global.profile.user!.uid, 0, timeLineSyncs.length + 30, timeline_id);
       emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: timeLineSyncs));
     });
     on<getlocalRelation>((event, emit) async {
+      print("[getlocalRelation] setAppUnReadCount ---------------------");
       NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
       emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: []));
     });
@@ -185,18 +198,21 @@ class ImBloc extends Bloc<ImEvent, ImState> {
       await imHelper.updateAlready(event.timeline_id);
     });
     on<RelationTop>((event, emit) async {
+      print("[RelationTop] setAppUnReadCount ---------------------");
       if(await imHelper.updateTop(event.timeline_id, event.user.uid) > 0) {
         NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
         emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: []));
       }
     });
     on<RelationTopCancel>((event, emit) async {
+      print("[RelationTopCancel] setAppUnReadCount ---------------------");
       if(await imHelper.updateTopCancel(event.timeline_id, event.user.uid) > 0) {
         NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
         emit(NewMessageState(sysMessage: newMessageState.sysMessage, groupRelations: newMessageState.groupRelations, msgMessage: []));
       }
     });
     on<RelationDel>((event, emit) async {
+      print("[RelationDel] setAppUnReadCount ---------------------");
       if(await imHelper.delGroupRelation(event.timeline_id, event.user.uid) > 0){
         imHelper.delTimeLineSync(event.user.uid, event.timeline_id);
         NewMessageState newMessageState = await setAppUnReadCount(event.user.uid);
@@ -395,13 +411,16 @@ class ImBloc extends Bloc<ImEvent, ImState> {
   Future<NewMessageState> setAppUnReadCount(int uid) async {
 
     int unAllReadCount = 0;//所有未读消息 待付款 待评价
-    NewMessageState newMessageState = await getAllMessage(uid);
+    NewMessageState newMessageState = await getAllMessageLocal(uid);
 
 
 
     unAllReadCount = newMessageState.sysMessage.newImMode + newMessageState.sysMessage.neworderpending_count
         + newMessageState.sysMessage.neworderfinish_count + newMessageState.sysMessage.activityevalute_count;
 
+    print("[setAppUnReadCount] unAllReadCount： ${unAllReadCount} newImMode：${newMessageState.sysMessage.newImMode}" +
+        " neworderpending_count: ${newMessageState.sysMessage.neworderpending_count} neworderfinish_count：${newMessageState.sysMessage.neworderfinish_count}" +
+        " activityevalute_count: ${newMessageState.sysMessage.activityevalute_count}-----------------------------------");
 
     if(unAllReadCount > 0) {
       FlutterAppBadger.updateBadgeCount(unAllReadCount > 99 ? 99 : unAllReadCount);
@@ -412,14 +431,16 @@ class ImBloc extends Bloc<ImEvent, ImState> {
     return newMessageState;
   }
 
-  Future<NewMessageState> getAllMessage(int uid) async {
+  Future<NewMessageState> getAllMessageLocal(int uid) async {
     int unImReadCount = 0;
     List<GroupRelation> grouprelationlist = await imHelper.getGroupRelation(uid.toString());
-    print("[getAllMessage] grouprelationlist length: ${grouprelationlist.length}-----------------------------------");
-    //IM为读
+    print("[getAllMessageLocal] grouprelationlist length: ${grouprelationlist.length}-----------------------------------");
+    //IM未读
     if(grouprelationlist != null && grouprelationlist.length > 0){
       for(GroupRelation groupRelation in grouprelationlist){
         unImReadCount += groupRelation.unreadcount;
+        print("[getAllMessageLocal] groupRelation.unreadcount: ${groupRelation.unreadcount} newmsg: ${groupRelation.newmsg}-----------------------------------");
+
       }
     }
     int commentreply_count = await imHelper.getCommentReplysCount();//新的留言,评论与回复
